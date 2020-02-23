@@ -1,0 +1,32 @@
+﻿Unity Plugin for EasyAR Sense 4.0.0
+++ 支持EasyAR Sense 4.0.0的所有新功能: 稀疏空间地图、稠密空间地图以及运动跟踪
+++ 恢复类似Sense 2.3的接口设计和行为，并有非常多改进
++ 添加严重出错情况的弹出消息（可在EasyARController上关闭）
++ Components: 大多数组件可以使用Unity组件的enabled来控制start/stop
++ Component ARSenssion: AR入口，控制center mode，具备支持外部设备的能力，比如自定义相机及AR眼镜
++ Component ARAssembly: 展示EasyAR Sense组件化API的组装过程，支持所有EasyAR Sense的组件
++ Component ImageTargetController: 改善对不同类型输入的支持，可以从本地文件系统或web URL加载图像和.etd文件
++ Component CameraImageRenderer: camera图像渲染可由disable该组件来关闭
++ Component VIOCameraDeviceUnion: 运动跟踪，可自动选取使用设备可用的ARKit、ARCore或EasyAR运动跟踪功能
++ Scene: 添加target gizmo，可在Unity编辑器中显示target细节
++ Asset: 添加全局服务配置及gizmo控制选项
++ Window: 添加生成image target data（.etd文件）的窗口
++ Window: 添加菜单跳转到license key设置界面和其他全局配置
+* 修复目标跟踪存在一帧延迟的问题
+* 修复阻塞式target加载，减少target加载时间
+* 修复target size获取
+* 许多其他改进及bug修复
+
+Samples of Unity Plugin for EasyAR Sense 4.0.0
+++ 添加许多sample，展示Sense功能及接口使用
+++ 添加回所有Sense 2.3的sample
+++ 添加展示新功能的sample，包括稀疏空间地图、稠密空间地图以及运动跟踪，还有这些功能如何与图像跟踪等其他组件同时使用的sample
++ 添加sample启动器，可以通过启动器加载所有samples
++ 添加屏幕上显示的组件状态信息，覆盖所有sample
++ 添加展示AR眼镜支持的sample
++ 添加表面跟踪与图像跟踪同时使用的sample
++ 添加获取camera图像贴图和控制camera显示的sample
++ 添加修改视频 aspect ratio （Unity VideoPlayer 功能） 适配image target的sample
++ 添加展示从图像扩展跟踪的sample
++ 云识别sample现在使用本地缓存，并在跟踪状态下停止云端识别，以覆盖常见的使用场景
++ 优化coloring3D sample，修复bug

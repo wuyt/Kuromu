@@ -1,0 +1,217 @@
+﻿4.0.0
+++ 稀疏空间地图
+++ 稠密空间地图
+++ 运动跟踪
++ ARKit支持
++ ARCore支持
++ CameraDevice增加了获得camera数量、索引，获得camera前后位置的功能（Mac不支持）和以指定前后位置打开camera的功能
++ 增加了各组件汇报占用的camera buffer需求的功能，用于CameraDevice.setBufferCapacity
+* 编程语言支持：Swift升级到Swift 5
+* 不再区分Basic和Pro二进制包
+* CloundRecognitionService从使用AppKey改为使用ApiKey
+* 修正iOS上只能使用有限种类分辨率的问题，使得iPad上能够使用最大视野
+* 修正部分iPad设备上camera分辨率较高时会崩溃的问题
+* 修正Google Play Store Android App Bundle支持
+* 修正ImageTracker.unloadTarget和ObjectTracker.unloadTarget无法卸载target的问题
+* 修复了一些稳定性问题
+
+3.0.1
+* 增加Windows上对摄像头的YUY2和I420像素格式的支持，减少出现黑屏的情况
+* 修正Objective-C示例中的Renderer的多个实例状态不独立，导致第二次进入时会在glDrawArrays处崩溃的问题
+* 增加对每通道16位的png图片的支持
+* 修正Unity HelloAR_Coloring3D示例在非OpenGLES和屏幕旋转等情况下贴图坐标出错的问题
+* 修正Unity示例默认不自动调焦的问题
+* 修正Unity示例中运行的一瞬间模型仍然显示，之后才消失的问题
+* 去除Unity示例初始化成功界面提示
+* 在Unity示例中增加对第二摄像头的支持(例如：在Windows/Mac上内置摄像头之外的USB摄像头)
+* 将ExternalCamera改名为CustomCamera以减少歧义
+
+3.0.0
+++ 更灵活的基于数据流的组件化API
+++ 表面跟踪
++ Image Target Data生成
++ 编程语言支持：C# for .Net/Mono支持
++ 编程语言支持：C++11升级到C++17
++ 编程语言支持：Kotlin/Swift升级并支持Optional
++ Unity插件重写并开源，底层API与非Unity统一
++ Unity插件涂涂乐示例新增截取静态图像绘制小熊的功能
++ Unity插件新增key填错等UI提示
++ Android ARM64支持
++ 非OpenGLES2的渲染API支持(除VideoPlayer和Recorder以外实现渲染API中立)
++ 外部摄像头接入
++ 外部算法接入
++ 降低包体大小
+- 二维码识别功能移除
+- 渲染器移除，改为提供各平台示例渲染代码
+* 支持从内存加载识别图
+* CloudRecognizer支持https(Android和iOS上)
+* Android CameraDevice增加对Camera2的支持
+* 修正Android 9.0上录屏崩溃的问题
+* 支持Unity 5.6, 2017.4, 2018.4, 2019.1，去除对5.6以下版本的支持
+* 去除对iOS 7及以下版本的支持
+* Unity插件使用CommandBuffer绘制相机背景
+* 修复了一些稳定性问题
+
+2.3.0
++ 优化图像跟踪算法
++ 提升EasyAR CRS连接的安全性
+* 修复了在Android 8及新版本上ARSceneTracker停止时崩溃
+* 修复了在Unity 2018上使用Android/iOS/Mac发布黑屏
+* 修复了在iPhone XS/XS Max上的崩溃
+
+2.2.0
++ 优化图像跟踪算法
++ 添加ImageTracker模式选择的接口
+* 修复在Java接口中使用非ASCII字符造成的崩溃
+* 修复某些类型PNG图像在某些硬件下的加载和跟踪问题
+* 修复在使用多个camera实例的时候，某些情况下camera打开失败
+* 修复在经打开的camera在未关闭的情况下再次调用打开接口时崩溃
+* 修复录屏缩放模式无效
+* 修复在某些情况下录屏关闭时崩溃
+
+2.1.0
++ 添加新的编程语言支持：Swift for iOS
++ 添加Android使用的arm64-v8a库文件
++ 添加新接口（Buffer），实现在Android Java API中访问图像数据
++ 添加 Android Kotlin 样例
++ 添加 iOS dynamic framework 样例
+* All: 所有接口都不会抛出异常
+* All: 修复camera图像在屏幕显示的色彩失真
+* Unity: 修复iOS Unity录屏后的系统杂音
+* Unity: 如果OnPreRender中修改了RevertBackfacing，会在OnPostRender中重置
+* Unity: 添加ObjectTargetBaseBehaviour中缺失的LoadList*接口
+* Unity: 默认不在AndroidManifest中添加音频权限
+* Unity: 修改容易产生误导的错误信息，"EasyAR is running on an unsupported graphics device" 改为 "EasyAR is running with an unsupported graphics API"
+* Android: Engine API 已经可以替换 cn.easyar.engine.EasyAR。cn.easyar.engine.EasyAR 已经弃用并将在今后版本中移除
+* Android: 修复调用ImageTarget.setupAll 配置大量target时可能产生的 local reference table overflow
+* Android: 修复在Android平板和眼镜上SLAM不正常的漂移
+* Android: 修复在某些罕见Android设备上拒绝camera权限导致的崩溃
+* Android: 改善在某些罕见Android设备上的camera分辨率选择策略
+* iOS: 修复iOS 11视频播放
+* iOS: framework将不会再包含签名
+* iOS: 修复在某些设备上的某些分辨率下camera显示问题
+* iOS: 修复录屏内存泄漏
+* Sample: 重命名Unity样例代码的文件名和namespace，划分样例代码和SDK的明确边界
+* Sample: 删除HelloARCloud样例中的本地目标
+* Sample: 改善Android/iOS HelloARQRCode样例中QR Code检测到之后的信息显示
+* Sample: 在iOS Unity上默认打开IL2CPP
+* 其它修正和完善
+
+2.0.0
+++ 全新的编程语言支持：C/C++11/traditional C++/Java for Android/Objective-C for iOS
+++ 所有编程语言和不同IDE的sample
+++ 工作流和API变化
+++ 云识别
+++ 3D跟踪 (pro)
+++ SLAM (pro)
+++ 录屏 (pro)
++ SDK API导出为C接口，更容易在所有平台上导入其他语言
++ 添加camera权限申请API
++ 添加camera缩放API
++ 提升二维码检测效果
++ 优化内存使用
++ Unity: 添加默认的found/lost行为
++ Windows: DLL将不再依赖于CRT
++ Windows: 添加两个样例：一个关于如何使用API，另一个演示在Qt5中的集成
++ Android: 添加native库文件的自定义加载路径和选择性加载支持
+- Unity: 删除了大部分非behaviour API（所有功能被移动到了behaviour中）
+* 修复对AMD CPU的兼容性
+* 修复某些情况下渲染camera图像导致的GL状态污染
+* 修复视频播放前的黑色块
+* Unity: 修复Unity 4.x中target加载状态总是返回true
+* Unity: 修复Unity 5.0.0和部分其他版本中屏幕闪烁
+* Windows: 修复某些情况下窗口关闭时崩溃
+* Android: 修复某些情况下调用close之后camera延迟关闭
+* Android: 修复从native线程中调用camera API崩溃
+* Android: 修复内存抖动和频繁GC
+* Android: 修复在某些设备上camera的显示
+* Android: 修复某些类型PNG图像的加载和跟踪问题
+* iOS: 修复某些情况下关闭camera随机崩溃
+* iOS: 修复由于不兼容的RIIT配置导致的在与某些SDK（比如Google VR SDK）一起使用时出现的未被处理的异常（通常是domain error）
+* iOS: 修复视频播放位置的时间单位
+
+1.3.1
++ 添加中文路径支持
++ 添加json文件中对"meta"数据的支持
+* 修正UTF-8-BOM编码的json文件解析
+* 修正在某些Android设备（Nexus 5s/6）上的camera显示问题
+
+1.3.0
++ 添加多目标支持
++ 添加多目标的典型样例
++ 添加同时跟踪目标和识别二维码的样例
++ 提升检测和跟踪效果，减少抖动
++ 优化算法降低功耗
++ 添加直接画到texture的接口
++ 添加显式水平翻转相机输入的接口
++ 添加禁止Android自动旋转检测的接口
++ 添加设置外部旋转的接口
++ Unity: 优化渲染效率
++ Unity: 添加多个组合了基础prefab的常用prefab
++ Unity: 添加EasyARBehaviour，用以输入key并进行初始化，并显式处理pause/resume/quit事件
++ Unity: 添加显示/隐藏RealityPlane的选项
++ Unity: 添加使用索引打开camera的接口
++ Unity: 添加对自定义硬件设置旋转偏移的接口
++ Unity: 修改AugmentedTarget接口，支持在FrameUpdate事件中进行自定义的姿态滤波
++ Unity: 修改Target事件处理接口
+* 调整部分接口
+* 修正切换场景时的内存泄漏
+* 修正在暂停并恢复之后找到虚假的目标
+* 修正使用透明PNG图像的target检测
+* 修正因key中的空格导致的初始化失败
+* 修正iOS和mac某些分辨率下camera显示错误
+* 修正native iOS样例在切换到后台时崩溃
+* Unity: 修正在图像高比宽大的时候ImageTarget mesh显示错误
+* Unity: 修正在OnFound事件中重置target
+* Unity: 修正camera打开之后有可能出现的白色帧
+* Unity: 修正Augmenter中心模式下的TargetOnTheFly和Coloring3D样例
+* Unity: 修正TargetOnTheFly样例在某些情况下崩溃的问题
+
+1.2.1
+* 修正当输入size比例不正确的时候的闪烁和难以识别问题
+* 优化跟踪算法
+
+1.2.0
++ 大幅提升跟踪稳定性和准确性
++ Unity: 移除Visual C++运行时库依赖
++ Unity: 添加对Unity 5.3+ OpenGLCore的支持
++ Unity: 添加更多针对首次使用的引导
++ Unity: 添加关闭显示视频不支持信息的选项
+* 修正某些情况下iOS视频播放黑屏
+* 修正某些Android设备视频播放不正常
+* Unity: 微调整某些接口
+* Unity: 修正invalid aabb
+* Unity: 修正Unity 5使用prefab创建场景灰屏
+* Unity: 修正postbuild脚本对Unity 4.7的兼容性
+* 其它修正和完善
+* 在发布包中添加一个Unity样例
+
+1.1.0
++ 添加更多完整实例（单独的压缩包）
++ 添加透明视频支持
++ 完整支持Unity 5
++ Unity: 添加/改善许多接口
++ Unity: 添加获取同步Frame的接口
++ Unity: 添加设置Target或Augmenter为世界中心的选项（该选项可在Augmenter物体上找到）
++ Unity: 开放ARBuilder脚本，提供从头构建EasyAR的参考实现
+* 更加完善的视频播放支持（接口有变化）
+* 更加完善的前置摄像头和动态摄像头切换支持
+* Unity: 完善ImageTarget在Inspector面板中的设置
+* Unity: 完善错误信息显示和新手导引
+* Unity: 修正Target transform变化后的显示
+* Unity5: 修正iOS上白屏问题
+* 其它修正和完善
+* 将Unity示例单独打包
+
+1.0.1
++ 添加更明显的错误信息输出
++ 添加使用必读
+* 修正在某些情况下启动速度慢的问题
+* 修正跟踪很容易丢失的问题
+* 修正在某些情况下unity编辑器中初始化失败的情况（即使已经填写正确的Key）
+* 提升运行效率
+* 将示例代码单独打包
+* 其它修正
+
+1.0.0
++ 首个公开发布版本

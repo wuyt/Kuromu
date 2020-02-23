@@ -1,0 +1,32 @@
+Unity Plugin for EasyAR Sense 4.0.0
+++ support all new features of EasyAR Sense 4.0.0: Sparse Spatial Map, Dense Spatial Map and Motion Tracking
+++ restore Sense 2.3-like interface design and behaviors with tons of improvements
++ add popup message for critical fails (can be turned off from EasyARController)
++ Components: most components can use Unity Component's enabled to control start/stop
++ Component ARSenssion: entrance for AR, control center mode, with ability to support external devices like custom cameras and eyewears
++ Component ARAssembly: demonstrate the assembly process of component-based API of EasyAR Sense, support all EasyAR Sense components
++ Component ImageTargetController: refined to hold different types of input, support images and .etd files from local filesystem or web URL
++ Component CameraImageRenderer: camera image rendering can be disabled by disabling this component
++ Component VIOCameraDeviceUnion: motion tracker with auto switch when ARKit/ARCore or EasyAR Motion Tracker available on device
++ Scene: add target gizmo to show target details in Unity Editor
++ Asset: add global service settings entry and gizmo control
++ Window: add window to generate image target data (.etd file)
++ Window: add menu entry to jump to license key and other global settings
+* fix one frame lag in target tracking
+* fix blocking target load, reduce loading time
+* fix target size
+* many other improvements and bug fixes
+
+Samples of Unity Plugin for EasyAR Sense 4.0.0
+++ add a lot of samples to demonstrate features and interface usages
+++ add back all missing samples from Sense 2.3
+++ add samples to demonstrate new features including Sparse Spatial Map, Dense Spatial Map and Motion Tracking and how can they be used together with other components like image tracking
++ add a sample launcher to load all samples
++ add onscreen info for component status in all samples
++ add sample to demonstrate eyewear support
++ add sample to demonstrate how to make surface tracking work together with image tracking
++ add sample to demonstrate how to get camera image texture and how to control camera display
++ add sample to demonstrate how to change the video aspect ratio (Unity VideoPlayer feature) to fit image target
++ add sample to demonstrate extended tracking start from image
++ cloud recognition sample now use local cache and stop request when tracking to demonstrate a more real case
++ coloring3D sample is optimized and bugs have been fixed

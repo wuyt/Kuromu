@@ -1,0 +1,217 @@
+4.0.0
+++ Sparse Spatial Map
+++ Dense Spatial Map
+++ Motion Tracking
++ ARKit support
++ ARCore support
++ add functionalities in CameraDevice to get camera count, camera index, to get camera front and rear location (not supported on Mac) and to open camera for specific location
++ add camera buffer requirement reporting in various components for CameraDevice.setBufferCapacity
+* language binding: update Swift to Swift 5
+* do not distinguish Basic and Pro binary packages any more
+* switch CloundRecognitionService from use of AppKey to ApiKey
+* fix limited pixel resolutions on iOS, which makes it possible to use a full view on iPad
+* fix the crash problem on some iPad devices with a high pixel resolution
+* fix the support for Google Play Store Android App Bundle
+* fix the problem that ImageTracker.unloadTarget and ObjectTracker.unloadTarget can not unload targets
+* fix some stability problems
+
+3.0.1
+* add support of YUY2 and I420 pixel formats for cameras on Windows to reduce the possibility of black screen
+* fix the crash at glDrawArrays in Objective-C samples, which is caused by dependent states of multiple instances of Renderer
+* add support for png of 16-bit per channel
+* fix texture coordinate problem with non-OpenGLES or screen rotation in Unity HelloAR_Coloring3D sample
+* fix autofocus problem with Unity samples
+* fix Unity samples for the problem that models are visible on startup and only disappear after a while
+* remove initialization success banner from Unity samples
+* add support for a secondary camera in Unity samples (ex. on Windows/Mac, a USB camera in addition to the built-in camera)
+* rename ExternalCamera to CustomCamera to reduce ambiguity
+
+3.0.0
+++ a more flexible dataflow-oriented component-based API
+++ Surface Tracking
++ Image target data generation
++ language binding: C# for .Net/Mono
++ language binding: update C++11 to C++17
++ language binding: update Kotlin/Swift and support Optional
++ Unity plugin rewrite and open-source, unify low-level API with non-Unity APIs
++ Unity plugin Coloring3D sample static image snapshot rendering support
++ Unity plugin UI hints for common problems like invalid key
++ Android ARM64 support
++ non-OpenGLES2 rendering API support (rendering API neutral except for VideoPlayer and Recorder)
++ external camera interoperability
++ external algorithm interoperability
++ package size reduction
+- remove QRCode recognition
+- remove Renderer, sample rendering code are provided for various platforms
+* support in-memory image target loading
+* support https in CloudRecognizer (on Android and iOS)
+* add support for Camera2 on Android
+* fix crash for recording on Android 9.0
+* support Unity 5.6, 2017.4, 2018.4, 2019.1 and stop support for versions lower than 5.6
+* stop support for iOS 7 and lower
+* use CommandBuffer to draw camera background in Unity plugin
+* fix some stability problems
+
+2.3.0
++ optimized image tracking
++ improved security when connecting EasyAR CRS
+* fixed ARSceneTracker crash when stop on Android 8 and later
+* fixed black screen on Unity 2018 Android/iOS/Mac build
+* fixed crash on iPhone XS/XS Max
+
+2.2.0
++ optimized image tracking
++ added new API for ImageTracker mode selection
+* fixed crash when using non-ASCII characters in Java interface
+* fixed loading and tracking for some type of PNG images on some hardware
+* fixed camera open fail when using multiple camera instances in some conditions
+* fixed camera open crash when the same camera was already opened
+* fixed Recorder zoom mode do not work
+* fixed Recorder close may crash in some conditions
+
+2.1.0
++ added new language binding: Swift for iOS
++ added arm64-v8a binaries for Android
++ added new interface (Buffer) for image data access in Android Java API
++ added Android Kotlin sample
++ added iOS dynamic framework sample
+* All: all interfaces are now exception free
+* All: fixed camera image color display on screen
+* Unity: fixed noisy sound after recording on iOS Unity
+* Unity: reset RevertBackfacing in OnPostRender if it has been changed in OnPreRender
+* Unity: added missing LoadList* interface in ObjectTargetBaseBehaviour
+* Unity: do not include audio permission in AndroidManifest by default
+* Unity: changed misleading error message of "EasyAR is running on an unsupported graphics device" to "EasyAR is running with an unsupported graphics API"
+* Android: Engine API is now ready to replace cn.easyar.engine.EasyAR. cn.easyar.engine.EasyAR is deprecated and will be removed in later releases
+* Android: fixed local reference table overflow when calling ImageTarget.setupAll to setup a large number of targets
+* Android: fixed irregular drift of SLAM on Android tablets and glasses
+* Android: fixed crash when camera permission denied on some rare Android devices
+* Android: refined camera resolution selection strategy on some rare Android devices
+* iOS: fixed video playback on iOS 11
+* iOS: frameworks are not signed now
+* iOS: fixed camera display in some rare resolutions on some devices
+* iOS: fixed memory leak in recording
+* Sample: renamed Unity sample namespace and files, to make clear boundaries between sample code and the SDK
+* Sample: removed local targets from HelloARCloud samples
+* Sample: refined message display for Android/iOS HelloARQRCode sample when QR code is detected
+* Sample: turn on IL2CPP on iOS Unity by default
+* other refines and bug fixes
+
+2.0.0
+++ new language bindings: C/C++11/traditional C++/Java for Android/Objective-C for iOS
+++ samples for all language bindings and different IDE
+++ workflow and API changes
+++ cloud recognition
+++ 3D tracking (pro)
+++ SLAM (pro)
+++ Screen recording (pro)
++ export c API in SDK, make it easier to import into other languages on all platforms
++ added camera permission request API
++ added camera zoom API
++ improved QR code detection
++ optimized memory footprint
++ Unity: added default target found/lost behavior
++ Windows: DLLs are now independent from CRT
++ Windows: added two samples, one for API usage and one for Qt5 integration
++ Android: added support for custom loading path and optional loading for native libs
+- Unity: removed most non-behaviour API (all functions are moved into behaviours)
+* fixed AMD CPU compatibility
+* fixed GL status pollution when render camera image in some conditions
+* fixed black block before video starts to play
+* Unity: fixed target load status always return true in Unity 4.x
+* Unity: fixed flicker on Unity 5.0.0 and some other versions
+* Windows: fixed crash when window close in some conditions
+* Android: fixed camera close delay after calling close in some conditions
+* Android: fixed crash when calling camera APIs from native threads
+* Android: fixed memory jitter and frequent GC
+* Android: fixed camera display on some devices
+* Android: fixed loading and tracking for some type of PNG images
+* iOS: fixed random crash when camera close in some conditions
+* iOS: fixed uncaught exceptions (usually domain error) when using together with some other SDKs (e.g. Google VR SDK), caused by incompatible RTTI configurations
+* iOS: fixed video player position time unit
+
+1.3.1
++ added Unicode path name support
++ added "meta" data support in json file
+* fixed parsing json file of UTF-8-BOM encoding
+* fixed display on some Android devices (Nexus 5s/6)
+
+1.3.0
++ added multi-target support
++ added a few samples to show typical multi-target usages
++ added a sample to do tracking and read QR code simultaneously
++ improved detection and tracking, reduced shakiness
++ optimized algorithms for power reduction
++ added interface to draw directly into texture
++ added interface to explicitly flip camera input horizontally
++ added interface to disable automatic Android rotation detection
++ added interface to set rotation externally
++ Unity: optimized rendering performance
++ Unity: added many prefabs to show how to combine basic prefabs
++ Unity: added EasyARBehaviour for input key and initialize, and use explicit pause/resume/quit handlers
++ Unity: added an option to show/hide RealityPlane
++ Unity: added interface to open camera with index
++ Unity: added interface to set rotation offset for customized hardware
++ Unity: changed AugmentedTarget interface, to support user defined pose filter at FrameUpdate
++ Unity: changed Target event handling interface
+* some interfaces are changed
+* fixed memory leak when switching between scenes
+* fixed fake target found after pause resume
+* fixed target detection when loaded using transparent PNG images
+* fixed initialize fail with key containing white spaces
+* fixed iOS & mac camera display error at some resolutions
+* fixed native iOS sample crash when enter background
+* Unity: fixed ImageTarget mesh display when image has a larger height than width
+* Unity: fixed reset target in OnFound event
+* Unity: fixed white frames after camera open
+* Unity: fixed TargetOnTheFly & Coloring3D samples in Augmenter center mode
+* Unity: fixed TargetOnTheFly sample crash in some conditions
+
+1.2.1
+* fixed flicker and detection issue if the input size ratio is incorrect
+* optimized tracking
+
+1.2.0
++ dramatically improved tracking stability and accuracy
++ Unity: removed dependency of Visual C++ runtime library
++ Unity: added OpenGLCore support for Unity 5.3+
++ Unity: added more guide for first use
++ Unity: added an option to turn off video not support message
+* fixed iOS video playback black in some conditions
+* fixed Android video playback on some devices
+* Unity: minor changes of some interfaces
+* Unity: fixed invalid aabb
+* Unity: fixed Unity 5 gray screen when create use prefab
+* Unity: fixed the compatibility of postbuild script in Unity 4.7
+* other refines and bug fixes
+* put one Unity sample into the package
+
+1.1.0
++ added more samples (in separate packages)
++ added transparent video support
++ full Unity 5 support
++ Unity: added/refined many interfaces
++ Unity: added interface to get synchronized Frame
++ Unity: added option to set Target or Augmenter as world center (option can be found on Augmenter object)
++ Unity: export ARBuilder script to offer a reference for building EasyAR from scratch
+* better video player support (interface has changed)
+* better support for front camera and dynamic camera switch
+* Unity: better support for ImageTarget on inspector panel
+* Unity: better error report and user guide for first use
+* Unity: fixed display when Target transform change
+* Unity5: fixed white screen on iOS
+* other refines and bug fixes
+* splitted Unity sample to separate package
+
+1.0.1
++ added visual error messages
++ added user guide
+* fixed startup takes long time in some conditions
+* fixed very easy to track lost
+* fixed initialize in unity editor fail even after key is entered in some conditions
+* improved performance
+* splitted sample code
+* other minor fixes
+
+1.0.0
++ initial public release
