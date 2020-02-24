@@ -15,6 +15,10 @@ namespace Kuromu
         /// 路径
         /// </summary>
         public Road road;
+        /// <summary>
+        /// 目的地
+        /// </summary>
+        public Transform arrival;
 
         void Start()
         {
