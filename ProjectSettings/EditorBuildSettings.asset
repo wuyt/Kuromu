@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Kuromu/Scenes/PreKeyPoints.unity
     guid: e4484cb64f25cc640a251d58b7ea1b37
+  - enabled: 1
+    path: Assets/Kuromu/Scenes/Roads.unity
+    guid: 00075655b3ae981479bbc550017c743d
   m_configObjects: {}

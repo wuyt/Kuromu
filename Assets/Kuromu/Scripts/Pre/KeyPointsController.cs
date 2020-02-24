@@ -34,7 +34,7 @@ namespace Kuromu.Pre
         /// <summary>
         /// 关键点按钮预制件
         /// </summary>
-        public BtnKeyPoint prefab;
+        public SelectButton prefab;
 
         private Button btnAdd;
 
@@ -75,7 +75,7 @@ namespace Kuromu.Pre
             var list = gameController.LoadKeyPoins();
             foreach (var item in list)
             {
-                var btn = Instantiate(prefab, svContent);
+                SelectButton btn = Instantiate(prefab, svContent);
                 btn.keyPoint = JsonUtility.FromJson<KeyPoint>(item);
                 btn.GetComponentInChildren<Text>().text = btn.keyPoint.name;
             }
@@ -89,7 +89,7 @@ namespace Kuromu.Pre
             string[] jsons = new string[svContent.childCount];
             for (int i = 0; i < svContent.childCount; i++)
             {
-                jsons[i] = JsonUtility.ToJson(svContent.GetChild(i).GetComponent<BtnKeyPoint>().keyPoint);
+                jsons[i] = JsonUtility.ToJson(svContent.GetChild(i).GetComponent<SelectButton>().keyPoint);
             }
             gameController.SaveKeyPoints(jsons);
             info.text = "保存完成。";
@@ -104,10 +104,10 @@ namespace Kuromu.Pre
             btnDelete.interactable = false;
         }
         /// <summary>
-        /// 关键点按钮点击
+        /// 按钮点击
         /// </summary>
         /// <param name="btnTF"></param>
-        public void BtnKeyPointClicked(Transform btnTF)
+        public void SelectButtonClicked(Transform btnTF)
         {
             selected = btnTF;
             info.text = btnTF.GetComponentInChildren<Text>().text;
@@ -122,13 +122,13 @@ namespace Kuromu.Pre
         {
             if (!string.IsNullOrEmpty(inputField.text) && selected != null)
             {
-                BtnKeyPoint btnKP = Instantiate(prefab, svContent);
+                SelectButton btn = Instantiate(prefab, svContent);
 
-                btnKP.keyPoint.name = inputField.text;
-                btnKP.keyPoint.position = selected.localPosition;
-                btnKP.keyPoint.pointType = dropdown.value;
+                btn.keyPoint.name = inputField.text;
+                btn.keyPoint.position = selected.localPosition;
+                btn.keyPoint.pointType = dropdown.value;
 
-                btnKP.GetComponentInChildren<Text>().text = inputField.text;
+                btn.GetComponentInChildren<Text>().text = inputField.text;
 
                 inputField.text = "";
                 selected = null;

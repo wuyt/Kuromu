@@ -5,21 +5,24 @@ using UnityEngine.UI;
 
 namespace Kuromu
 {
-    public class BtnKeyPoint : MonoBehaviour
+    public class SelectButton : MonoBehaviour
     {
         /// <summary>
         /// 关键点
         /// </summary>
         public KeyPoint keyPoint;
+        /// <summary>
+        /// 路径
+        /// </summary>
+        public Road road;
 
         void Start()
         {
             gameObject.GetComponent<Button>().onClick.AddListener(() =>
             {
-                GameObject.Find("SceneMaster").SendMessage("BtnKeyPointClicked",transform);
+                GameObject.Find("SceneMaster").SendMessage("SelectButtonClicked", transform);
             });
         }
-
     }
 }
 
