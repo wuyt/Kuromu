@@ -18,6 +18,6 @@ EditorBuildSettings:
     path: Assets/Kuromu/Scenes/Roads.unity
     guid: 00075655b3ae981479bbc550017c743d
   - enabled: 1
-    path: Assets/Kuromu/Scenes/PreNavigation.unity
-    guid: c55bfc0fff2349d4b9d6fbac4015c605
+    path: Assets/Kuromu/Scenes/Navigation.unity
+    guid: b2240870241f56d4ca5c1efb55b6be05
   m_configObjects: {}

@@ -43,32 +43,25 @@ namespace Kuromu
         }
 
         /// <summary>
-        /// 地图保存反馈
-        /// </summary>
-        /// <param name="mapInfo">地图信息</param>
-        /// <param name="isSuccess">是否成功</param>
-        /// <param name="error">错误信息</param>
-        private void MapHostBack(SparseSpatialMapController.SparseSpatialMapInfo mapInfo, bool isSuccess, string error)
-        {
-            if (isSuccess)
-            {
-                PlayerPrefs.SetString("MapID", mapInfo.ID);
-                PlayerPrefs.SetString("MapName", mapInfo.Name);
-                gameController.SendMessage("ShowMessage", "地图保存成功。");
-            }
-            else
-            {
-                gameController.SendMessage("ShowMessage", "地图保存出错：" + error);
-                btnSave.interactable = true;
-            }
-        }
-        /// <summary>
         /// 保存地图
         /// </summary>
         private void Save()
         {
             btnSave.interactable = false;
-            mapWorker.BuilderMapController.MapHost += MapHostBack;
+            mapWorker.BuilderMapController.MapHost += (mapInfo, isSuccess, error) =>
+            {
+                if (isSuccess)
+                {
+                    PlayerPrefs.SetString("MapID", mapInfo.ID);
+                    PlayerPrefs.SetString("MapName", mapInfo.Name);
+                    gameController.SendMessage("ShowMessage", "地图保存成功。");
+                }
+                else
+                {
+                    gameController.SendMessage("ShowMessage", "地图保存出错：" + error);
+                    btnSave.interactable = true;
+                }
+            };
             try
             {
                 mapWorker.BuilderMapController.Host(gameController.inputName, null);

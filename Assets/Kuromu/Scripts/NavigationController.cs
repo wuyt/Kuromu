@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.AI;
+using easyar;
 
 namespace Kuromu
 {
-    public class Navigation : MonoBehaviour
+    public class NavigationController : MonoBehaviour
     {
         private GameController gameController;
         /// <summary>
@@ -57,25 +58,67 @@ namespace Kuromu
         /// 玩家
         /// </summary>
         public Transform player;
+
+        private ARSession session;
+        private SparseSpatialMapWorkerFrameFilter mapWorker;
+        private SparseSpatialMapController map;
         void Start()
         {
             gameController = FindObjectOfType<GameController>();
             panel = GameObject.Find("/Canvas/Panel");
             btnNav = GameObject.Find("/Canvas/ButtonNav").GetComponent<Button>();
             btnNav.onClick.AddListener(ShowNavUI);
-            //btnNav.interactable = false;
+            btnNav.interactable = false;
             panel.transform.Find("ButtonClose").GetComponent<Button>().onClick.AddListener(CloseNavUI);
 
             svContent = panel.transform.Find("Scroll View/Viewport/Content").transform;
-            LoadArrivals();
 
-            LoadRoads();
+            session = FindObjectOfType<ARSession>();
+            mapWorker = FindObjectOfType<SparseSpatialMapWorkerFrameFilter>();
+            map = FindObjectOfType<SparseSpatialMapController>();
 
             SetLine();
-
-            BakePath();
-
             CloseNavUI();
+
+            LoadMap();
+        }
+
+        /// <summary>
+        /// 加载地图
+        /// </summary>
+        private void LoadMap()
+        {
+            map.MapManagerSource.ID = PlayerPrefs.GetString("MapID");
+            map.MapManagerSource.Name = PlayerPrefs.GetString("MapName");
+
+            map.MapLoad += (map, status, error) =>
+            {
+                if (status)
+                {
+                    gameController.SendMessage("ShowMessage", "地图加载成功。");
+                }
+                else
+                {
+                    gameController.SendMessage("ShowMessage", "地图加载失败。" + error);
+                }
+            };
+
+            map.MapLocalized += () =>
+            {
+                gameController.SendMessage("ShowMessage", "进入稀疏空间定位。");
+                LoadArrivals();
+                LoadRoads();
+                BakePath();
+                btnNav.interactable = true;
+                ShowNavUI();
+            };
+            map.MapStopLocalize += () =>
+            {
+                gameController.SendMessage("ShowMessage", "停止稀疏空间定位");
+            };
+
+            gameController.SendMessage("ShowMessage", "开始加载地图。");
+            mapWorker.Localizer.startLocalization();
         }
 
         /// <summary>
@@ -115,11 +158,11 @@ namespace Kuromu
         /// </summary>
         private void BakePath()
         {
-            
             surface = FindObjectOfType<NavMeshSurface>();
             Debug.Log("bake start");
             agent = FindObjectOfType<NavMeshAgent>();
             Debug.Log(agent);
+            agent.transform.position=player.position;
             agent.enabled = false;
             surface.BuildNavMesh();
             path = new NavMeshPath();
@@ -135,7 +178,7 @@ namespace Kuromu
             Debug.Log(lineRenderer);
             lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
             lineRenderer.positionCount = 0;
-            lineRenderer.widthMultiplier = 0.3f;
+            lineRenderer.widthMultiplier = 0.05f;
             Gradient gradient = new Gradient();
             gradient.SetKeys(
                 new GradientColorKey[] {
@@ -205,8 +248,6 @@ namespace Kuromu
         {
             panel.SetActive(false);
         }
-
-
     }
 }
 
