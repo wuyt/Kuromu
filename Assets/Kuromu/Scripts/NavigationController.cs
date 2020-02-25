@@ -162,7 +162,7 @@ namespace Kuromu
             Debug.Log("bake start");
             agent = FindObjectOfType<NavMeshAgent>();
             Debug.Log(agent);
-            agent.transform.position=player.position;
+            agent.transform.position = player.position;
             agent.enabled = false;
             surface.BuildNavMesh();
             path = new NavMeshPath();
@@ -231,6 +231,7 @@ namespace Kuromu
                     var arrivalTemp = Instantiate(prefabArrival, navRoot.Find("Arrivals"));
                     arrivalTemp.localPosition = point.position;
                     btn.arrival = arrivalTemp;
+                    arrivalTemp.gameObject.SetActive(false);
                 }
             }
         }
