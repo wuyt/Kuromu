@@ -1,11 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 namespace Kuromu
 {
+    /// <summary>
+    /// 菜单场景控制器
+    /// </summary>
     public class MenuController : MonoBehaviour
     {
         /// <summary>
@@ -20,7 +21,9 @@ namespace Kuromu
         /// 删除地图按钮
         /// </summary>
         private GameObject btnDelete;
-
+        /// <summary>
+        /// 游戏控制
+        /// </summary>
         private GameController gameController;
 
 
@@ -45,6 +48,9 @@ namespace Kuromu
                 SceneManager.LoadScene("BuildMap");
             }
         }
+        /// <summary>
+        /// 删除
+        /// </summary>
         public void DeleteMap()
         {
             PlayerPrefs.DeleteKey("MapID");

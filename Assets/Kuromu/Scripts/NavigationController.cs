@@ -1,14 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.AI;
 using easyar;
 
 namespace Kuromu
 {
+    /// <summary>
+    /// 导航场景控制器
+    /// </summary>
     public class NavigationController : MonoBehaviour
     {
+        /// <summary>
+        /// 游戏控制
+        /// </summary>
         private GameController gameController;
         /// <summary>
         /// 导航画布
@@ -46,9 +50,10 @@ namespace Kuromu
         /// 导航代理
         /// </summary>
         private NavMeshAgent agent;
-
+        /// <summary>
+        /// 导航路径
+        /// </summary>
         private NavMeshPath path;
-
         private NavMeshSurface surface;
         /// <summary>
         /// 导航目标
@@ -79,7 +84,6 @@ namespace Kuromu
 
             SetLine();
             CloseNavUI();
-
             LoadMap();
         }
 
@@ -88,9 +92,10 @@ namespace Kuromu
         /// </summary>
         private void LoadMap()
         {
+            //设置地图
             map.MapManagerSource.ID = PlayerPrefs.GetString("MapID");
             map.MapManagerSource.Name = PlayerPrefs.GetString("MapName");
-
+            //地图加载反馈
             map.MapLoad += (map, status, error) =>
             {
                 if (status)
@@ -102,25 +107,46 @@ namespace Kuromu
                     gameController.SendMessage("ShowMessage", "地图加载失败。" + error);
                 }
             };
-
+            //地图定位反馈
             map.MapLocalized += () =>
             {
                 gameController.SendMessage("ShowMessage", "进入稀疏空间定位。");
+                ClearNav();
                 LoadArrivals();
                 LoadRoads();
                 BakePath();
                 btnNav.interactable = true;
                 ShowNavUI();
             };
+            //停止定位反馈
             map.MapStopLocalize += () =>
             {
                 gameController.SendMessage("ShowMessage", "停止稀疏空间定位");
             };
-
             gameController.SendMessage("ShowMessage", "开始加载地图。");
-            mapWorker.Localizer.startLocalization();
+            mapWorker.Localizer.startLocalization();    //本地化地图
         }
-
+        /// <summary>
+        /// 清理导航元素
+        /// </summary>
+        private void ClearNav()
+        {
+            //删除按钮
+            foreach (Transform tf in svContent)
+            {
+                Destroy(tf.gameObject);
+            }
+            //删除目的地
+            foreach (Transform tf in navRoot.Find("Arrivals"))
+            {
+                Destroy(tf.gameObject);
+            }
+            //删除路径
+            foreach (Transform tf in navRoot.Find("Roads"))
+            {
+                Destroy(tf.gameObject);
+            }
+        }
         /// <summary>
         /// 按钮点击
         /// </summary>
@@ -138,7 +164,6 @@ namespace Kuromu
             arrival.gameObject.SetActive(true);
 
             InvokeRepeating("DisplayPath", 0, 0.5f);
-
             CloseNavUI();
         }
         /// <summary>
@@ -159,14 +184,11 @@ namespace Kuromu
         private void BakePath()
         {
             surface = FindObjectOfType<NavMeshSurface>();
-            Debug.Log("bake start");
             agent = FindObjectOfType<NavMeshAgent>();
-            Debug.Log(agent);
             agent.transform.position = player.position;
             agent.enabled = false;
             surface.BuildNavMesh();
             path = new NavMeshPath();
-            Debug.Log("bake end");
         }
 
         /// <summary>
@@ -189,8 +211,6 @@ namespace Kuromu
                 new GradientAlphaKey(1f, 1.0f) });
             lineRenderer.colorGradient = gradient;
         }
-
-
         /// <summary>
         /// 加载路径
         /// </summary>

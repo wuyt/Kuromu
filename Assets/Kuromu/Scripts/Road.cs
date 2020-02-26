@@ -1,10 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 
 namespace Kuromu
 {
+    /// <summary>
+    /// 路径
+    /// </summary>
     [Serializable]
     public class Road
     {

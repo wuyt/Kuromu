@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using easyar;
 
 namespace Kuromu
 {
+    //关键点场景控制
     public class KeyPointsController : MonoBehaviour
     {
         /// <summary>
@@ -36,17 +35,24 @@ namespace Kuromu
         /// 关键点按钮预制件
         /// </summary>
         public SelectButton prefab;
-
+        /// <summary>
+        /// 添加按钮
+        /// </summary>
         private Button btnAdd;
-
+        /// <summary>
+        /// 删除按钮
+        /// </summary>
         private Button btnDelete;
-
+        /// <summary>
+        /// 游戏控制
+        /// </summary>
         private GameController gameController;
-
         private ARSession session;
         private SparseSpatialMapWorkerFrameFilter mapWorker;
         private SparseSpatialMapController map;
-
+        /// <summary>
+        /// 本地化状态
+        /// </summary>
         private bool localized = false;
 
         void Start()
@@ -79,7 +85,6 @@ namespace Kuromu
 
             LoadKeyPoints();
             HiddenPanel();
-
             LoadMap();
         }
         /// <summary>
@@ -87,11 +92,10 @@ namespace Kuromu
         /// </summary>
         private void LoadMap()
         {
-            Debug.Log("start set map");
+            //设置地图
             map.MapManagerSource.ID = PlayerPrefs.GetString("MapID");
             map.MapManagerSource.Name = PlayerPrefs.GetString("MapName");
-            Debug.Log("set end.");
-
+            //地图获取反馈
             map.MapLoad += (map, status, error) =>
             {
                 if (status)
@@ -104,20 +108,20 @@ namespace Kuromu
                     gameController.SendMessage("ShowMessage", "地图加载失败。" + error);
                 }
             };
-
+            //定位成功事件
             map.MapLocalized += () =>
             {
                 gameController.SendMessage("ShowMessage", "进入稀疏空间定位。");
             };
+            //停止定位事件
             map.MapStopLocalize += () =>
             {
                 gameController.SendMessage("ShowMessage", "停止稀疏空间定位");
             };
-
             gameController.SendMessage("ShowMessage", "开始加载地图。");
-            mapWorker.Localizer.startLocalization();
+            mapWorker.Localizer.startLocalization();    //本地化地图
         }
-
+        #region 关键点控制
         /// <summary>
         /// 加载关键点
         /// </summary>
@@ -131,7 +135,6 @@ namespace Kuromu
                 btn.GetComponentInChildren<Text>().text = btn.keyPoint.name;
             }
         }
-
         /// <summary>
         /// 保存关键点
         /// </summary>
@@ -165,7 +168,6 @@ namespace Kuromu
             btnDelete.interactable = true;
             btnAdd.interactable = false;
         }
-
         /// <summary>
         /// 添加关键点
         /// </summary>
@@ -187,7 +189,9 @@ namespace Kuromu
                 btnAdd.interactable = false;
             }
         }
+        #endregion
 
+        #region 界面控制
         /// <summary>
         /// 隐藏画布
         /// </summary>
@@ -204,7 +208,9 @@ namespace Kuromu
             panel.SetActive(true);
             info.text = "Position:" + selected.localPosition;
         }
+        #endregion
 
+        #region  点击物体
         void Update()
         {
             if (Input.GetMouseButtonUp(0) && localized)
@@ -230,6 +236,7 @@ namespace Kuromu
             tf.parent = map.transform;
             selected = tf;
         }
+        #endregion
     }
 }
 

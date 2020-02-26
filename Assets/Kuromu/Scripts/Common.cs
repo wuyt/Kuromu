@@ -1,13 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Kuromu
 {
+    /// <summary>
+    /// 公共功能
+    /// </summary>
     public class Common : MonoBehaviour
     {
-
         /// <summary>
         /// 加载场景
         /// </summary>
@@ -15,9 +15,7 @@ namespace Kuromu
         public void LoadScene(string sceneName)
         {
             SceneManager.LoadScene(sceneName);
-        }
-
-        
+        }        
     }
 }
 

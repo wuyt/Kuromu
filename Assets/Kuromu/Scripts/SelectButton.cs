@@ -1,10 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace Kuromu
 {
+    /// <summary>
+    /// 滚动视图中的点击按钮
+    /// </summary>
     public class SelectButton : MonoBehaviour
     {
         /// <summary>

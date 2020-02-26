@@ -5,8 +5,10 @@ using UnityEngine.UI;
 
 namespace Kuromu
 {
+    //路径场景控制器
     public class RoadsController : MonoBehaviour
     {
+        //游戏控制
         private GameController gameController;
         /// <summary>
         /// 出发点下拉列表
@@ -20,7 +22,6 @@ namespace Kuromu
         /// 按钮
         /// </summary>
         public SelectButton prefab;
-
         /// <summary>
         /// 按钮容器
         /// </summary>
@@ -42,26 +43,22 @@ namespace Kuromu
         /// </summary>
         private Button btnDelete;
 
-
-
         void Start()
         {
             //填充下拉列表
             gameController = FindObjectOfType<GameController>();
             dpdStart = GameObject.Find("/Canvas/Panel/dpdStart").GetComponent<Dropdown>();
             dpdArrival = GameObject.Find("/Canvas/Panel/dpdArrival").GetComponent<Dropdown>();
-
             //添加按钮
             svContent = GameObject.Find("/Canvas/Panel/Scroll View/Viewport/Content").transform;
             info = GameObject.Find("/Canvas/Panel/Text").GetComponent<Text>();
             GameObject.Find("/Canvas/Panel/ButtonAdd").GetComponent<Button>().onClick.AddListener(AddRoad);
             keyPoints = new List<KeyPoint>();
-
             //删除按钮
             btnDelete = GameObject.Find("/Canvas/Panel/ButtonDelete").GetComponent<Button>();
             btnDelete.onClick.AddListener(DeleteRoad);
             btnDelete.interactable = false;
-
+            //保存按钮
             GameObject.Find("/Canvas/Panel/ButtonSave").GetComponent<Button>().onClick.AddListener(SaveRoads);
 
             BindDropdown();
@@ -80,7 +77,6 @@ namespace Kuromu
                 btn.GetComponentInChildren<Text>().text = btn.road.startName + "<===>" + btn.road.arrivalName;
             }
         }
-
         /// <summary>
         /// 保存路径
         /// </summary>
@@ -94,7 +90,6 @@ namespace Kuromu
             gameController.SaveRoads(jsons);
             info.text = "保存成功。";
         }
-
         /// <summary>
         /// 删除路径
         /// </summary>
@@ -114,7 +109,6 @@ namespace Kuromu
             info.text = btnTF.GetComponentInChildren<Text>().text;
             btnDelete.interactable = true;
         }
-
         /// <summary>
         /// 添加路径
         /// </summary>
@@ -147,7 +141,6 @@ namespace Kuromu
             }
             return Vector3.zero;
         }
-
         /// <summary>
         /// 绑定下拉列表
         /// </summary>
