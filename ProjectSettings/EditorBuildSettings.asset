@@ -20,4 +20,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Kuromu/Scenes/Navigation.unity
     guid: b2240870241f56d4ca5c1efb55b6be05
+  - enabled: 1
+    path: Assets/Kuromu/Scenes/PreMenu.unity
+    guid: 62da4025156c46742a01628ae71d6411
+  - enabled: 1
+    path: Assets/Kuromu/Scenes/PreBuildMap.unity
+    guid: 3efad25bd3f73e340ae1b8104c937c0e
+  - enabled: 1
+    path: Assets/Kuromu/Scenes/PreKeyPoints.unity
+    guid: e4484cb64f25cc640a251d58b7ea1b37
+  - enabled: 1
+    path: Assets/Kuromu/Scenes/PreNavigation.unity
+    guid: c55bfc0fff2349d4b9d6fbac4015c605
   m_configObjects: {}

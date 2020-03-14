@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.AI;
 
-namespace Kuromu
+namespace Kuromu.Pre
 {
-    public class Navigation : MonoBehaviour
+    public class NavigationController : MonoBehaviour
     {
         private GameController gameController;
         /// <summary>
