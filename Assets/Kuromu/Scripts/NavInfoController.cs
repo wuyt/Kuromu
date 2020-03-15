@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 using UnityEngine.UI;
 using UnityEngine.AI;
+using System;
 
-namespace Kuromu.Pre
+namespace Kuromu
 {
     public class NavInfoController : MonoBehaviour
     {
@@ -123,13 +123,21 @@ namespace Kuromu.Pre
             return dotValue < 0f;
         }
 
+        private bool LeftOfLine(Vector2 start, Vector2 origin, Vector2 point)
+        {
+           // Tmp = (y1 – y2) *x + (x2 – x1) *y + x1 * y2 – x2* y1
+          //  var tmpx = (start.x - origin.x) / (start.y - origin.y) * (point.y - origin.y) + origin.x;
+          var tmp = (start.y - origin.y) * point.x + (origin.x - start.x) * point.y + start.x * origin.y - origin.x * start.y;
+            return tmp > 0;
+        }
+
         /// <summary>
         /// 判断玩家在绿线左边
         /// </summary>
         /// <returns></returns>
         private bool PlayerGreenLeft()
         {
-            return PointOnLeftSideOfVector(
+            return LeftOfLine(
                 new Vector2(path.corners[0].x, path.corners[0].z),
                 new Vector2(path.corners[1].x, path.corners[1].z),
                 new Vector2(player.position.x, player.position.z));
@@ -268,7 +276,6 @@ namespace Kuromu.Pre
             }
             return distance;
         }
-
     }
 }
 

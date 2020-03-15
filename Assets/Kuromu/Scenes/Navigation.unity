@@ -344,7 +344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.7528505, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1710,6 +1710,7 @@ GameObject:
   - component: {fileID: 1291455844}
   - component: {fileID: 1291455845}
   - component: {fileID: 1291455846}
+  - component: {fileID: 1291455847}
   m_Layer: 0
   m_Name: SceneMaster
   m_TagString: Untagged
@@ -1764,6 +1765,19 @@ MonoBehaviour:
     type: 3}
   player: {fileID: 1158888404}
   refresh: 0.5
+--- !u!114 &1291455847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291455843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be750b48c90f0bc409ade59118f5f754, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1158888404}
   projection: -1
 --- !u!1 &1457195401
 GameObject:
@@ -2333,7 +2347,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.7528505, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
