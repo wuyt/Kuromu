@@ -130,7 +130,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &119691278
 Transform:
   m_ObjectHideFlags: 0
@@ -221,7 +221,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &199013207
 Transform:
   m_ObjectHideFlags: 0
@@ -311,7 +311,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &259253610
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1710,7 +1710,6 @@ GameObject:
   - component: {fileID: 1291455844}
   - component: {fileID: 1291455845}
   - component: {fileID: 1291455846}
-  - component: {fileID: 1291455847}
   m_Layer: 0
   m_Name: SceneMaster
   m_TagString: Untagged
@@ -1765,20 +1764,6 @@ MonoBehaviour:
     type: 3}
   player: {fileID: 1158888404}
   refresh: 0.5
---- !u!114 &1291455847
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1291455843}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be750b48c90f0bc409ade59118f5f754, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 1158888404}
-  projection: -1
 --- !u!1 &1457195401
 GameObject:
   m_ObjectHideFlags: 0
@@ -1794,7 +1779,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1457195402
 Transform:
   m_ObjectHideFlags: 0
@@ -2314,7 +2299,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1745555516
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2749,7 +2734,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1835493767
 Transform:
   m_ObjectHideFlags: 0

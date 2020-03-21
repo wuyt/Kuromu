@@ -122,7 +122,10 @@ namespace Kuromu.Pre
             lineRenderer.SetPositions(path.corners);
             agent.enabled = false;
 
-            gameObject.SendMessage("ShowStatus",path);
+            if (GetComponent<NavInfoController>().enabled)
+            {
+                gameObject.SendMessage("ShowStatus", path);
+            }
             //ShowStatus();
         }
         /// <summary>
