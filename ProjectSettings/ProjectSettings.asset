@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: BackFlowLake
-  productName: IndoorNavigation
+  productName: "\u5BA4\u5185\u5BFC\u822A\u6F14\u793A"
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -161,7 +161,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.BackFlowLake.SSMNavigation
+    Android: com.BackFlowLake.Shen
   buildNumber: {}
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 26
@@ -270,7 +270,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: bcceeed843b2def4ca7c9c4462592e83, type: 3}
+      m_Icon: {fileID: 2800000, guid: 27abb79ddbe302a47bf0cc0660bda0b5, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0

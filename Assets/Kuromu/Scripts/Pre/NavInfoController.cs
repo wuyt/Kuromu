@@ -46,6 +46,10 @@ namespace Kuromu.Pre
         /// 导航起始点到下一个点投影线
         /// </summary>
         private LineRenderer lrNavToNext;
+        /// <summary>
+        /// 玩家到导航线的投影线
+        /// </summary>
+        private LineRenderer lrPlayerToLine;
 
         private NavMeshPath path;
 
@@ -62,6 +66,9 @@ namespace Kuromu.Pre
             lrPlayerToNext = GameObject.Find("/Lines/PlayerToNext").GetComponent<LineRenderer>();
 
             lrNavToNext = GameObject.Find("/Lines/NavToNext").GetComponent<LineRenderer>();
+
+            lrPlayerToLine = GameObject.Find("/Lines/PlayerToLine").GetComponent<LineRenderer>();
+
         }
         /// <summary>
         /// 显示导航点坐标
@@ -89,7 +96,9 @@ namespace Kuromu.Pre
                 黄红夹角：{5}
                 黄红Dot（<0在左，>0在右）：{6}
                 黄绿夹角：{7}
-                玩家在绿线左：{8}",
+                玩家在绿线左：{8}
+                黄黑夹角：{9}
+                黄黑Dot（<0在左，>0在右）：{10}",
                 "",
                 CALCPathLength(),
                 NavPointToNextLength(),
@@ -98,13 +107,17 @@ namespace Kuromu.Pre
                 YellowRedAngle(),
                 YellowRedDot(),
                 YellowGreenAngle(),
-                PlayerGreenLeft());
+                PlayerGreenLeft(),
+                YellowBlackAngle(),
+                YellowBlackDot());
 
             ShowPoints();
 
             ShowPlayerLine();
             ShowPlayerToNextLine();
             ShowNavToNextLine();
+            ShowPlayerToLine();
+
         }
 
         /// <summary>
@@ -176,7 +189,29 @@ namespace Kuromu.Pre
         }
 
         /// <summary>
-        /// 显示导航起始到下一个点的投影线
+        /// 黄黑线夹角
+        /// </summary>
+        /// <returns></returns>
+        private float YellowBlackAngle()
+        {
+            Vector2 black = new Vector2(path.corners[0].x, path.corners[0].z) - new Vector2(player.position.x, player.position.z);
+            Vector2 yellow = new Vector2(playerAhead.position.x, playerAhead.position.z) - new Vector2(player.position.x, player.position.z);
+            return Vector2.Angle(yellow, black);
+        }
+        /// <summary>
+        /// 黄黑线左右
+        /// </summary>
+        /// <returns></returns>
+        private bool YellowBlackDot()
+        {
+            Vector2 black = new Vector2(path.corners[0].x, path.corners[0].z) - new Vector2(player.position.x, player.position.z);
+            Vector2 yellow = new Vector2(playerLeft.position.x, playerLeft.position.z) - new Vector2(player.position.x, player.position.z);
+            return Vector2.Dot(yellow, black) < 0;
+        }
+
+
+        /// <summary>
+        /// 显示导航起始到下一个点的投影线（绿线）
         /// </summary>
         private void ShowNavToNextLine()
         {
@@ -189,7 +224,7 @@ namespace Kuromu.Pre
             }
         }
         /// <summary>
-        /// 显示玩家到下一个点投影线
+        /// 显示玩家到下一个点投影线（红线）
         /// </summary>
         private void ShowPlayerToNextLine()
         {
@@ -203,7 +238,7 @@ namespace Kuromu.Pre
         }
 
         /// <summary>
-        /// 显示玩家面向方向投影线
+        /// 显示玩家面向方向投影线（黄线）
         /// </summary>
         private void ShowPlayerLine()
         {
@@ -211,6 +246,19 @@ namespace Kuromu.Pre
 
             lrPlayer.SetPosition(0, new Vector3(player.position.x, player.position.y + projection, player.position.z));
             lrPlayer.SetPosition(1, new Vector3(playerAhead.position.x, player.position.y + projection, playerAhead.position.z));
+        }
+        /// <summary>
+        /// 显示玩家到导航线起点的投影（黑线）
+        /// </summary>
+        private void ShowPlayerToLine()
+        {
+            if (path.corners.Length > 1)
+            {
+                lrPlayerToLine.positionCount = 2;
+
+                lrPlayerToLine.SetPosition(0, new Vector3(player.position.x, player.position.y + projection, player.position.z));
+                lrPlayerToLine.SetPosition(1, new Vector3(path.corners[0].x, player.position.y + projection, path.corners[0].z));
+            }
         }
 
         /// <summary>
