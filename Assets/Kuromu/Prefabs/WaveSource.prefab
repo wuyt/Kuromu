@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4012757636475684252
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3252400289575303456}
+  - component: {fileID: 7055988649065608078}
+  m_Layer: 0
+  m_Name: WaveSource
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3252400289575303456
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4012757636475684252}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7055988649065608078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4012757636475684252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea8f713fa1f2e4e43a11df721d683643, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  units:
+  - {fileID: 8300000, guid: a40dcdddfaea21742943c7abdd5c594d, type: 3}
+  - {fileID: 8300000, guid: 2d94b5989350b2f468bf4d947d082919, type: 3}
+  - {fileID: 8300000, guid: 5db8fac70ccf5bd478bb4cf7d6f99c66, type: 3}
+  hundredsDigit:
+  - {fileID: 8300000, guid: 587429170a873cd48ac02db7706a0d98, type: 3}
+  - {fileID: 8300000, guid: 6c1b0a1c21f5a9747a4c6537c8773ebc, type: 3}
+  - {fileID: 8300000, guid: c69827ab26f75e84f9016966655abb17, type: 3}
+  - {fileID: 8300000, guid: a7784a7cc88f2f34c9cd507dc6301562, type: 3}
+  - {fileID: 8300000, guid: 5277f09a6f814324e9dd539f14697804, type: 3}
+  - {fileID: 8300000, guid: a7e6b4dae56c5184ba94752a1247f7c7, type: 3}
+  - {fileID: 8300000, guid: 00eccad622f40ed42ad2daf07eaa61b6, type: 3}
+  - {fileID: 8300000, guid: 134283180271b7345b40fff839ea173f, type: 3}
+  - {fileID: 8300000, guid: b4090c90ad6600f4fabf96a291d416e7, type: 3}
+  - {fileID: 8300000, guid: 3cf83e603731d594bb652ce9442bfa32, type: 3}
+  tenDigit:
+  - {fileID: 8300000, guid: e1863648503afd048a50cf4fad4c4680, type: 3}
+  - {fileID: 8300000, guid: eb031de560556184bb5a307ca4f3ba19, type: 3}
+  - {fileID: 8300000, guid: 8762299e4a0b06f459486c1094a2903f, type: 3}
+  - {fileID: 8300000, guid: 7bde07f15786d434db07322f48ea1775, type: 3}
+  - {fileID: 8300000, guid: ce1030ac2bba79f4e9d87a0fe1a03d19, type: 3}
+  - {fileID: 8300000, guid: e016254dd71c06f4eb3068960db739ab, type: 3}
+  - {fileID: 8300000, guid: b71a9abdb332d81469eac77f3beb9d60, type: 3}
+  - {fileID: 8300000, guid: 62f0dba2479a3ff42bd69ed3cb3255a6, type: 3}
+  - {fileID: 8300000, guid: dba3a2a724715bd40bd948ceee2ba1da, type: 3}
+  - {fileID: 8300000, guid: d816064b3f6bb724c8ffe4e2e3b7cc35, type: 3}
+  digits:
+  - {fileID: 8300000, guid: 587429170a873cd48ac02db7706a0d98, type: 3}
+  - {fileID: 8300000, guid: c818302a57b3dcb4397503e3ced0820f, type: 3}
+  - {fileID: 8300000, guid: f3fe7503f0af7a84398c80e4eb869a8b, type: 3}
+  - {fileID: 8300000, guid: cf3e8d9a8315a1346b9ca8fa34e1e34a, type: 3}
+  - {fileID: 8300000, guid: 52ae37f2c54f74248b288332ec147edf, type: 3}
+  - {fileID: 8300000, guid: 51c067b56be67074d9d2f7792fc1ba7a, type: 3}
+  - {fileID: 8300000, guid: fcd7cbe0af5b82445b50f1da0dcaca97, type: 3}
+  - {fileID: 8300000, guid: 72d3995a0bd969940bf07ffb062c2898, type: 3}
+  - {fileID: 8300000, guid: 5806e4b84326ee246a152b2fe7074567, type: 3}
+  - {fileID: 8300000, guid: 122a5174babfbf94b904a47584e1648a, type: 3}
+  textWaves:
+  - text: "\u5F00\u59CB\u524D\u8FDB"
+    wave: {fileID: 8300000, guid: 93726ef16e7fd6049a9cb53255d66a7d, type: 3}
+  - text: "\u8DDD\u79BB\u76EE\u6807"
+    wave: {fileID: 8300000, guid: d017463074778404586548948a4690a8, type: 3}
+  - text: "\u5230\u8FBE\u7EC8\u70B9"
+    wave: {fileID: 8300000, guid: 27709f2df65523242b28f9e15acbe488, type: 3}
+  - text: "\u5411\u53F3\u8F6C"
+    wave: {fileID: 8300000, guid: 83ba2164998a6ea4b9c99322ecc649d4, type: 3}
+  - text: "\u5411\u5DE6\u8F6C"
+    wave: {fileID: 8300000, guid: 3f9a78b2846b8994cbf4e1c273122129, type: 3}

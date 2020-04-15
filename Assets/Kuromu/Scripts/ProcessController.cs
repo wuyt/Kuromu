@@ -148,7 +148,7 @@ namespace Kuromu
                 direction = "向左转";
             }
             float angle = infoController.YellowBlackAngle();
-
+            
             SendVoice(direction, angle, "度");
 
         }
@@ -192,9 +192,9 @@ namespace Kuromu
             SendMessage("PlayVoice", strArray);
         }
 
-        private void SendVoice(string front, float distance, string unit)
+        private void SendVoice(string front, float number, string unit)
         {
-            string[] strArray = new string[] { front, distance.ToString("0.0"), unit };
+            string[] strArray = new string[] { front, number.ToString("0.0"), unit };
             SendMessage("PlayVoice", strArray);
         }
 
