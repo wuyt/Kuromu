@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using UnityEngine.AI;
 using easyar;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Kuromu
 {
@@ -69,11 +71,18 @@ namespace Kuromu
         private ARSession session;
         private SparseSpatialMapWorkerFrameFilter mapWorker;
         private SparseSpatialMapController map;
-
         /// <summary>
         /// 刷新频率
         /// </summary>
         public float refresh;
+        /// <summary>
+        /// 参照数组
+        /// </summary>
+        private Vector3[] aryArrivals;
+        /// <summary>
+        /// 最终导航数组
+        /// </summary>
+        private Vector3[] arrangePoints;
         void Start()
         {
 
@@ -173,6 +182,11 @@ namespace Kuromu
             }
             arrival.gameObject.SetActive(true);
 
+            if (GetComponent<ProcessController>().enabled)
+            {
+                gameObject.SendMessage("StartProcess");
+            }
+
             InvokeRepeating("DisplayPath", 0, refresh);
             CloseNavUI();
         }
@@ -184,12 +198,55 @@ namespace Kuromu
             agent.transform.position = player.position;
             agent.enabled = true;
             agent.CalculatePath(arrival.position, path);
-            lineRenderer.positionCount = path.corners.Length;
-            lineRenderer.SetPositions(path.corners);
+
+            ChangePoints();
+
+            lineRenderer.positionCount = arrangePoints.Length;
+            lineRenderer.SetPositions(arrangePoints);
+
+            //lineRenderer.positionCount = path.corners.Length;
+            // lineRenderer.SetPositions(path.corners);
             agent.enabled = false;
 
-            gameObject.SendMessage("ShowStatus",path);
-           // ShowStatus();
+            gameObject.SendMessage("ShowStatus", path);
+            // ShowStatus();
+        }
+
+
+        /// <summary>
+        /// 修改导航路径
+        /// </summary>
+        private void ChangePoints()
+        {
+            List<Vector3> list = new List<Vector3>();
+            int mark = 0;
+            for (int i = 0; i < path.corners.Length; i++)
+            {
+                if (i == mark)
+                {
+                    float d = 1000f;
+                    Vector3 p = Vector3.zero;
+                    foreach (Vector3 v in aryArrivals)
+                    {
+                        if ((path.corners[i] - v).magnitude < d)
+                        {
+                            d = (path.corners[i] - v).magnitude;
+                            p = v;
+                        }
+                    }
+                    list.Add(p);
+                }
+
+                if (i + 1 < path.corners.Length)
+                {
+                    if ((path.corners[i] - path.corners[i + 1]).magnitude > 0.1f)
+                    {
+                        mark = i + 1;
+                    }
+                }
+            }
+
+            arrangePoints = list.ToArray();
         }
 
 
@@ -257,17 +314,23 @@ namespace Kuromu
             foreach (var item in list)
             {
                 KeyPoint point = JsonUtility.FromJson<KeyPoint>(item);
+
+                var arrivalTemp = Instantiate(prefabArrival, navRoot.Find("Arrivals"));
+                arrivalTemp.localPosition = point.position;
                 if (point.pointType == 0)
                 {
                     var btn = Instantiate(prefabButton, svContent);
                     btn.keyPoint = point;
                     btn.GetComponentInChildren<Text>().text = point.name;
-
-                    var arrivalTemp = Instantiate(prefabArrival, navRoot.Find("Arrivals"));
-                    arrivalTemp.localPosition = point.position;
                     btn.arrival = arrivalTemp;
-                    arrivalTemp.gameObject.SetActive(false);
                 }
+            }
+
+            //整理导航点用
+            aryArrivals = new Vector3[navRoot.Find("Arrivals").childCount];
+            for (int i = 0; i < navRoot.Find("Arrivals").childCount; i++)
+            {
+                aryArrivals[i] = navRoot.Find("Arrivals").GetChild(i).transform.position;
             }
         }
         /// <summary>

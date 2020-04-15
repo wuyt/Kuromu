@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 namespace Kuromu
 {
@@ -15,7 +16,7 @@ namespace Kuromu
         public void LoadScene(string sceneName)
         {
             SceneManager.LoadScene(sceneName);
-        }        
+        }
     }
 }
 

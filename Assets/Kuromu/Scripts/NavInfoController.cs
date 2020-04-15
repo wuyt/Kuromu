@@ -46,12 +46,17 @@ namespace Kuromu
         /// 导航起始点到下一个点投影线
         /// </summary>
         private LineRenderer lrNavToNext;
+        /// <summary>
+        /// 玩家到导航线的投影线
+        /// </summary>
+        private LineRenderer lrPlayerToLine;
 
         private NavMeshPath path;
 
         void Start()
         {
             textStatus = GameObject.Find("/Canvas/TextStatus").GetComponent<Text>();
+            textStatus.text = "";
 
             textPoints = GameObject.Find("/Canvas/TextPoints").GetComponent<Text>();
 
@@ -62,6 +67,9 @@ namespace Kuromu
             lrPlayerToNext = GameObject.Find("/Lines/PlayerToNext").GetComponent<LineRenderer>();
 
             lrNavToNext = GameObject.Find("/Lines/NavToNext").GetComponent<LineRenderer>();
+
+            lrPlayerToLine = GameObject.Find("/Lines/PlayerToLine").GetComponent<LineRenderer>();
+
         }
         /// <summary>
         /// 显示导航点坐标
@@ -79,7 +87,9 @@ namespace Kuromu
         /// </summary>
         private void ShowStatus(NavMeshPath navPath)
         {
+
             path = navPath;
+
             textStatus.text = string.Format(
                 @"{0}；
                 到终点距离：{1}；
@@ -89,7 +99,9 @@ namespace Kuromu
                 黄红夹角：{5}
                 黄红Dot（<0在左，>0在右）：{6}
                 黄绿夹角：{7}
-                玩家在绿线左：{8}",
+                玩家在绿线左：{8}
+                黄黑夹角：{9}
+                黄黑Dot（<0在左，>0在右）：{10}",
                 "",
                 CALCPathLength(),
                 NavPointToNextLength(),
@@ -98,13 +110,22 @@ namespace Kuromu
                 YellowRedAngle(),
                 YellowRedDot(),
                 YellowGreenAngle(),
-                PlayerGreenLeft());
+                PlayerGreenLeft(),
+                YellowBlackAngle(),
+                YellowBlackDot());
 
             ShowPoints();
 
             ShowPlayerLine();
             ShowPlayerToNextLine();
             ShowNavToNextLine();
+            ShowPlayerToLine();
+
+            if (GetComponent<ProcessController>().enabled)
+            {
+                gameObject.SendMessage("CheckStatus");
+            }
+
         }
 
         /// <summary>
@@ -123,21 +144,17 @@ namespace Kuromu
             return dotValue < 0f;
         }
 
-        private bool LeftOfLine(Vector2 start, Vector2 origin, Vector2 point)
-        {
-           // Tmp = (y1 – y2) *x + (x2 – x1) *y + x1 * y2 – x2* y1
-          //  var tmpx = (start.x - origin.x) / (start.y - origin.y) * (point.y - origin.y) + origin.x;
-          var tmp = (start.y - origin.y) * point.x + (origin.x - start.x) * point.y + start.x * origin.y - origin.x * start.y;
-            return tmp > 0;
-        }
-
         /// <summary>
         /// 判断玩家在绿线左边
-        /// </summary>
+        /// /// </summary>
         /// <returns></returns>
         private bool PlayerGreenLeft()
         {
-            return LeftOfLine(
+            if (path.corners.Length < 2)
+            {
+                return false;
+            }
+            return PointOnLeftSideOfVector(
                 new Vector2(path.corners[0].x, path.corners[0].z),
                 new Vector2(path.corners[1].x, path.corners[1].z),
                 new Vector2(player.position.x, player.position.z));
@@ -157,6 +174,10 @@ namespace Kuromu
         /// <returns></returns>
         private float YellowGreenAngle()
         {
+            if (path.corners.Length < 2)
+            {
+                return 0;
+            }
             Vector2 green = new Vector2(path.corners[1].x, path.corners[1].z) - new Vector2(path.corners[0].x, path.corners[0].z);
             Vector2 yellow = new Vector2(playerAhead.position.x, playerAhead.position.z) - new Vector2(player.position.x, player.position.z);
             return Vector2.Angle(yellow, green);
@@ -166,8 +187,12 @@ namespace Kuromu
         /// 黄红线夹角
         /// </summary>
         /// <returns></returns>
-        private float YellowRedAngle()
+        public float YellowRedAngle()
         {
+            if (path.corners.Length < 2)
+            {
+                return 0;
+            }
             Vector2 red = new Vector2(path.corners[1].x, path.corners[1].z) - new Vector2(player.position.x, player.position.z);
             Vector2 yellow = new Vector2(playerAhead.position.x, playerAhead.position.z) - new Vector2(player.position.x, player.position.z);
             return Vector2.Angle(yellow, red);
@@ -176,15 +201,41 @@ namespace Kuromu
         /// 黄红线左右
         /// </summary>
         /// <returns></returns>
-        private bool YellowRedDot()
+        public bool YellowRedDot()
         {
+            if (path.corners.Length < 2)
+            {
+                return false;
+            }
             Vector2 red = new Vector2(path.corners[1].x, path.corners[1].z) - new Vector2(player.position.x, player.position.z);
             Vector2 yellow = new Vector2(playerLeft.position.x, playerLeft.position.z) - new Vector2(player.position.x, player.position.z);
             return Vector2.Dot(yellow, red) < 0;
         }
 
         /// <summary>
-        /// 显示导航起始到下一个点的投影线
+        /// 黄黑线夹角
+        /// </summary>
+        /// <returns></returns>
+        public float YellowBlackAngle()
+        {
+            Vector2 black = new Vector2(path.corners[0].x, path.corners[0].z) - new Vector2(player.position.x, player.position.z);
+            Vector2 yellow = new Vector2(playerAhead.position.x, playerAhead.position.z) - new Vector2(player.position.x, player.position.z);
+            return Vector2.Angle(yellow, black);
+        }
+        /// <summary>
+        /// 黄黑线左右
+        /// </summary>
+        /// <returns></returns>
+        public bool YellowBlackDot()
+        {
+            Vector2 black = new Vector2(path.corners[0].x, path.corners[0].z) - new Vector2(player.position.x, player.position.z);
+            Vector2 yellow = new Vector2(playerLeft.position.x, playerLeft.position.z) - new Vector2(player.position.x, player.position.z);
+            return Vector2.Dot(yellow, black) < 0;
+        }
+
+
+        /// <summary>
+        /// 显示导航起始到下一个点的投影线（绿线）
         /// </summary>
         private void ShowNavToNextLine()
         {
@@ -197,7 +248,7 @@ namespace Kuromu
             }
         }
         /// <summary>
-        /// 显示玩家到下一个点投影线
+        /// 显示玩家到下一个点投影线（红线）
         /// </summary>
         private void ShowPlayerToNextLine()
         {
@@ -211,7 +262,7 @@ namespace Kuromu
         }
 
         /// <summary>
-        /// 显示玩家面向方向投影线
+        /// 显示玩家面向方向投影线（黄线）
         /// </summary>
         private void ShowPlayerLine()
         {
@@ -220,12 +271,25 @@ namespace Kuromu
             lrPlayer.SetPosition(0, new Vector3(player.position.x, player.position.y + projection, player.position.z));
             lrPlayer.SetPosition(1, new Vector3(playerAhead.position.x, player.position.y + projection, playerAhead.position.z));
         }
+        /// <summary>
+        /// 显示玩家到导航线起点的投影（黑线）
+        /// </summary>
+        private void ShowPlayerToLine()
+        {
+            if (path.corners.Length > 1)
+            {
+                lrPlayerToLine.positionCount = 2;
+
+                lrPlayerToLine.SetPosition(0, new Vector3(player.position.x, player.position.y + projection, player.position.z));
+                lrPlayerToLine.SetPosition(1, new Vector3(path.corners[0].x, player.position.y + projection, path.corners[0].z));
+            }
+        }
 
         /// <summary>
         /// 玩家位置到导航起始点的距离
         /// </summary>
         /// <returns></returns>
-        private float PlayerPositionToNavLine()
+        public float PlayerPositionToNavLine()
         {
             if (path.corners.Length > 0)
             {
@@ -267,7 +331,7 @@ namespace Kuromu
         /// 计算从导航起始点到终点距离
         /// </summary>
         /// <returns>距离</returns>
-        private float CALCPathLength()
+        public float CALCPathLength()
         {
             float distance = 0;
             for (int i = 1; i < path.corners.Length; i++)
@@ -276,6 +340,15 @@ namespace Kuromu
             }
             return distance;
         }
+        /// <summary>
+        /// 玩家到终点的距离
+        /// </summary>
+        /// <returns></returns>
+        // public float CALPlayerToEndLength()
+        // {
+        //     return (player.position - path.corners[path.corners.Length - 1]).magnitude;
+        // }
+
     }
 }
 

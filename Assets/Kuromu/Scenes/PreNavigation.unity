@@ -1578,6 +1578,8 @@ GameObject:
   - component: {fileID: 1291455844}
   - component: {fileID: 1291455846}
   - component: {fileID: 1291455845}
+  - component: {fileID: 1291455848}
+  - component: {fileID: 1291455849}
   - component: {fileID: 1291455847}
   m_Layer: 0
   m_Name: SceneMaster
@@ -1632,7 +1634,7 @@ MonoBehaviour:
   prefabRoad: {fileID: 7296009835961358548, guid: 908ab95f53b611a4eb8805ec31cf3a40,
     type: 3}
   player: {fileID: 1067796528}
-  refresh: 0.5
+  refresh: 0.1
 --- !u!114 &1291455847
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1642,11 +1644,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 1291455843}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86b1aad4442ea9b4c98ed181378fbb7a, type: 3}
+  m_Script: {fileID: 11500000, guid: d4ebe1a5acedc04409898947ec65c191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1291455848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291455843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be750b48c90f0bc409ade59118f5f754, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1067796528}
   projection: -1
+--- !u!114 &1291455849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291455843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ca780538ac7d1d4d85942ba28f317ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  errorDistance: 0.1
+  maxLeaveDistance: 1
+  errorAngle: 1
+  maxChangeAngle: 5
 --- !u!1 &1392661168
 GameObject:
   m_ObjectHideFlags: 0
