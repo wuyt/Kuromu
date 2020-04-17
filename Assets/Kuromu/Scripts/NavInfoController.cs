@@ -121,7 +121,7 @@ namespace Kuromu
             ShowNavToNextLine();
             ShowPlayerToLine();
 
-            if (GetComponent<ProcessController>().enabled)
+            if (GetComponent<ProcessController>())
             {
                 gameObject.SendMessage("CheckStatus");
             }

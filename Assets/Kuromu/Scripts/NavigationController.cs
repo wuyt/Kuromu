@@ -182,7 +182,7 @@ namespace Kuromu
             }
             arrival.gameObject.SetActive(true);
 
-            if (GetComponent<ProcessController>().enabled)
+            if (GetComponent<ProcessController>())
             {
                 gameObject.SendMessage("StartProcess");
             }
@@ -207,8 +207,11 @@ namespace Kuromu
             //lineRenderer.positionCount = path.corners.Length;
             // lineRenderer.SetPositions(path.corners);
             agent.enabled = false;
+            if (GetComponent<NavInfoController>())
+            {
+                gameObject.SendMessage("ShowStatus", path);
+            }
 
-            gameObject.SendMessage("ShowStatus", path);
             // ShowStatus();
         }
 

@@ -113,7 +113,7 @@ namespace Kuromu.Pre
             }
             arrival.gameObject.SetActive(true);
 
-            if (GetComponent<ProcessController>().enabled)
+            if (GetComponent<ProcessController>())
             {
                 gameObject.SendMessage("StartProcess");
             }
@@ -144,7 +144,7 @@ namespace Kuromu.Pre
 
 
 
-            if (GetComponent<NavInfoController>().enabled)
+            if (GetComponent<NavInfoController>())
             {
                 gameObject.SendMessage("ShowStatus", path);
             }
