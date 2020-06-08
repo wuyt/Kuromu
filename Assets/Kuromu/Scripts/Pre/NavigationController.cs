@@ -139,7 +139,7 @@ namespace Kuromu.Pre
             lineRenderer.SetPositions(arrangePoints);
 
             //lineRenderer.positionCount = path.corners.Length;
-            // lineRenderer.SetPositions(path.corners);
+            //lineRenderer.SetPositions(path.corners);
             agent.enabled = false;
 
 
@@ -171,7 +171,23 @@ namespace Kuromu.Pre
                             p = v;
                         }
                     }
-                    list.Add(p);
+                    //list.Add(p);
+                    if (i == 0)
+                    {
+                        if (d > 0.2f)
+                        {
+                            list.Add(path.corners[0]);
+                        }
+                        else
+                        {
+                            list.Add(p);
+                        }
+                    }
+                    else
+                    {
+                        list.Add(p);
+                    }
+
                 }
 
                 if (i + 1 < path.corners.Length)

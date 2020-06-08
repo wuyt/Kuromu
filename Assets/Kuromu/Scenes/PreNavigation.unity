@@ -1714,12 +1714,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1291455843}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85f72853aa41e694782b0baab825d9b0, type: 3}
+  m_Script: {fileID: 11500000, guid: d4ebe1a5acedc04409898947ec65c191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   list: []
-  APIKey: jaWNtzT8k4Gn2xUavHYZm9La
-  SecretKey: whxcTATVWkcZ3wUdLgoPvoQh7BYI4CzG
 --- !u!114 &1291455848
 MonoBehaviour:
   m_ObjectHideFlags: 0
