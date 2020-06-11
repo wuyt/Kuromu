@@ -270,6 +270,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: WaveSourceBaidu
       objectReference: {fileID: 0}
+    - target: {fileID: 6160669625628137992, guid: 106bd28bc611b3c47be965f42e93a4b8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 106bd28bc611b3c47be965f42e93a4b8, type: 3}
 --- !u!1 &199013206
@@ -1651,6 +1656,7 @@ GameObject:
   - component: {fileID: 1291455849}
   - component: {fileID: 1291455850}
   - component: {fileID: 1291455847}
+  - component: {fileID: 1291455851}
   m_Layer: 0
   m_Name: SceneMaster
   m_TagString: Untagged
@@ -1718,6 +1724,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   list: []
+  audioEnd: {fileID: 8300000, guid: 27709f2df65523242b28f9e15acbe488, type: 3}
 --- !u!114 &1291455848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1844,6 +1851,21 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1291455851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291455843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f15528f6ddfe464dad1d01d9651a638, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1067796528}
+  refresh: 0.5
+  distance: 0.4
 --- !u!1 &1392661168
 GameObject:
   m_ObjectHideFlags: 0
@@ -1978,6 +2000,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: WaveSource
+      objectReference: {fileID: 0}
+    - target: {fileID: 4012757636475684252, guid: f82baa7c34d59984faf89b88f3b6815a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f82baa7c34d59984faf89b88f3b6815a, type: 3}

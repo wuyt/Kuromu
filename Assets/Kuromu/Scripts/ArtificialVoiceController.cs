@@ -19,6 +19,10 @@ namespace Kuromu
         /// 声音播放列表
         /// </summary>
         public List<AudioClip> list;
+        /// <summary>
+        /// 到达终点语音
+        /// </summary>
+        public AudioClip audioEnd;
 
         void Start()
         {
@@ -41,6 +45,16 @@ namespace Kuromu
             {
                 PlayThreeWave(voices);
             }
+        }
+        /// <summary>
+        /// 到达终点
+        /// </summary>
+        public void VoiceEnd()
+        {
+            list.Clear();
+            audioSource.Stop();
+            audioSource.clip = audioEnd;
+            audioSource.Play();
         }
         /// <summary>
         /// 播放3个的文本

@@ -115,7 +115,10 @@ namespace Kuromu.Pre
 
             if (GetComponent<ProcessController>())
             {
-                gameObject.SendMessage("StartProcess");
+                if (GetComponent<ProcessController>().enabled)
+                {
+                    gameObject.SendMessage("StartProcess");
+                }
             }
 
             InvokeRepeating("DisplayPath", 0, refresh);
@@ -146,7 +149,10 @@ namespace Kuromu.Pre
 
             if (GetComponent<NavInfoController>())
             {
-                gameObject.SendMessage("ShowStatus", path);
+                if (GetComponent<NavInfoController>().enabled)
+                {
+                    gameObject.SendMessage("ShowStatus", path);
+                }
             }
             //ShowStatus();
         }

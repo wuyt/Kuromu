@@ -29,6 +29,10 @@ namespace Kuromu
         /// 导航路径存储路径
         /// </summary>
         private string pathRoads;
+        /// <summary>
+        /// 到达终点判断距离
+        /// </summary>
+        public float endDistance;
 
         void Awake()
         {
@@ -52,6 +56,7 @@ namespace Kuromu
             txtShow = transform.GetComponentInChildren<Text>();
             txtShow.gameObject.SetActive(false);
         }
+
 
         #region 提示信息
         /// <summary>
@@ -77,6 +82,16 @@ namespace Kuromu
         }
 
         #endregion
+        /// <summary>
+        /// 根据文件名保存
+        /// </summary>
+        /// <param name="stringArray"></param>
+        /// <param name="fileName"></param>
+        public void SaveByFileName(string[] stringArray, string fileName)
+        {
+            SaveStringArray(stringArray, Application.persistentDataPath + "/" + fileName);
+        }
+
 
         #region 读取关键点和路径
         /// <summary>

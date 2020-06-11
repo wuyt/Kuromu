@@ -828,6 +828,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputName: 
+  endDistance: 0.5
 --- !u!4 &817449323
 Transform:
   m_ObjectHideFlags: 0

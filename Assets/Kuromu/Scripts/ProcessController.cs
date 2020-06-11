@@ -11,6 +11,8 @@ namespace Kuromu
 
         private NavInfoController infoController;
 
+        private GameController game;
+
         private ProcessStatus status;
         /// <summary>
         /// 误差距离
@@ -41,6 +43,7 @@ namespace Kuromu
 
         void Start()
         {
+            game=FindObjectOfType<GameController>();
             infoController = GetComponent<NavInfoController>();
 
             status = ProcessStatus.waiting;
@@ -71,7 +74,7 @@ namespace Kuromu
 
 
 
-            if (infoController.CALCPathLength() < errorDistance)
+            if (infoController.CALCPathLength() < game.endDistance)
             {
                 EndProcess();
                 return;
@@ -129,7 +132,8 @@ namespace Kuromu
         private void EndProcess()
         {
             status = ProcessStatus.end;
-            SendVoice("到达终点");
+            //SendVoice("到达终点");
+            SendMessage("VoiceEnd");
         }
 
         private void ToBackNavLineAngle()
