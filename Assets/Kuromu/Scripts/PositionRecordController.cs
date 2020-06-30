@@ -36,6 +36,10 @@ namespace Kuromu
         /// </summary>
         private GameController game;
 
+        public Transform tempPoint;
+
+        public Transform map;
+
 
 
         void Start()
@@ -62,7 +66,8 @@ namespace Kuromu
         private void Save()
         {
             string strSave = "";
-            strSave = player.position + "," + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ffff") + "," + (int)navStatus;
+            //strSave = player.position + "," + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ffff") + "," + (int)navStatus;
+            strSave = GetSaveString();
             record.Add(strSave);
             if (fileName.EndsWith(""))
             {
@@ -78,7 +83,8 @@ namespace Kuromu
             {
                 CancelInvoke("Save");
                 navStatus = NavStatus.end;
-                strSave = player.position + "," + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ffff") + "," + (int)navStatus;
+                // strSave = player.position + "," + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ffff") + "," + (int)navStatus;
+                strSave = GetSaveString();
                 record.Add(strSave);
                 game.SaveByFileName(record.ToArray(), fileName);
 
@@ -88,6 +94,15 @@ namespace Kuromu
             }
         }
 
+        private string GetSaveString()
+        {
+            string strReturn = "";
+            tempPoint.parent = null;
+            tempPoint.position = player.position;
+            tempPoint.parent = map;
+            strReturn = tempPoint.localPosition + "," + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ffff") + "," + (int)navStatus;
+            return strReturn;
+        }
 
     }
     /// <summary>
