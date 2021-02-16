@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -31,7 +31,7 @@ public:
     const easyar_CameraParameters * get_cdata() const;
     easyar_CameraParameters * get_cdata();
 
-    CameraParameters(Vec2I size, Vec2F focalLength, Vec2F principalPoint, CameraDeviceType cameraDeviceType, int cameraOrientation);
+    CameraParameters(Vec2I imageSize, Vec2F focalLength, Vec2F principalPoint, CameraDeviceType cameraDeviceType, int cameraOrientation);
     /// <summary>
     /// Image size.
     /// </summary>
@@ -58,7 +58,11 @@ public:
     /// <summary>
     /// Creates CameraParameters with default camera intrinsics. Default intrinsics are calculated by image size, which is not very precise.
     /// </summary>
-    static void createWithDefaultIntrinsics(Vec2I size, CameraDeviceType cameraDeviceType, int cameraOrientation, /* OUT */ CameraParameters * * Return);
+    static void createWithDefaultIntrinsics(Vec2I imageSize, CameraDeviceType cameraDeviceType, int cameraOrientation, /* OUT */ CameraParameters * * Return);
+    /// <summary>
+    /// Get equivalent CameraParameters for a different camera image size.
+    /// </summary>
+    void getResized(Vec2I imageSize, /* OUT */ CameraParameters * * Return);
     /// <summary>
     /// Calculates the angle required to rotate the camera image clockwise to align it with the screen.
     /// screenRotation is the angle of rotation of displaying screen image against device natural orientation in clockwise in degrees.
@@ -199,6 +203,16 @@ inline void CameraParameters::createWithDefaultIntrinsics(Vec2I arg0, CameraDevi
 {
     easyar_CameraParameters * _return_value_ = NULL;
     easyar_CameraParameters_createWithDefaultIntrinsics(arg0.get_cdata(), static_cast<easyar_CameraDeviceType>(arg1), arg2, &_return_value_);
+    *Return = new CameraParameters(_return_value_);
+}
+inline void CameraParameters::getResized(Vec2I arg0, /* OUT */ CameraParameters * * Return)
+{
+    if (cdata_ == NULL) {
+        *Return = NULL;
+        return;
+    }
+    easyar_CameraParameters * _return_value_ = NULL;
+    easyar_CameraParameters_getResized(cdata_, arg0.get_cdata(), &_return_value_);
     *Return = new CameraParameters(_return_value_);
 }
 inline int CameraParameters::imageOrientation(int arg0)

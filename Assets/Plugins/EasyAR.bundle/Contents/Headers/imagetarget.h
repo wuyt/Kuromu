@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -80,15 +80,9 @@ void easyar_ImageTarget_createFromTargetData(easyar_Buffer * buffer, /* OUT */ e
 /// </summary>
 bool easyar_ImageTarget_save(easyar_ImageTarget * This, easyar_String * path);
 /// <summary>
-/// Creates a target from an image file. If not needed, name, uid, meta can be passed with empty string, and scale can be passed with default value 1.
+/// Creates a target from an image file. If not needed, name, uid, meta can be passed with empty string, and scale can be passed with default value 1. Jpeg and png files are supported.
 /// </summary>
 void easyar_ImageTarget_createFromImageFile(easyar_String * path, easyar_StorageType storageType, easyar_String * name, easyar_String * uid, easyar_String * meta, float scale, /* OUT */ easyar_OptionalOfImageTarget * Return);
-/// <summary>
-/// Setup all targets listed in the json file or json string from path with storageType. This method only parses the json file or string.
-/// If path is json file path, storageType should be `App` or `Assets` or `Absolute` indicating the path type. Paths inside json files should be absolute path or relative path to the json file.
-/// See `StorageType`_ for more descriptions.
-/// </summary>
-void easyar_ImageTarget_setupAll(easyar_String * path, easyar_StorageType storageType, /* OUT */ easyar_ListOfImageTarget * * Return);
 /// <summary>
 /// The scale of image. The value is the physical image width divided by 1 meter. The default value is 1.
 /// </summary>
@@ -135,12 +129,6 @@ void easyar_ImageTarget__retain(const easyar_ImageTarget * This, /* OUT */ easya
 const char * easyar_ImageTarget__typeName(const easyar_ImageTarget * This);
 void easyar_castImageTargetToTarget(const easyar_ImageTarget * This, /* OUT */ easyar_Target * * Return);
 void easyar_tryCastTargetToImageTarget(const easyar_Target * This, /* OUT */ easyar_ImageTarget * * Return);
-
-void easyar_ListOfImageTarget__ctor(easyar_ImageTarget * const * begin, easyar_ImageTarget * const * end, /* OUT */ easyar_ListOfImageTarget * * Return);
-void easyar_ListOfImageTarget__dtor(easyar_ListOfImageTarget * This);
-void easyar_ListOfImageTarget_copy(const easyar_ListOfImageTarget * This, /* OUT */ easyar_ListOfImageTarget * * Return);
-int easyar_ListOfImageTarget_size(const easyar_ListOfImageTarget * This);
-easyar_ImageTarget * easyar_ListOfImageTarget_at(const easyar_ListOfImageTarget * This, int index);
 
 void easyar_ListOfImage__ctor(easyar_Image * const * begin, easyar_Image * const * end, /* OUT */ easyar_ListOfImage * * Return);
 void easyar_ListOfImage__dtor(easyar_ListOfImage * This);

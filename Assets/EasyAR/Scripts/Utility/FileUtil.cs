@@ -1,6 +1,6 @@
 ﻿//================================================================================================================================
 //
-//  Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+//  Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 //  EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 //  and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -15,15 +15,39 @@ using UnityEngine.Networking;
 
 namespace easyar
 {
+    /// <summary>
+    /// <para xml:lang="en">Path type.</para>
+    /// <para xml:lang="zh">路径类型。</para>
+    /// </summary>
     public enum PathType
     {
+        /// <summary>
+        /// <para xml:lang="en">Absolute path.</para>
+        /// <para xml:lang="zh">绝对路径。</para>
+        /// </summary>
         Absolute,
+        /// <summary>
+        /// <para xml:lang="en">Unity StreamingAssets path.</para>
+        /// <para xml:lang="zh">UnityStreamingAssets路径。</para>
+        /// </summary>
         StreamingAssets,
+        /// <summary>
+        /// <para xml:lang="en">Not file storage.</para>
+        /// <para xml:lang="zh">不是文件存储。</para>
+        /// </summary>
         None,
     }
 
+    /// <summary>
+    /// <para xml:lang="en">File utility.</para>
+    /// <para xml:lang="zh">文件工具。</para>
+    /// </summary>
     public static class FileUtil
     {
+        /// <summary>
+        /// <para xml:lang="en">Async Load file and return <see cref="Buffer"/> object in the callback.</para>
+        /// <para xml:lang="zh">异步加载文件，回调返回<see cref="Buffer"/>对象。</para>
+        /// </summary>
         public static IEnumerator LoadFile(string filePath, PathType filePathType, Action<Buffer> onLoad)
         {
             return LoadFile(filePath, filePathType, (data) =>
@@ -39,6 +63,10 @@ namespace easyar
             });
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Async Load file and return byte array in the callback.</para>
+        /// <para xml:lang="zh">异步加载文件，回调返回字节数组。</para>
+        /// </summary>
         public static IEnumerator LoadFile(string filePath, PathType filePathType, Action<byte[]> onLoad)
         {
             if (onLoad == null)
@@ -85,6 +113,10 @@ namespace easyar
             onLoad(data);
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Convert file path to URL.</para>
+        /// <para xml:lang="zh">将路径转换成URL。</para>
+        /// </summary>
         public static string PathToUrl(string path)
         {
             if (string.IsNullOrEmpty(path) || path.StartsWith("jar:file://") || path.StartsWith("file://") || path.StartsWith("http://") || path.StartsWith("https://"))

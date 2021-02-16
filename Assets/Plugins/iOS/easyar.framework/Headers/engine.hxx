@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -62,7 +62,7 @@ inline int Engine::schemaHash()
 }
 inline bool Engine::initialize(String * arg0)
 {
-    if (easyar_Engine_schemaHash() != -279124390) {
+    if (easyar_Engine_schemaHash() != 2058628672) {
         return false;
     }
     bool _return_value_ = easyar_Engine_initialize(arg0->get_cdata());

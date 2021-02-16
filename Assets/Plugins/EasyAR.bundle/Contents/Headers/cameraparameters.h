@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 
-void easyar_CameraParameters__ctor(easyar_Vec2I size, easyar_Vec2F focalLength, easyar_Vec2F principalPoint, easyar_CameraDeviceType cameraDeviceType, int cameraOrientation, /* OUT */ easyar_CameraParameters * * Return);
+void easyar_CameraParameters__ctor(easyar_Vec2I imageSize, easyar_Vec2F focalLength, easyar_Vec2F principalPoint, easyar_CameraDeviceType cameraDeviceType, int cameraOrientation, /* OUT */ easyar_CameraParameters * * Return);
 /// <summary>
 /// Image size.
 /// </summary>
@@ -43,7 +43,11 @@ int easyar_CameraParameters_cameraOrientation(const easyar_CameraParameters * Th
 /// <summary>
 /// Creates CameraParameters with default camera intrinsics. Default intrinsics are calculated by image size, which is not very precise.
 /// </summary>
-void easyar_CameraParameters_createWithDefaultIntrinsics(easyar_Vec2I size, easyar_CameraDeviceType cameraDeviceType, int cameraOrientation, /* OUT */ easyar_CameraParameters * * Return);
+void easyar_CameraParameters_createWithDefaultIntrinsics(easyar_Vec2I imageSize, easyar_CameraDeviceType cameraDeviceType, int cameraOrientation, /* OUT */ easyar_CameraParameters * * Return);
+/// <summary>
+/// Get equivalent CameraParameters for a different camera image size.
+/// </summary>
+void easyar_CameraParameters_getResized(easyar_CameraParameters * This, easyar_Vec2I imageSize, /* OUT */ easyar_CameraParameters * * Return);
 /// <summary>
 /// Calculates the angle required to rotate the camera image clockwise to align it with the screen.
 /// screenRotation is the angle of rotation of displaying screen image against device natural orientation in clockwise in degrees.

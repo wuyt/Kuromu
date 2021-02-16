@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -38,27 +38,139 @@ class ObjectTrackerResult;
 
 class ObjectTracker;
 
-enum class CloudStatus
+enum class CloudRecognizationStatus
 {
     /// <summary>
-    /// Targets are recognized.
+    /// Unknown error
     /// </summary>
-    FoundTargets = 0,
+    UnknownError = 0,
     /// <summary>
-    /// No targets are recognized.
+    /// A target is recognized.
     /// </summary>
-    TargetsNotFound = 1,
+    FoundTarget = 1,
     /// <summary>
-    /// Connection broke and auto reconnecting
+    /// No target is recognized.
     /// </summary>
-    Reconnecting = 2,
+    TargetNotFound = 2,
     /// <summary>
-    /// Protocol error
+    /// Reached the access limit
     /// </summary>
-    ProtocolError = 3,
+    ReachedAccessLimit = 3,
+    /// <summary>
+    /// Request interval too low
+    /// </summary>
+    RequestIntervalTooLow = 4,
 };
 
+class CloudRecognizationResult;
+
 class CloudRecognizer;
+
+class Buffer;
+
+class BufferDictionary;
+
+class BufferPool;
+
+enum class CameraDeviceType
+{
+    /// <summary>
+    /// Unknown location
+    /// </summary>
+    Unknown = 0,
+    /// <summary>
+    /// Rear camera
+    /// </summary>
+    Back = 1,
+    /// <summary>
+    /// Front camera
+    /// </summary>
+    Front = 2,
+};
+
+/// <summary>
+/// MotionTrackingStatus describes the quality of device motion tracking.
+/// </summary>
+enum class MotionTrackingStatus
+{
+    /// <summary>
+    /// Result is not available and should not to be used to render virtual objects or do 3D reconstruction. This value occurs temporarily after initializing, tracking lost or relocalizing.
+    /// </summary>
+    NotTracking = 0,
+    /// <summary>
+    /// Tracking is available, but the quality of the result is not good enough. This value occurs temporarily due to weak texture or excessive movement. The result can be used to render virtual objects, but should generally not be used to do 3D reconstruction.
+    /// </summary>
+    Limited = 1,
+    /// <summary>
+    /// Tracking with a good quality. The result can be used to render virtual objects or do 3D reconstruction.
+    /// </summary>
+    Tracking = 2,
+};
+
+class CameraParameters;
+
+/// <summary>
+/// PixelFormat represents the format of image pixel data. All formats follow the pixel direction from left to right and from top to bottom.
+/// </summary>
+enum class PixelFormat
+{
+    /// <summary>
+    /// Unknown
+    /// </summary>
+    Unknown = 0,
+    /// <summary>
+    /// 256 shades grayscale
+    /// </summary>
+    Gray = 1,
+    /// <summary>
+    /// YUV_NV21
+    /// </summary>
+    YUV_NV21 = 2,
+    /// <summary>
+    /// YUV_NV12
+    /// </summary>
+    YUV_NV12 = 3,
+    /// <summary>
+    /// YUV_I420
+    /// </summary>
+    YUV_I420 = 4,
+    /// <summary>
+    /// YUV_YV12
+    /// </summary>
+    YUV_YV12 = 5,
+    /// <summary>
+    /// RGB888
+    /// </summary>
+    RGB888 = 6,
+    /// <summary>
+    /// BGR888
+    /// </summary>
+    BGR888 = 7,
+    /// <summary>
+    /// RGBA8888
+    /// </summary>
+    RGBA8888 = 8,
+    /// <summary>
+    /// BGRA8888
+    /// </summary>
+    BGRA8888 = 9,
+};
+
+class Image;
+
+struct Matrix44F;
+
+struct Matrix33F;
+
+struct Vec4F;
+
+struct Vec3F;
+
+struct Vec2F;
+
+struct Vec4I;
+
+struct Vec2I;
 
 class DenseSpatialMap;
 
@@ -66,11 +178,137 @@ struct BlockInfo;
 
 class SceneMesh;
 
+class ARCoreCameraDevice;
+
+class ARKitCameraDevice;
+
+enum class CameraDeviceFocusMode
+{
+    /// <summary>
+    /// Normal auto focus mode. You should call autoFocus to start the focus in this mode.
+    /// </summary>
+    Normal = 0,
+    /// <summary>
+    /// Continuous auto focus mode
+    /// </summary>
+    Continousauto = 2,
+    /// <summary>
+    /// Infinity focus mode
+    /// </summary>
+    Infinity = 3,
+    /// <summary>
+    /// Macro (close-up) focus mode. You should call autoFocus to start the focus in this mode.
+    /// </summary>
+    Macro = 4,
+    /// <summary>
+    /// Medium distance focus mode
+    /// </summary>
+    Medium = 5,
+};
+
+enum class AndroidCameraApiType
+{
+    /// <summary>
+    /// Android Camera1
+    /// </summary>
+    Camera1 = 0,
+    /// <summary>
+    /// Android Camera2
+    /// </summary>
+    Camera2 = 1,
+};
+
+enum class CameraDevicePresetProfile
+{
+    /// <summary>
+    /// The same as AVCaptureSessionPresetPhoto.
+    /// </summary>
+    Photo = 0,
+    /// <summary>
+    /// The same as AVCaptureSessionPresetHigh.
+    /// </summary>
+    High = 1,
+    /// <summary>
+    /// The same as AVCaptureSessionPresetMedium.
+    /// </summary>
+    Medium = 2,
+    /// <summary>
+    /// The same as AVCaptureSessionPresetLow.
+    /// </summary>
+    Low = 3,
+};
+
+enum class CameraState
+{
+    /// <summary>
+    /// Unknown
+    /// </summary>
+    Unknown = 0x00000000,
+    /// <summary>
+    /// Disconnected
+    /// </summary>
+    Disconnected = 0x00000001,
+    /// <summary>
+    /// Preempted by another application.
+    /// </summary>
+    Preempted = 0x00000002,
+};
+
+class CameraDevice;
+
+enum class CameraDevicePreference
+{
+    /// <summary>
+    /// Optimized for `ImageTracker`_ , `ObjectTracker`_ and `CloudRecognizer`_ .
+    /// </summary>
+    PreferObjectSensing = 0,
+    /// <summary>
+    /// Optimized for `SurfaceTracker`_ .
+    /// </summary>
+    PreferSurfaceTracking = 1,
+    /// <summary>
+    /// Optimized for Motion Tracking .
+    /// </summary>
+    PreferMotionTracking = 2,
+};
+
+class CameraDeviceSelector;
+
 class SurfaceTrackerResult;
 
 class SurfaceTracker;
 
 class MotionTrackerCameraDevice;
+
+class InputFrameRecorder;
+
+class InputFramePlayer;
+
+class CallbackScheduler;
+
+class DelayedCallbackScheduler;
+
+class ImmediateCallbackScheduler;
+
+class JniUtility;
+
+enum class LogLevel
+{
+    /// <summary>
+    /// Error
+    /// </summary>
+    Error = 0,
+    /// <summary>
+    /// Warning
+    /// </summary>
+    Warning = 1,
+    /// <summary>
+    /// Information
+    /// </summary>
+    Info = 2,
+};
+
+class Log;
 
 class ImageTargetParameters;
 
@@ -254,105 +492,43 @@ class SparseSpatialMap;
 
 class SparseSpatialMapManager;
 
-class ImageHelper;
+class Engine;
 
-class ARCoreCameraDevice;
-
-class ARKitCameraDevice;
-
-class CallbackScheduler;
-
-class DelayedCallbackScheduler;
-
-class ImmediateCallbackScheduler;
-
-enum class CameraDeviceFocusMode
+enum class VideoStatus
 {
     /// <summary>
-    /// Normal auto focus mode. You should call autoFocus to start the focus in this mode.
+    /// Status to indicate something wrong happen in video open or play.
+    /// </summary>
+    Error = -1,
+    /// <summary>
+    /// Status to show video finished open and is ready for play.
+    /// </summary>
+    Ready = 0,
+    /// <summary>
+    /// Status to indicate video finished play and reached the end.
+    /// </summary>
+    Completed = 1,
+};
+
+enum class VideoType
+{
+    /// <summary>
+    /// Normal video.
     /// </summary>
     Normal = 0,
     /// <summary>
-    /// Continuous auto focus mode
+    /// Transparent video, left half is the RGB channel and right half is alpha channel.
     /// </summary>
-    Continousauto = 2,
+    TransparentSideBySide = 1,
     /// <summary>
-    /// Infinity focus mode
+    /// Transparent video, top half is the RGB channel and bottom half is alpha channel.
     /// </summary>
-    Infinity = 3,
-    /// <summary>
-    /// Macro (close-up) focus mode. You should call autoFocus to start the focus in this mode.
-    /// </summary>
-    Macro = 4,
-    /// <summary>
-    /// Medium distance focus mode
-    /// </summary>
-    Medium = 5,
+    TransparentTopAndBottom = 2,
 };
 
-enum class AndroidCameraApiType
-{
-    /// <summary>
-    /// Android Camera1
-    /// </summary>
-    Camera1 = 0,
-    /// <summary>
-    /// Android Camera2
-    /// </summary>
-    Camera2 = 1,
-};
+class VideoPlayer;
 
-enum class CameraDevicePresetProfile
-{
-    /// <summary>
-    /// The same as AVCaptureSessionPresetPhoto.
-    /// </summary>
-    Photo = 0,
-    /// <summary>
-    /// The same as AVCaptureSessionPresetHigh.
-    /// </summary>
-    High = 1,
-    /// <summary>
-    /// The same as AVCaptureSessionPresetMedium.
-    /// </summary>
-    Medium = 2,
-    /// <summary>
-    /// The same as AVCaptureSessionPresetLow.
-    /// </summary>
-    Low = 3,
-};
-
-enum class CameraState
-{
-    /// <summary>
-    /// Unknown
-    /// </summary>
-    Unknown = 0x00000000,
-    /// <summary>
-    /// Disconnected
-    /// </summary>
-    Disconnected = 0x00000001,
-    /// <summary>
-    /// Preempted by another application.
-    /// </summary>
-    Preempted = 0x00000002,
-};
-
-class CameraDevice;
-
-enum class CameraDevicePreference
-{
-    /// <summary>
-    /// Optimized for `ImageTracker`_ , `ObjectTracker`_ and `CloudRecognizer`_ .
-    /// </summary>
-    PreferObjectSensing = 0,
-    /// <summary>
-    /// Optimized for `SurfaceTracker`_ .
-    /// </summary>
-    PreferSurfaceTracking = 1,
-};
-
-class CameraDeviceSelector;
+class ImageHelper;
 
 class SignalSink;
 
@@ -386,8 +562,6 @@ class InputFrameToOutputFrameAdapter;
 
 class InputFrameToFeedbackFrameAdapter;
 
-class Engine;
-
 class InputFrame;
 
 class FrameFilterResult;
@@ -420,7 +594,7 @@ enum class StorageType
 {
     /// <summary>
     /// The app path.
-    /// Android: the application&#39;s `persistent data directory &lt;https://developer.android.google.cn/reference/android/content/pm/ApplicationInfo.html#dataDir&gt;`_
+    /// Android: the application&#39;s `persistent data directory &lt;https://developer.android.google.cn/reference/android/content/pm/ApplicationInfo.html#dataDir&gt;`__
     /// iOS: the application&#39;s sandbox directory
     /// Windows: Windows: the application&#39;s executable directory
     /// Mac: the application’s executable directory (if app is a bundle, this path is inside the bundle)
@@ -468,166 +642,6 @@ class TargetInstance;
 class TargetTrackerResult;
 
 class TextureId;
-
-enum class VideoStatus
-{
-    /// <summary>
-    /// Status to indicate something wrong happen in video open or play.
-    /// </summary>
-    Error = -1,
-    /// <summary>
-    /// Status to show video finished open and is ready for play.
-    /// </summary>
-    Ready = 0,
-    /// <summary>
-    /// Status to indicate video finished play and reached the end.
-    /// </summary>
-    Completed = 1,
-};
-
-enum class VideoType
-{
-    /// <summary>
-    /// Normal video.
-    /// </summary>
-    Normal = 0,
-    /// <summary>
-    /// Transparent video, left half is the RGB channel and right half is alpha channel.
-    /// </summary>
-    TransparentSideBySide = 1,
-    /// <summary>
-    /// Transparent video, top half is the RGB channel and bottom half is alpha channel.
-    /// </summary>
-    TransparentTopAndBottom = 2,
-};
-
-class VideoPlayer;
-
-class Buffer;
-
-class BufferDictionary;
-
-class BufferPool;
-
-enum class CameraDeviceType
-{
-    /// <summary>
-    /// Unknown location
-    /// </summary>
-    Unknown = 0,
-    /// <summary>
-    /// Rear camera
-    /// </summary>
-    Back = 1,
-    /// <summary>
-    /// Front camera
-    /// </summary>
-    Front = 2,
-};
-
-/// <summary>
-/// MotionTrackingStatus describes the quality of device motion tracking.
-/// </summary>
-enum class MotionTrackingStatus
-{
-    /// <summary>
-    /// Result is not available and should not to be used to render virtual objects or do 3D reconstruction. This value occurs temporarily after initializing, tracking lost or relocalizing.
-    /// </summary>
-    NotTracking = 0,
-    /// <summary>
-    /// Tracking is available, but the quality of the result is not good enough. This value occurs temporarily due to weak texture or excessive movement. The result can be used to render virtual objects, but should generally not be used to do 3D reconstruction.
-    /// </summary>
-    Limited = 1,
-    /// <summary>
-    /// Tracking with a good quality. The result can be used to render virtual objects or do 3D reconstruction.
-    /// </summary>
-    Tracking = 2,
-};
-
-class CameraParameters;
-
-/// <summary>
-/// PixelFormat represents the format of image pixel data. All formats follow the pixel direction from left to right and from top to bottom.
-/// </summary>
-enum class PixelFormat
-{
-    /// <summary>
-    /// Unknown
-    /// </summary>
-    Unknown = 0,
-    /// <summary>
-    /// 256 shades grayscale
-    /// </summary>
-    Gray = 1,
-    /// <summary>
-    /// YUV_NV21
-    /// </summary>
-    YUV_NV21 = 2,
-    /// <summary>
-    /// YUV_NV12
-    /// </summary>
-    YUV_NV12 = 3,
-    /// <summary>
-    /// YUV_I420
-    /// </summary>
-    YUV_I420 = 4,
-    /// <summary>
-    /// YUV_YV12
-    /// </summary>
-    YUV_YV12 = 5,
-    /// <summary>
-    /// RGB888
-    /// </summary>
-    RGB888 = 6,
-    /// <summary>
-    /// BGR888
-    /// </summary>
-    BGR888 = 7,
-    /// <summary>
-    /// RGBA8888
-    /// </summary>
-    RGBA8888 = 8,
-    /// <summary>
-    /// BGRA8888
-    /// </summary>
-    BGRA8888 = 9,
-};
-
-class Image;
-
-class JniUtility;
-
-enum class LogLevel
-{
-    /// <summary>
-    /// Error
-    /// </summary>
-    Error = 0,
-    /// <summary>
-    /// Warning
-    /// </summary>
-    Warning = 1,
-    /// <summary>
-    /// Information
-    /// </summary>
-    Info = 2,
-};
-
-class Log;
-
-struct Matrix44F;
-
-struct Matrix33F;
-
-struct Vec4F;
-
-struct Vec3F;
-
-struct Vec2F;
-
-struct Vec4I;
-
-struct Vec2I;
 
 /// <summary>
 /// ObjectTargetParameters represents the parameters to create a `ObjectTarget`_ .
@@ -742,7 +756,7 @@ public:
 /// <summary>
 /// ObjectTarget represents 3d object targets that can be tracked by `ObjectTracker`_ .
 /// The size of ObjectTarget is determined by the `obj` file. You can change it by changing the object `scale`, which is default to 1.
-/// A ObjectTarget should be setup using setup before any value is valid. And ObjectTarget can be tracked by `ObjectTracker`_ after a successful load into the `ObjectTracker`_ using `ObjectTracker.loadTarget`_ .
+/// A ObjectTarget can be tracked by `ObjectTracker`_ after a successful load into the `ObjectTracker`_ using `ObjectTracker.loadTarget`_ .
 /// </summary>
 class ObjectTarget : public Target
 {
@@ -766,12 +780,6 @@ public:
     /// Creats a target from obj, mtl and jpg/png files.
     /// </summary>
     static std::optional<std::shared_ptr<ObjectTarget>> createFromObjectFile(std::string path, StorageType storageType, std::string name, std::string uid, std::string meta, float scale);
-    /// <summary>
-    /// Setup all targets listed in the json file or json string from path with storageType. This method only parses the json file or string.
-    /// If path is json file path, storageType should be `App` or `Assets` or `Absolute` indicating the path type. Paths inside json files should be absolute path or relative path to the json file.
-    /// See `StorageType`_ for more descriptions.
-    /// </summary>
-    static std::vector<std::shared_ptr<ObjectTarget>> setupAll(std::string path, StorageType storageType);
     /// <summary>
     /// The scale of model. The value is the physical scale divided by model coordinate system scale. The default value is 1. (Supposing the unit of model coordinate system is 1 meter.)
     /// </summary>
@@ -894,10 +902,10 @@ public:
 
 /// <summary>
 /// ObjectTracker implements 3D object target detection and tracking.
-/// ObjectTracker occupies (1 + SimultaneousNum) buffers of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`_ .
+/// ObjectTracker occupies (1 + SimultaneousNum) buffers of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`__ .
 /// After creation, you can call start/stop to enable/disable the track process. start and stop are very lightweight calls.
 /// When the component is not needed anymore, call close function to close it. It shall not be used after calling close.
-/// ObjectTracker inputs `FeedbackFrame`_ from feedbackFrameSink. `FeedbackFrameSource`_ shall be connected to feedbackFrameSink for use. Refer to `Overview &lt;Overview.html&gt;`_ .
+/// ObjectTracker inputs `FeedbackFrame`_ from feedbackFrameSink. `FeedbackFrameSource`_ shall be connected to feedbackFrameSink for use. Refer to `Overview &lt;Overview.html&gt;`__ .
 /// Before a `Target`_ can be tracked by ObjectTracker, you have to load it using loadTarget/unloadTarget. You can get load/unload results from callbacks passed into the interfaces.
 /// </summary>
 class ObjectTracker
@@ -969,12 +977,36 @@ public:
     int simultaneousNum();
 };
 
+class CloudRecognizationResult
+{
+protected:
+    std::shared_ptr<easyar_CloudRecognizationResult> cdata_;
+    void init_cdata(std::shared_ptr<easyar_CloudRecognizationResult> cdata);
+    CloudRecognizationResult & operator=(const CloudRecognizationResult & data) = delete;
+public:
+    CloudRecognizationResult(std::shared_ptr<easyar_CloudRecognizationResult> cdata);
+    virtual ~CloudRecognizationResult();
+
+    std::shared_ptr<easyar_CloudRecognizationResult> get_cdata();
+    static std::shared_ptr<CloudRecognizationResult> from_cdata(std::shared_ptr<easyar_CloudRecognizationResult> cdata);
+
+    /// <summary>
+    /// Returns recognition status.
+    /// </summary>
+    CloudRecognizationStatus getStatus();
+    /// <summary>
+    /// Returns the recognized target when status is FoundTarget.
+    /// </summary>
+    std::optional<std::shared_ptr<ImageTarget>> getTarget();
+    /// <summary>
+    /// Returns the error message when status is UnknownError.
+    /// </summary>
+    std::optional<std::string> getUnknownErrorMessage();
+};
+
 /// <summary>
 /// CloudRecognizer implements cloud recognition. It can only be used after created a recognition image library on the cloud. Please refer to EasyAR CRS documentation.
-/// CloudRecognizer occupies one buffer of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`_ .
-/// After creation, you can call start/stop to enable/disable running.
 /// When the component is not needed anymore, call close function to close it. It shall not be used after calling close.
-/// CloudRecognizer inputs `InputFrame`_ from inputFrameSink. `InputFrameSource`_ shall be connected to inputFrameSink for use. Refer to `Overview &lt;Overview.html&gt;`_ .
 /// Before using a CloudRecognizer, an `ImageTracker`_ must be setup and prepared. Any target returned from cloud should be manually put into the `ImageTracker`_ using `ImageTracker.loadTarget`_ if it need to be tracked. Then the target can be used as same as a local target after loaded into the tracker. When a target is recognized, you can get it from callback, and you should use target uid to distinguish different targets. The target runtimeID is dynamically created and cannot be used as unique identifier in the cloud situation.
 /// </summary>
 class CloudRecognizer
@@ -995,29 +1027,400 @@ public:
     /// </summary>
     static bool isAvailable();
     /// <summary>
-    /// `InputFrame`_ input port. Raw image and timestamp are essential.
-    /// </summary>
-    std::shared_ptr<InputFrameSink> inputFrameSink();
-    /// <summary>
-    /// Camera buffers occupied in this component.
-    /// </summary>
-    int bufferRequirement();
-    /// <summary>
     /// Creates an instance and connects to the server.
     /// </summary>
-    static std::shared_ptr<CloudRecognizer> create(std::string cloudRecognitionServiceServerAddress, std::string apiKey, std::string apiSecret, std::string cloudRecognitionServiceAppId, std::shared_ptr<CallbackScheduler> callbackScheduler, std::optional<std::function<void(CloudStatus, std::vector<std::shared_ptr<Target>>)>> callback);
+    static std::shared_ptr<CloudRecognizer> create(std::string cloudRecognitionServiceServerAddress, std::string apiKey, std::string apiSecret, std::string cloudRecognitionServiceAppId);
     /// <summary>
-    /// Starts the recognition.
+    /// Creates an instance and connects to the server with Cloud Secret.
     /// </summary>
-    bool start();
+    static std::shared_ptr<CloudRecognizer> createByCloudSecret(std::string cloudRecognitionServiceServerAddress, std::string cloudRecognitionServiceSecret, std::string cloudRecognitionServiceAppId);
     /// <summary>
-    /// Stops the recognition.
+    /// Send recognition request. The lowest available request interval is 300ms.
     /// </summary>
-    void stop();
+    void resolve(std::shared_ptr<InputFrame> inputFrame, std::shared_ptr<CallbackScheduler> callbackScheduler, std::function<void(std::shared_ptr<CloudRecognizationResult>)> callback);
     /// <summary>
     /// Stops the recognition and closes connection. The component shall not be used after calling close.
     /// </summary>
     void close();
+};
+
+/// <summary>
+/// Buffer stores a raw byte array, which can be used to access image data.
+/// To access image data in Java API, get buffer from `Image`_ and copy to a Java byte array.
+/// You can always access image data since the first version of EasyAR Sense. Refer to `Image`_ .
+/// </summary>
+class Buffer
+{
+protected:
+    std::shared_ptr<easyar_Buffer> cdata_;
+    void init_cdata(std::shared_ptr<easyar_Buffer> cdata);
+    Buffer & operator=(const Buffer & data) = delete;
+public:
+    Buffer(std::shared_ptr<easyar_Buffer> cdata);
+    virtual ~Buffer();
+
+    std::shared_ptr<easyar_Buffer> get_cdata();
+    static std::shared_ptr<Buffer> from_cdata(std::shared_ptr<easyar_Buffer> cdata);
+
+    /// <summary>
+    /// Wraps a raw memory block. When Buffer is released by all holders, deleter callback will be invoked to execute user-defined memory destruction. deleter must be thread-safe.
+    /// </summary>
+    static std::shared_ptr<Buffer> wrap(void * ptr, int size, std::function<void()> deleter);
+    /// <summary>
+    /// Creates a Buffer of specified byte size.
+    /// </summary>
+    static std::shared_ptr<Buffer> create(int size);
+    /// <summary>
+    /// Returns raw data address.
+    /// </summary>
+    void * data();
+    /// <summary>
+    /// Byte size of raw data.
+    /// </summary>
+    int size();
+    /// <summary>
+    /// Copies raw memory. It can be used in languages or platforms without complete support for memory operations.
+    /// </summary>
+    static void memoryCopy(void * src, void * dest, int length);
+    /// <summary>
+    /// Tries to copy data from a raw memory address into Buffer. If copy succeeds, it returns true, or else it returns false. Possible failure causes includes: source or destination data range overflow.
+    /// </summary>
+    bool tryCopyFrom(void * src, int srcIndex, int index, int length);
+    /// <summary>
+    /// Copies buffer data to user array.
+    /// </summary>
+    bool tryCopyTo(int index, void * dest, int destIndex, int length);
+    /// <summary>
+    /// Creates a sub-buffer with a reference to the original Buffer. A Buffer will only be released after all its sub-buffers are released.
+    /// </summary>
+    std::shared_ptr<Buffer> partition(int index, int length);
+};
+
+/// <summary>
+/// A mapping from file path to `Buffer`_ . It can be used to represent multiple files in the memory.
+/// </summary>
+class BufferDictionary
+{
+protected:
+    std::shared_ptr<easyar_BufferDictionary> cdata_;
+    void init_cdata(std::shared_ptr<easyar_BufferDictionary> cdata);
+    BufferDictionary & operator=(const BufferDictionary & data) = delete;
+public:
+    BufferDictionary(std::shared_ptr<easyar_BufferDictionary> cdata);
+    virtual ~BufferDictionary();
+
+    std::shared_ptr<easyar_BufferDictionary> get_cdata();
+    static std::shared_ptr<BufferDictionary> from_cdata(std::shared_ptr<easyar_BufferDictionary> cdata);
+
+    BufferDictionary();
+    /// <summary>
+    /// Current file count.
+    /// </summary>
+    int count();
+    /// <summary>
+    /// Checks if a specified path is in the dictionary.
+    /// </summary>
+    bool contains(std::string path);
+    /// <summary>
+    /// Tries to get the corresponding `Buffer`_ for a specified path.
+    /// </summary>
+    std::optional<std::shared_ptr<Buffer>> tryGet(std::string path);
+    /// <summary>
+    /// Sets `Buffer`_ for a specified path.
+    /// </summary>
+    void set(std::string path, std::shared_ptr<Buffer> buffer);
+    /// <summary>
+    /// Removes a specified path.
+    /// </summary>
+    bool remove(std::string path);
+    /// <summary>
+    /// Clears the dictionary.
+    /// </summary>
+    void clear();
+};
+
+/// <summary>
+/// BufferPool is a memory pool to reduce memory allocation time consumption for functionality like custom camera interoperability, which needs to allocate memory buffers of a fixed size repeatedly.
+/// </summary>
+class BufferPool
+{
+protected:
+    std::shared_ptr<easyar_BufferPool> cdata_;
+    void init_cdata(std::shared_ptr<easyar_BufferPool> cdata);
+    BufferPool & operator=(const BufferPool & data) = delete;
+public:
+    BufferPool(std::shared_ptr<easyar_BufferPool> cdata);
+    virtual ~BufferPool();
+
+    std::shared_ptr<easyar_BufferPool> get_cdata();
+    static std::shared_ptr<BufferPool> from_cdata(std::shared_ptr<easyar_BufferPool> cdata);
+
+    /// <summary>
+    /// block_size is the byte size of each `Buffer`_ .
+    /// capacity is the maximum count of `Buffer`_ .
+    /// </summary>
+    BufferPool(int block_size, int capacity);
+    /// <summary>
+    /// The byte size of each `Buffer`_ .
+    /// </summary>
+    int block_size();
+    /// <summary>
+    /// The maximum count of `Buffer`_ .
+    /// </summary>
+    int capacity();
+    /// <summary>
+    /// Current acquired count of `Buffer`_ .
+    /// </summary>
+    int size();
+    /// <summary>
+    /// Tries to acquire a memory block. If current acquired count of `Buffer`_ does not reach maximum, a new `Buffer`_ is fetched or allocated, or else null is returned.
+    /// </summary>
+    std::optional<std::shared_ptr<Buffer>> tryAcquire();
+};
+
+/// <summary>
+/// Camera parameters, including image size, focal length, principal point, camera type and camera rotation against natural orientation.
+/// </summary>
+class CameraParameters
+{
+protected:
+    std::shared_ptr<easyar_CameraParameters> cdata_;
+    void init_cdata(std::shared_ptr<easyar_CameraParameters> cdata);
+    CameraParameters & operator=(const CameraParameters & data) = delete;
+public:
+    CameraParameters(std::shared_ptr<easyar_CameraParameters> cdata);
+    virtual ~CameraParameters();
+
+    std::shared_ptr<easyar_CameraParameters> get_cdata();
+    static std::shared_ptr<CameraParameters> from_cdata(std::shared_ptr<easyar_CameraParameters> cdata);
+
+    CameraParameters(Vec2I imageSize, Vec2F focalLength, Vec2F principalPoint, CameraDeviceType cameraDeviceType, int cameraOrientation);
+    /// <summary>
+    /// Image size.
+    /// </summary>
+    Vec2I size();
+    /// <summary>
+    /// Focal length, the distance from effective optical center to CCD plane, divided by unit pixel density in width and height directions. The unit is pixel.
+    /// </summary>
+    Vec2F focalLength();
+    /// <summary>
+    /// Principal point, coordinates of the intersection point of principal axis on CCD plane against the left-top corner of the image. The unit is pixel.
+    /// </summary>
+    Vec2F principalPoint();
+    /// <summary>
+    /// Camera device type. Default, back or front camera. On desktop devices, there are only default cameras. On mobile devices, there is a differentiation between back and front cameras.
+    /// </summary>
+    CameraDeviceType cameraDeviceType();
+    /// <summary>
+    /// Camera rotation against device natural orientation.
+    /// For Android phones and some Android tablets, this value is 90 degrees.
+    /// For Android eye-wear and some Android tablets, this value is 0 degrees.
+    /// For all current iOS devices, this value is 90 degrees.
+    /// </summary>
+    int cameraOrientation();
+    /// <summary>
+    /// Creates CameraParameters with default camera intrinsics. Default intrinsics are calculated by image size, which is not very precise.
+    /// </summary>
+    static std::shared_ptr<CameraParameters> createWithDefaultIntrinsics(Vec2I imageSize, CameraDeviceType cameraDeviceType, int cameraOrientation);
+    /// <summary>
+    /// Get equivalent CameraParameters for a different camera image size.
+    /// </summary>
+    std::shared_ptr<CameraParameters> getResized(Vec2I imageSize);
+    /// <summary>
+    /// Calculates the angle required to rotate the camera image clockwise to align it with the screen.
+    /// screenRotation is the angle of rotation of displaying screen image against device natural orientation in clockwise in degrees.
+    /// For iOS(UIInterfaceOrientationPortrait as natural orientation):
+    /// * UIInterfaceOrientationPortrait: rotation = 0
+    /// * UIInterfaceOrientationLandscapeRight: rotation = 90
+    /// * UIInterfaceOrientationPortraitUpsideDown: rotation = 180
+    /// * UIInterfaceOrientationLandscapeLeft: rotation = 270
+    /// For Android:
+    /// * Surface.ROTATION_0 = 0
+    /// * Surface.ROTATION_90 = 90
+    /// * Surface.ROTATION_180 = 180
+    /// * Surface.ROTATION_270 = 270
+    /// </summary>
+    int imageOrientation(int screenRotation);
+    /// <summary>
+    /// Calculates whether the image needed to be flipped horizontally. The image is rotated, then flipped in rendering. When cameraDeviceType is front, a flip is automatically applied. Pass manualHorizontalFlip with true to add a manual flip.
+    /// </summary>
+    bool imageHorizontalFlip(bool manualHorizontalFlip);
+    /// <summary>
+    /// Calculates the perspective projection matrix needed by virtual object rendering. The projection transforms points from camera coordinate system to clip coordinate system ([-1, 1]^4). The form of perspective projection matrix is the same as OpenGL, that matrix multiply column vector of homogeneous coordinates of point on the right, ant not like Direct3D, that matrix multiply row vector of homogeneous coordinates of point on the left. But data arrangement is row-major, not like OpenGL&#39;s column-major. Clip coordinate system and normalized device coordinate system are defined as the same as OpenGL&#39;s default.
+    /// </summary>
+    Matrix44F projection(float nearPlane, float farPlane, float viewportAspectRatio, int screenRotation, bool combiningFlip, bool manualHorizontalFlip);
+    /// <summary>
+    /// Calculates the orthogonal projection matrix needed by camera background rendering. The projection transforms points from image quad coordinate system ([-1, 1]^2) to clip coordinate system ([-1, 1]^4), with the undefined two dimensions unchanged. The form of orthogonal projection matrix is the same as OpenGL, that matrix multiply column vector of homogeneous coordinates of point on the right, ant not like Direct3D, that matrix multiply row vector of homogeneous coordinates of point on the left. But data arrangement is row-major, not like OpenGL&#39;s column-major. Clip coordinate system and normalized device coordinate system are defined as the same as OpenGL&#39;s default.
+    /// </summary>
+    Matrix44F imageProjection(float viewportAspectRatio, int screenRotation, bool combiningFlip, bool manualHorizontalFlip);
+    /// <summary>
+    /// Transforms points from image coordinate system ([0, 1]^2) to screen coordinate system ([0, 1]^2). Both coordinate system is x-left, y-down, with origin at left-top.
+    /// </summary>
+    Vec2F screenCoordinatesFromImageCoordinates(float viewportAspectRatio, int screenRotation, bool combiningFlip, bool manualHorizontalFlip, Vec2F imageCoordinates);
+    /// <summary>
+    /// Transforms points from screen coordinate system ([0, 1]^2) to image coordinate system ([0, 1]^2). Both coordinate system is x-left, y-down, with origin at left-top.
+    /// </summary>
+    Vec2F imageCoordinatesFromScreenCoordinates(float viewportAspectRatio, int screenRotation, bool combiningFlip, bool manualHorizontalFlip, Vec2F screenCoordinates);
+    /// <summary>
+    /// Checks if two groups of parameters are equal.
+    /// </summary>
+    bool equalsTo(std::shared_ptr<CameraParameters> other);
+};
+
+/// <summary>
+/// Image stores an image data and represents an image in memory.
+/// Image raw data can be accessed as byte array. The width/height/etc information are also accessible.
+/// You can always access image data since the first version of EasyAR Sense.
+///
+/// You can do this in iOS
+/// ::
+///
+///     #import &lt;easyar/buffer.oc.h&gt;
+///     #import &lt;easyar/image.oc.h&gt;
+///
+///     easyar_OutputFrame * outputFrame = [outputFrameBuffer peek];
+///     if (outputFrame != nil) {
+///         easyar_Image * i = [[outputFrame inputFrame] image];
+///         easyar_Buffer * b = [i buffer];
+///         char * bytes = calloc([b size], 1);
+///         memcpy(bytes, [b data], [b size]);
+///         // use bytes here
+///         free(bytes);
+///     }
+///
+/// Or in Android
+/// ::
+///
+///     import cn.easyar.*;
+///
+///     OutputFrame outputFrame = outputFrameBuffer.peek();
+///     if (outputFrame != null) {
+///         InputFrame inputFrame = outputFrame.inputFrame();
+///         Image i = inputFrame.image();
+///         Buffer b = i.buffer();
+///         byte[] bytes = new byte[b.size()];
+///         b.copyToByteArray(0, bytes, 0, bytes.length);
+///         // use bytes here
+///         b.dispose();
+///         i.dispose();
+///         inputFrame.dispose();
+///         outputFrame.dispose();
+///     }
+/// </summary>
+class Image
+{
+protected:
+    std::shared_ptr<easyar_Image> cdata_;
+    void init_cdata(std::shared_ptr<easyar_Image> cdata);
+    Image & operator=(const Image & data) = delete;
+public:
+    Image(std::shared_ptr<easyar_Image> cdata);
+    virtual ~Image();
+
+    std::shared_ptr<easyar_Image> get_cdata();
+    static std::shared_ptr<Image> from_cdata(std::shared_ptr<easyar_Image> cdata);
+
+    Image(std::shared_ptr<Buffer> buffer, PixelFormat format, int width, int height);
+    /// <summary>
+    /// Returns buffer inside image. It can be used to access internal data of image. The content of `Buffer`_ shall not be modified, as they may be accessed from other threads.
+    /// </summary>
+    std::shared_ptr<Buffer> buffer();
+    /// <summary>
+    /// Returns image format.
+    /// </summary>
+    PixelFormat format();
+    /// <summary>
+    /// Returns image width.
+    /// </summary>
+    int width();
+    /// <summary>
+    /// Returns image height.
+    /// </summary>
+    int height();
+};
+
+/// <summary>
+/// record
+/// Square matrix of 4. The data arrangement is row-major.
+/// </summary>
+struct Matrix44F
+{
+    /// <summary>
+    /// The raw data of matrix.
+    /// </summary>
+    std::array<float, 16> data;
+};
+
+/// <summary>
+/// record
+/// Square matrix of 3. The data arrangement is row-major.
+/// </summary>
+struct Matrix33F
+{
+    /// <summary>
+    /// The raw data of matrix.
+    /// </summary>
+    std::array<float, 9> data;
+};
+
+/// <summary>
+/// record
+/// 4 dimensional vector of float.
+/// </summary>
+struct Vec4F
+{
+    /// <summary>
+    /// The raw data of vector.
+    /// </summary>
+    std::array<float, 4> data;
+};
+
+/// <summary>
+/// record
+/// 3 dimensional vector of float.
+/// </summary>
+struct Vec3F
+{
+    /// <summary>
+    /// The raw data of vector.
+    /// </summary>
+    std::array<float, 3> data;
+};
+
+/// <summary>
+/// record
+/// 2 dimensional vector of float.
+/// </summary>
+struct Vec2F
+{
+    /// <summary>
+    /// The raw data of vector.
+    /// </summary>
+    std::array<float, 2> data;
+};
+
+/// <summary>
+/// record
+/// 4 dimensional vector of int.
+/// </summary>
+struct Vec4I
+{
+    /// <summary>
+    /// The raw data of vector.
+    /// </summary>
+    std::array<int, 4> data;
+};
+
+/// <summary>
+/// record
+/// 2 dimensional vector of int.
+/// </summary>
+struct Vec2I
+{
+    /// <summary>
+    /// The raw data of vector.
+    /// </summary>
+    std::array<int, 2> data;
 };
 
 /// <summary>
@@ -1188,6 +1591,277 @@ public:
 };
 
 /// <summary>
+/// ARCoreCameraDevice implements a camera device based on ARCore, which outputs `InputFrame`_  (including image, camera parameters, timestamp, 6DOF location, and tracking status).
+/// Loading of libarcore_sdk_c.so with java.lang.System.loadLibrary is required.
+/// After creation, start/stop can be invoked to start or stop video stream capture.
+/// When the component is not needed anymore, call close function to close it. It shall not be used after calling close.
+/// ARCoreCameraDevice outputs `InputFrame`_ from inputFrameSource. inputFrameSource shall be connected to `InputFrameSink`_ for use. Refer to `Overview &lt;Overview.html&gt;`__ .
+/// bufferCapacity is the capacity of `InputFrame`_ buffer. If the count of `InputFrame`_ which has been output from the device and have not been released is more than this number, the device will not output new `InputFrame`_ , until previous `InputFrame`_ have been released. This may cause screen stuck. Refer to `Overview &lt;Overview.html&gt;`__ .
+/// Caution: Currently, ARCore(v1.13.0) has memory leaks on creating and destroying sessions. Repeated creations and destructions will cause an increasing and non-reclaimable memory footprint.
+/// </summary>
+class ARCoreCameraDevice
+{
+protected:
+    std::shared_ptr<easyar_ARCoreCameraDevice> cdata_;
+    void init_cdata(std::shared_ptr<easyar_ARCoreCameraDevice> cdata);
+    ARCoreCameraDevice & operator=(const ARCoreCameraDevice & data) = delete;
+public:
+    ARCoreCameraDevice(std::shared_ptr<easyar_ARCoreCameraDevice> cdata);
+    virtual ~ARCoreCameraDevice();
+
+    std::shared_ptr<easyar_ARCoreCameraDevice> get_cdata();
+    static std::shared_ptr<ARCoreCameraDevice> from_cdata(std::shared_ptr<easyar_ARCoreCameraDevice> cdata);
+
+    ARCoreCameraDevice();
+    /// <summary>
+    /// Checks if the component is available. It returns true only on Android when ARCore is installed.
+    /// If called with libarcore_sdk_c.so not loaded, it returns false.
+    /// Notice: If ARCore is not supported on the device but ARCore apk is installed via side-loading, it will return true, but ARCore will not function properly.
+    /// </summary>
+    static bool isAvailable();
+    /// <summary>
+    /// `InputFrame`_ buffer capacity. The default is 8.
+    /// </summary>
+    int bufferCapacity();
+    /// <summary>
+    /// Sets `InputFrame`_ buffer capacity.
+    /// </summary>
+    void setBufferCapacity(int capacity);
+    /// <summary>
+    /// `InputFrame`_ output port.
+    /// </summary>
+    std::shared_ptr<InputFrameSource> inputFrameSource();
+    /// <summary>
+    /// Starts video stream capture.
+    /// </summary>
+    bool start();
+    /// <summary>
+    /// Stops video stream capture.
+    /// </summary>
+    void stop();
+    /// <summary>
+    /// Close. The component shall not be used after calling close.
+    /// </summary>
+    void close();
+};
+
+/// <summary>
+/// ARKitCameraDevice implements a camera device based on ARKit, which outputs `InputFrame`_ (including image, camera parameters, timestamp, 6DOF location, and tracking status).
+/// After creation, start/stop can be invoked to start or stop data collection.
+/// When the component is not needed anymore, call close function to close it. It shall not be used after calling close.
+/// ARKitCameraDevice outputs `InputFrame`_ from inputFrameSource. inputFrameSource shall be connected to `InputFrameSink`_ for use. Refer to `Overview &lt;Overview.html&gt;`__ .
+/// bufferCapacity is the capacity of `InputFrame`_ buffer. If the count of `InputFrame`_ which has been output from the device and have not been released is more than this number, the device will not output new `InputFrame`_ , until previous `InputFrame`_ have been released. This may cause screen stuck. Refer to `Overview &lt;Overview.html&gt;`__ .
+/// </summary>
+class ARKitCameraDevice
+{
+protected:
+    std::shared_ptr<easyar_ARKitCameraDevice> cdata_;
+    void init_cdata(std::shared_ptr<easyar_ARKitCameraDevice> cdata);
+    ARKitCameraDevice & operator=(const ARKitCameraDevice & data) = delete;
+public:
+    ARKitCameraDevice(std::shared_ptr<easyar_ARKitCameraDevice> cdata);
+    virtual ~ARKitCameraDevice();
+
+    std::shared_ptr<easyar_ARKitCameraDevice> get_cdata();
+    static std::shared_ptr<ARKitCameraDevice> from_cdata(std::shared_ptr<easyar_ARKitCameraDevice> cdata);
+
+    ARKitCameraDevice();
+    /// <summary>
+    /// Checks if the component is available. It returns true only on iOS 11 or later when ARKit is supported by hardware.
+    /// </summary>
+    static bool isAvailable();
+    /// <summary>
+    /// `InputFrame`_ buffer capacity. The default is 8.
+    /// </summary>
+    int bufferCapacity();
+    /// <summary>
+    /// Sets `InputFrame`_ buffer capacity.
+    /// </summary>
+    void setBufferCapacity(int capacity);
+    /// <summary>
+    /// `InputFrame`_ output port.
+    /// </summary>
+    std::shared_ptr<InputFrameSource> inputFrameSource();
+    /// <summary>
+    /// Starts video stream capture.
+    /// </summary>
+    bool start();
+    /// <summary>
+    /// Stops video stream capture.
+    /// </summary>
+    void stop();
+    /// <summary>
+    /// Close. The component shall not be used after calling close.
+    /// </summary>
+    void close();
+};
+
+/// <summary>
+/// CameraDevice implements a camera device, which outputs `InputFrame`_ (including image, camera paramters, and timestamp). It is available on Windows, Mac, Android and iOS.
+/// After open, start/stop can be invoked to start or stop data collection. start/stop will not change previous set camera parameters.
+/// When the component is not needed anymore, call close function to close it. It shall not be used after calling close.
+/// CameraDevice outputs `InputFrame`_ from inputFrameSource. inputFrameSource shall be connected to `InputFrameSink`_ for use. Refer to `Overview &lt;Overview.html&gt;`__ .
+/// bufferCapacity is the capacity of `InputFrame`_ buffer. If the count of `InputFrame`_ which has been output from the device and have not been released is more than this number, the device will not output new `InputFrame`_ , until previous `InputFrame`_ have been released. This may cause screen stuck. Refer to `Overview &lt;Overview.html&gt;`__ .
+/// </summary>
+class CameraDevice
+{
+protected:
+    std::shared_ptr<easyar_CameraDevice> cdata_;
+    void init_cdata(std::shared_ptr<easyar_CameraDevice> cdata);
+    CameraDevice & operator=(const CameraDevice & data) = delete;
+public:
+    CameraDevice(std::shared_ptr<easyar_CameraDevice> cdata);
+    virtual ~CameraDevice();
+
+    std::shared_ptr<easyar_CameraDevice> get_cdata();
+    static std::shared_ptr<CameraDevice> from_cdata(std::shared_ptr<easyar_CameraDevice> cdata);
+
+    CameraDevice();
+    /// <summary>
+    /// Checks if the component is available. It returns true only on Windows, Mac, Android or iOS.
+    /// </summary>
+    static bool isAvailable();
+    /// <summary>
+    /// Gets current camera API (camera1 or camera2) on Android. camera1 is better for compatibility, but lacks some necessary information such as timestamp. camera2 has compatibility issues on some devices.
+    /// </summary>
+    AndroidCameraApiType androidCameraApiType();
+    /// <summary>
+    /// Sets current camera API (camera1 or camera2) on Android. It must be called before calling openWithIndex, openWithSpecificType or openWithPreferredType, or it will not take effect.
+    /// It is recommended to use `CameraDeviceSelector`_ to create camera with camera API set to recommended based on primary algorithm to run.
+    /// </summary>
+    void setAndroidCameraApiType(AndroidCameraApiType type);
+    /// <summary>
+    /// `InputFrame`_ buffer capacity. The default is 8.
+    /// </summary>
+    int bufferCapacity();
+    /// <summary>
+    /// Sets `InputFrame`_ buffer capacity.
+    /// </summary>
+    void setBufferCapacity(int capacity);
+    /// <summary>
+    /// `InputFrame`_ output port.
+    /// </summary>
+    std::shared_ptr<InputFrameSource> inputFrameSource();
+    /// <summary>
+    /// Sets callback on state change to notify state of camera disconnection or preemption. It is only available on Windows.
+    /// </summary>
+    void setStateChangedCallback(std::shared_ptr<CallbackScheduler> callbackScheduler, std::optional<std::function<void(CameraState)>> stateChangedCallback);
+    /// <summary>
+    /// Requests camera permission from operating system. You can call this function or request permission directly from operating system. It is only available on Android and iOS. On other platforms, it will call the callback directly with status being granted. This function need to be called from the UI thread.
+    /// </summary>
+    static void requestPermissions(std::shared_ptr<CallbackScheduler> callbackScheduler, std::optional<std::function<void(PermissionStatus, std::string)>> permissionCallback);
+    /// <summary>
+    /// Gets count of cameras recognized by the operating system.
+    /// </summary>
+    static int cameraCount();
+    /// <summary>
+    /// Opens a camera by index.
+    /// </summary>
+    bool openWithIndex(int cameraIndex);
+    /// <summary>
+    /// Opens a camera by specific camera device type. If no camera is matched, false will be returned. On Mac, camera device types can not be distinguished.
+    /// </summary>
+    bool openWithSpecificType(CameraDeviceType type);
+    /// <summary>
+    /// Opens a camera by camera device type. If no camera is matched, the first camera will be used.
+    /// </summary>
+    bool openWithPreferredType(CameraDeviceType type);
+    /// <summary>
+    /// Starts video stream capture.
+    /// </summary>
+    bool start();
+    /// <summary>
+    /// Stops video stream capture. It will only stop capture and will not change previous set camera parameters and connection.
+    /// </summary>
+    void stop();
+    /// <summary>
+    /// Close. The component shall not be used after calling close.
+    /// </summary>
+    void close();
+    /// <summary>
+    /// Camera index.
+    /// </summary>
+    int index();
+    /// <summary>
+    /// Camera type.
+    /// </summary>
+    CameraDeviceType type();
+    /// <summary>
+    /// Camera parameters, including image size, focal length, principal point, camera type and camera rotation against natural orientation. Call after a successful open.
+    /// </summary>
+    std::shared_ptr<CameraParameters> cameraParameters();
+    /// <summary>
+    /// Sets camera parameters. Call after a successful open.
+    /// </summary>
+    void setCameraParameters(std::shared_ptr<CameraParameters> cameraParameters);
+    /// <summary>
+    /// Gets the current preview size. Call after a successful open.
+    /// </summary>
+    Vec2I size();
+    /// <summary>
+    /// Gets the number of supported preview sizes. Call after a successful open.
+    /// </summary>
+    int supportedSizeCount();
+    /// <summary>
+    /// Gets the index-th supported preview size. It returns {0, 0} if index is out of range. Call after a successful open.
+    /// </summary>
+    Vec2I supportedSize(int index);
+    /// <summary>
+    /// Sets the preview size. The available nearest value will be selected. Call size to get the actual size. Call after a successful open. frameRateRange may change after calling setSize.
+    /// </summary>
+    bool setSize(Vec2I size);
+    /// <summary>
+    /// Gets the number of supported frame rate ranges. Call after a successful open.
+    /// </summary>
+    int supportedFrameRateRangeCount();
+    /// <summary>
+    /// Gets range lower bound of the index-th supported frame rate range. Call after a successful open.
+    /// </summary>
+    float supportedFrameRateRangeLower(int index);
+    /// <summary>
+    /// Gets range upper bound of the index-th supported frame rate range. Call after a successful open.
+    /// </summary>
+    float supportedFrameRateRangeUpper(int index);
+    /// <summary>
+    /// Gets current index of frame rate range. Call after a successful open.
+    /// </summary>
+    int frameRateRange();
+    /// <summary>
+    /// Sets current index of frame rate range. Call after a successful open.
+    /// </summary>
+    bool setFrameRateRange(int index);
+    /// <summary>
+    /// Sets flash torch mode to on. Call after a successful open.
+    /// </summary>
+    bool setFlashTorchMode(bool on);
+    /// <summary>
+    /// Sets focus mode to focusMode. Call after a successful open.
+    /// </summary>
+    bool setFocusMode(CameraDeviceFocusMode focusMode);
+    /// <summary>
+    /// Does auto focus once. Call after start. It is only available when FocusMode is Normal or Macro.
+    /// </summary>
+    bool autoFocus();
+};
+
+/// <summary>
+/// It is used for selecting camera API (camera1 or camera2) on Android. camera1 is better for compatibility, but lacks some necessary information such as timestamp. camera2 has compatibility issues on some devices.
+/// Different preferences will choose camera1 or camera2 based on usage.
+/// </summary>
+class CameraDeviceSelector
+{
+public:
+    /// <summary>
+    /// Gets recommended Android Camera API type by a specified preference.
+    /// </summary>
+    static AndroidCameraApiType getAndroidCameraApiType(CameraDevicePreference preference);
+    /// <summary>
+    /// Creates `CameraDevice`_ by a specified preference.
+    /// </summary>
+    static std::shared_ptr<CameraDevice> createCameraDevice(CameraDevicePreference preference);
+};
+
+/// <summary>
 /// Result of `SurfaceTracker`_ .
 /// </summary>
 class SurfaceTrackerResult : public FrameFilterResult
@@ -1211,10 +1885,10 @@ public:
 
 /// <summary>
 /// SurfaceTracker implements tracking with environmental surfaces.
-/// SurfaceTracker occupies one buffer of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`_ .
+/// SurfaceTracker occupies one buffer of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`__ .
 /// After creation, you can call start/stop to enable/disable the track process. start and stop are very lightweight calls.
 /// When the component is not needed anymore, call close function to close it. It shall not be used after calling close.
-/// SurfaceTracker inputs `InputFrame`_ from inputFrameSink. `InputFrameSource`_ shall be connected to inputFrameSink for use. Refer to `Overview &lt;Overview.html&gt;`_ .
+/// SurfaceTracker inputs `InputFrame`_ from inputFrameSink. `InputFrameSource`_ shall be connected to inputFrameSink for use. Refer to `Overview &lt;Overview.html&gt;`__ .
 /// </summary>
 class SurfaceTracker
 {
@@ -1271,7 +1945,7 @@ public:
 /// MotionTrackerCameraDevice implements a camera device with metric-scale six degree-of-freedom motion tracking, which outputs `InputFrame`_  (including image, camera parameters, timestamp, 6DOF pose and tracking status).
 /// After creation, start/stop can be invoked to start or stop data flow.
 /// When the component is not needed anymore, call close function to close it. It shall not be used after calling close.
-/// MotionTrackerCameraDevice outputs `InputFrame`_ from inputFrameSource. inputFrameSource shall be connected to `InputFrameSink`_ for further use. Refer to `Overview &lt;Overview.html&gt;`_ .
+/// MotionTrackerCameraDevice outputs `InputFrame`_ from inputFrameSource. inputFrameSource shall be connected to `InputFrameSink`_ for further use. Refer to `Overview &lt;Overview.html&gt;`__ .
 /// </summary>
 class MotionTrackerCameraDevice
 {
@@ -1296,7 +1970,7 @@ public:
     static bool isAvailable();
     /// <summary>
     /// Set `InputFrame`_ buffer capacity.
-    /// bufferCapacity is the capacity of `InputFrame`_ buffer. If the count of `InputFrame`_ which has been output from the device and have not been released is higher than this number, the device will not output new `InputFrame`_ until previous `InputFrame`_ has been released. This may cause screen stuck. Refer to `Overview &lt;Overview.html&gt;`_ .
+    /// bufferCapacity is the capacity of `InputFrame`_ buffer. If the count of `InputFrame`_ which has been output from the device and have not been released is higher than this number, the device will not output new `InputFrame`_ until previous `InputFrame`_ has been released. This may cause screen stuck. Refer to `Overview &lt;Overview.html&gt;`__ .
     /// </summary>
     void setBufferCapacity(int capacity);
     /// <summary>
@@ -1320,6 +1994,211 @@ public:
     /// Close motion tracking. The component shall not be used after calling close.
     /// </summary>
     void close();
+    /// <summary>
+    /// Perform hit test against the point cloud and return the nearest 3D point. The 3D point is represented by three consecutive values, representing X, Y, Z position coordinates in the world coordinate space.
+    /// For the camera image coordinate system ([0, 1]^2), x-right, y-down, and origin is at left-top corner. `CameraParameters.imageCoordinatesFromScreenCoordinates`_ can be used to convert points from screen coordinate system to camera image coordinate system.
+    /// </summary>
+    std::vector<Vec3F> hitTestAgainstPointCloud(Vec2F cameraImagePoint);
+    /// <summary>
+    /// Performs ray cast from the user&#39;s device in the direction of given screen point.
+    /// Intersections with horizontal plane is detected in real time in the current field of view,and return the 3D point nearest to ray on horizontal plane.
+    /// For the camera image coordinate system ([0, 1]^2), x-right, y-down, and origin is at left-top corner. `CameraParameters.imageCoordinatesFromScreenCoordinates`_ can be used to convert points from screen coordinate system to camera image coordinate system.
+    /// The output point cloud coordinate on Horizontal plane is in the world coordinate system. The 3D point is represented by three consecutive values, representing X, Y, Z position coordinates in the world coordinate space.
+    /// </summary>
+    std::vector<Vec3F> hitTestAgainstHorizontalPlane(Vec2F cameraImagePoint);
+    /// <summary>
+    /// Returns the vector of point cloud coordinate. Each 3D point is represented by three consecutive values, representing X, Y, Z position coordinates in the world coordinate space.
+    /// </summary>
+    std::vector<Vec3F> getLocalPointsCloud();
+};
+
+/// <summary>
+/// Input frame recorder.
+/// There is an input frame input port and an input frame output port. It can be used to record input frames into an EIF file. Refer to `Overview &lt;Overview.html&gt;`__ .
+/// All members of this class is thread-safe.
+/// </summary>
+class InputFrameRecorder
+{
+protected:
+    std::shared_ptr<easyar_InputFrameRecorder> cdata_;
+    void init_cdata(std::shared_ptr<easyar_InputFrameRecorder> cdata);
+    InputFrameRecorder & operator=(const InputFrameRecorder & data) = delete;
+public:
+    InputFrameRecorder(std::shared_ptr<easyar_InputFrameRecorder> cdata);
+    virtual ~InputFrameRecorder();
+
+    std::shared_ptr<easyar_InputFrameRecorder> get_cdata();
+    static std::shared_ptr<InputFrameRecorder> from_cdata(std::shared_ptr<easyar_InputFrameRecorder> cdata);
+
+    /// <summary>
+    /// Input port.
+    /// </summary>
+    std::shared_ptr<InputFrameSink> input();
+    /// <summary>
+    /// Camera buffers occupied in this component.
+    /// </summary>
+    int bufferRequirement();
+    /// <summary>
+    /// Output port.
+    /// </summary>
+    std::shared_ptr<InputFrameSource> output();
+    /// <summary>
+    /// Creates an instance.
+    /// </summary>
+    static std::shared_ptr<InputFrameRecorder> create();
+    /// <summary>
+    /// Starts frame recording.
+    /// </summary>
+    bool start(std::string filePath);
+    /// <summary>
+    /// Stops frame recording. It will only stop recording and will not affect connection.
+    /// </summary>
+    void stop();
+};
+
+/// <summary>
+/// Input frame player.
+/// There is an input frame output port. It can be used to get input frame from an EIF file. Refer to `Overview &lt;Overview.html&gt;`__ .
+/// All members of this class is thread-safe.
+/// </summary>
+class InputFramePlayer
+{
+protected:
+    std::shared_ptr<easyar_InputFramePlayer> cdata_;
+    void init_cdata(std::shared_ptr<easyar_InputFramePlayer> cdata);
+    InputFramePlayer & operator=(const InputFramePlayer & data) = delete;
+public:
+    InputFramePlayer(std::shared_ptr<easyar_InputFramePlayer> cdata);
+    virtual ~InputFramePlayer();
+
+    std::shared_ptr<easyar_InputFramePlayer> get_cdata();
+    static std::shared_ptr<InputFramePlayer> from_cdata(std::shared_ptr<easyar_InputFramePlayer> cdata);
+
+    /// <summary>
+    /// Output port.
+    /// </summary>
+    std::shared_ptr<InputFrameSource> output();
+    /// <summary>
+    /// Creates an instance.
+    /// </summary>
+    static std::shared_ptr<InputFramePlayer> create();
+    /// <summary>
+    /// Starts frame play.
+    /// </summary>
+    bool start(std::string filePath);
+    /// <summary>
+    /// Stops frame play.
+    /// </summary>
+    void stop();
+};
+
+/// <summary>
+/// Callback scheduler.
+/// There are two subclasses: `DelayedCallbackScheduler`_ and `ImmediateCallbackScheduler`_ .
+/// `DelayedCallbackScheduler`_ is used to delay callback to be invoked manually, and it can be used in single-threaded environments (such as various UI environments).
+/// `ImmediateCallbackScheduler`_ is used to mark callback to be invoked when event is dispatched, and it can be used in multi-threaded environments (such as server or service daemon).
+/// </summary>
+class CallbackScheduler
+{
+protected:
+    std::shared_ptr<easyar_CallbackScheduler> cdata_;
+    void init_cdata(std::shared_ptr<easyar_CallbackScheduler> cdata);
+    CallbackScheduler & operator=(const CallbackScheduler & data) = delete;
+public:
+    CallbackScheduler(std::shared_ptr<easyar_CallbackScheduler> cdata);
+    virtual ~CallbackScheduler();
+
+    std::shared_ptr<easyar_CallbackScheduler> get_cdata();
+    static std::shared_ptr<CallbackScheduler> from_cdata(std::shared_ptr<easyar_CallbackScheduler> cdata);
+
+};
+
+/// <summary>
+/// Delayed callback scheduler.
+/// It is used to delay callback to be invoked manually, and it can be used in single-threaded environments (such as various UI environments).
+/// All members of this class is thread-safe.
+/// </summary>
+class DelayedCallbackScheduler : public CallbackScheduler
+{
+protected:
+    std::shared_ptr<easyar_DelayedCallbackScheduler> cdata_;
+    void init_cdata(std::shared_ptr<easyar_DelayedCallbackScheduler> cdata);
+    DelayedCallbackScheduler & operator=(const DelayedCallbackScheduler & data) = delete;
+public:
+    DelayedCallbackScheduler(std::shared_ptr<easyar_DelayedCallbackScheduler> cdata);
+    virtual ~DelayedCallbackScheduler();
+
+    std::shared_ptr<easyar_DelayedCallbackScheduler> get_cdata();
+    static std::shared_ptr<DelayedCallbackScheduler> from_cdata(std::shared_ptr<easyar_DelayedCallbackScheduler> cdata);
+
+    DelayedCallbackScheduler();
+    /// <summary>
+    /// Executes a callback. If there is no callback to execute, false is returned.
+    /// </summary>
+    bool runOne();
+};
+
+/// <summary>
+/// Immediate callback scheduler.
+/// It is used to mark callback to be invoked when event is dispatched, and it can be used in multi-threaded environments (such as server or service daemon).
+/// All members of this class is thread-safe.
+/// </summary>
+class ImmediateCallbackScheduler : public CallbackScheduler
+{
+protected:
+    std::shared_ptr<easyar_ImmediateCallbackScheduler> cdata_;
+    void init_cdata(std::shared_ptr<easyar_ImmediateCallbackScheduler> cdata);
+    ImmediateCallbackScheduler & operator=(const ImmediateCallbackScheduler & data) = delete;
+public:
+    ImmediateCallbackScheduler(std::shared_ptr<easyar_ImmediateCallbackScheduler> cdata);
+    virtual ~ImmediateCallbackScheduler();
+
+    std::shared_ptr<easyar_ImmediateCallbackScheduler> get_cdata();
+    static std::shared_ptr<ImmediateCallbackScheduler> from_cdata(std::shared_ptr<easyar_ImmediateCallbackScheduler> cdata);
+
+    /// <summary>
+    /// Gets a default immediate callback scheduler.
+    /// </summary>
+    static std::shared_ptr<ImmediateCallbackScheduler> getDefault();
+};
+
+/// <summary>
+/// JNI utility class.
+/// It is used in Unity to wrap Java byte array and ByteBuffer.
+/// It is not supported on iOS.
+/// </summary>
+class JniUtility
+{
+public:
+    /// <summary>
+    /// Wraps Java&#39;s byte[]。
+    /// </summary>
+    static std::shared_ptr<Buffer> wrapByteArray(void * bytes, bool readOnly, std::function<void()> deleter);
+    /// <summary>
+    /// Wraps Java&#39;s java.nio.ByteBuffer, which must be a direct buffer.
+    /// </summary>
+    static std::shared_ptr<Buffer> wrapBuffer(void * directBuffer, std::function<void()> deleter);
+    /// <summary>
+    /// Get the raw address of a direct buffer of java.nio.ByteBuffer by calling JNIEnv-&gt;GetDirectBufferAddress.
+    /// </summary>
+    static void * getDirectBufferAddress(void * directBuffer);
+};
+
+/// <summary>
+/// Log class.
+/// It is used to setup a custom log output function.
+/// </summary>
+class Log
+{
+public:
+    /// <summary>
+    /// Sets custom log output function.
+    /// </summary>
+    static void setLogFunc(std::function<void(LogLevel, std::string)> func);
+    /// <summary>
+    /// Clears custom log output function and reverts to default log output function.
+    /// </summary>
+    static void resetLogFunc();
 };
 
 /// <summary>
@@ -1384,7 +2263,7 @@ public:
 
 /// <summary>
 /// ImageTarget represents planar image targets that can be tracked by `ImageTracker`_ .
-/// The fields of ImageTarget need to be filled with the create.../setupAll method before it can be read. And ImageTarget can be tracked by `ImageTracker`_ after a successful load into the `ImageTracker`_ using `ImageTracker.loadTarget`_ .
+/// The fields of ImageTarget need to be filled with the create... method before it can be read. And ImageTarget can be tracked by `ImageTracker`_ after a successful load into the `ImageTracker`_ using `ImageTracker.loadTarget`_ .
 /// </summary>
 class ImageTarget : public Target
 {
@@ -1417,15 +2296,9 @@ public:
     /// </summary>
     bool save(std::string path);
     /// <summary>
-    /// Creates a target from an image file. If not needed, name, uid, meta can be passed with empty string, and scale can be passed with default value 1.
+    /// Creates a target from an image file. If not needed, name, uid, meta can be passed with empty string, and scale can be passed with default value 1. Jpeg and png files are supported.
     /// </summary>
     static std::optional<std::shared_ptr<ImageTarget>> createFromImageFile(std::string path, StorageType storageType, std::string name, std::string uid, std::string meta, float scale);
-    /// <summary>
-    /// Setup all targets listed in the json file or json string from path with storageType. This method only parses the json file or string.
-    /// If path is json file path, storageType should be `App` or `Assets` or `Absolute` indicating the path type. Paths inside json files should be absolute path or relative path to the json file.
-    /// See `StorageType`_ for more descriptions.
-    /// </summary>
-    static std::vector<std::shared_ptr<ImageTarget>> setupAll(std::string path, StorageType storageType);
     /// <summary>
     /// The scale of image. The value is the physical image width divided by 1 meter. The default value is 1.
     /// </summary>
@@ -1497,10 +2370,10 @@ public:
 
 /// <summary>
 /// ImageTracker implements image target detection and tracking.
-/// ImageTracker occupies (1 + SimultaneousNum) buffers of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`_ .
+/// ImageTracker occupies (1 + SimultaneousNum) buffers of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`__ .
 /// After creation, you can call start/stop to enable/disable the track process. start and stop are very lightweight calls.
 /// When the component is not needed anymore, call close function to close it. It shall not be used after calling close.
-/// ImageTracker inputs `FeedbackFrame`_ from feedbackFrameSink. `FeedbackFrameSource`_ shall be connected to feedbackFrameSink for use. Refer to `Overview &lt;Overview.html&gt;`_ .
+/// ImageTracker inputs `FeedbackFrame`_ from feedbackFrameSink. `FeedbackFrameSource`_ shall be connected to feedbackFrameSink for use. Refer to `Overview &lt;Overview.html&gt;`__ .
 /// Before a `Target`_ can be tracked by ImageTracker, you have to load it using loadTarget/unloadTarget. You can get load/unload results from callbacks passed into the interfaces.
 /// </summary>
 class ImageTracker
@@ -1785,7 +2658,7 @@ public:
 
 /// <summary>
 /// Provides core components for SparseSpatialMap, can be used for sparse spatial map building as well as localization using existing map. Also provides utilities for point cloud and plane access.
-/// SparseSpatialMap occupies 2 buffers of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`_ .
+/// SparseSpatialMap occupies 2 buffers of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`__ .
 /// </summary>
 class SparseSpatialMap
 {
@@ -1894,7 +2767,7 @@ public:
     static std::shared_ptr<SparseSpatialMapManager> from_cdata(std::shared_ptr<easyar_SparseSpatialMapManager> cdata);
 
     /// <summary>
-    /// Check whether SparseSpatialMapManager is is available. It returns true when the operating system is Mac, iOS or Android.
+    /// Check whether SparseSpatialMapManager is is available. It returns true when the operating system is Windows, Mac, iOS or Android.
     /// </summary>
     static bool isAvailable();
     /// <summary>
@@ -1915,6 +2788,131 @@ public:
     void clear();
 };
 
+class Engine
+{
+public:
+    /// <summary>
+    /// Gets the version schema hash, which can be used to ensure type declarations consistent with runtime library.
+    /// </summary>
+    static int schemaHash();
+    static bool initialize(std::string key);
+    /// <summary>
+    /// Handles the app onPause, pauses internal tasks.
+    /// </summary>
+    static void onPause();
+    /// <summary>
+    /// Handles the app onResume, resumes internal tasks.
+    /// </summary>
+    static void onResume();
+    /// <summary>
+    /// Gets error message on initialization failure.
+    /// </summary>
+    static std::string errorMessage();
+    /// <summary>
+    /// Gets the version number of EasyARSense.
+    /// </summary>
+    static std::string versionString();
+    /// <summary>
+    /// Gets the product name of EasyARSense. (Including variant, operating system and CPU architecture.)
+    /// </summary>
+    static std::string name();
+};
+
+/// <summary>
+/// VideoPlayer is the class for video playback.
+/// EasyAR supports normal videos, transparent videos and streaming videos. The video content will be rendered into a texture passed into the player through setRenderTexture.
+/// This class only supports OpenGLES2 texture.
+/// Due to the dependency to OpenGLES, every method in this class (including the destructor) has to be called in a single thread containing an OpenGLES context.
+/// Current version requires width and height being mutiples of 16.
+///
+/// Supported video file formats
+/// Windows: Media Foundation-compatible formats, more can be supported via extra codecs. Please refer to `Supported Media Formats in Media Foundation &lt;https://docs.microsoft.com/en-us/windows/win32/medfound/supported-media-formats-in-media-foundation&gt;`__ . DirectShow is not supported.
+/// Mac: Not supported.
+/// Android: System supported formats. Please refer to `Supported media formats &lt;https://developer.android.com/guide/topics/media/media-formats&gt;`__ .
+/// iOS: System supported formats. There is no reference in effect currently.
+/// </summary>
+class VideoPlayer
+{
+protected:
+    std::shared_ptr<easyar_VideoPlayer> cdata_;
+    void init_cdata(std::shared_ptr<easyar_VideoPlayer> cdata);
+    VideoPlayer & operator=(const VideoPlayer & data) = delete;
+public:
+    VideoPlayer(std::shared_ptr<easyar_VideoPlayer> cdata);
+    virtual ~VideoPlayer();
+
+    std::shared_ptr<easyar_VideoPlayer> get_cdata();
+    static std::shared_ptr<VideoPlayer> from_cdata(std::shared_ptr<easyar_VideoPlayer> cdata);
+
+    VideoPlayer();
+    /// <summary>
+    /// Checks if the component is available. It returns true only on Windows, Android or iOS. It&#39;s not available on Mac.
+    /// </summary>
+    static bool isAvailable();
+    /// <summary>
+    /// Sets the video type. The type will default to normal video if not set manually. It should be called before open.
+    /// </summary>
+    void setVideoType(VideoType videoType);
+    /// <summary>
+    /// Passes the texture to display video into player. It should be set before open.
+    /// </summary>
+    void setRenderTexture(std::shared_ptr<TextureId> texture);
+    /// <summary>
+    /// Opens a video from path.
+    /// path can be a local video file (path/to/video.mp4) or url (http://www.../.../video.mp4). storageType indicates the type of path. See `StorageType`_ for more description.
+    /// This method is an asynchronous method. Open may take some time to finish. If you want to know the open result or the play status while playing, you have to handle callback. The callback will be called from a different thread. You can check if the open finished successfully and start play after a successful open.
+    /// </summary>
+    void open(std::string path, StorageType storageType, std::shared_ptr<CallbackScheduler> callbackScheduler, std::optional<std::function<void(VideoStatus)>> callback);
+    /// <summary>
+    /// Closes the video.
+    /// </summary>
+    void close();
+    /// <summary>
+    /// Starts or continues to play video.
+    /// </summary>
+    bool play();
+    /// <summary>
+    /// Stops the video playback.
+    /// </summary>
+    void stop();
+    /// <summary>
+    /// Pauses the video playback.
+    /// </summary>
+    void pause();
+    /// <summary>
+    /// Checks whether video texture is ready for render. Use this to check if texture passed into the player has been touched.
+    /// </summary>
+    bool isRenderTextureAvailable();
+    /// <summary>
+    /// Updates texture data. This should be called in the renderer thread when isRenderTextureAvailable returns true.
+    /// </summary>
+    void updateFrame();
+    /// <summary>
+    /// Returns the video duration. Use after a successful open.
+    /// </summary>
+    int duration();
+    /// <summary>
+    /// Returns the current position of video. Use after a successful open.
+    /// </summary>
+    int currentPosition();
+    /// <summary>
+    /// Seeks to play to position . Use after a successful open.
+    /// </summary>
+    bool seek(int position);
+    /// <summary>
+    /// Returns the video size. Use after a successful open.
+    /// </summary>
+    Vec2I size();
+    /// <summary>
+    /// Returns current volume. Use after a successful open.
+    /// </summary>
+    float volume();
+    /// <summary>
+    /// Sets volume of the video. Use after a successful open.
+    /// </summary>
+    bool setVolume(float volume);
+};
+
 /// <summary>
 /// Image helper class.
 /// </summary>
@@ -1925,343 +2923,6 @@ public:
     /// Decodes a JPEG or PNG file.
     /// </summary>
     static std::optional<std::shared_ptr<Image>> decode(std::shared_ptr<Buffer> buffer);
-};
-
-/// <summary>
-/// ARCoreCameraDevice implements a camera device based on ARCore, which outputs `InputFrame`_  (including image, camera parameters, timestamp, 6DOF location, and tracking status).
-/// Loading of libarcore_sdk_c.so with java.lang.System.loadLibrary is required.
-/// After creation, start/stop can be invoked to start or stop video stream capture.
-/// When the component is not needed anymore, call close function to close it. It shall not be used after calling close.
-/// ARCoreCameraDevice outputs `InputFrame`_ from inputFrameSource. inputFrameSource shall be connected to `InputFrameSink`_ for use. Refer to `Overview &lt;Overview.html&gt;`_ .
-/// bufferCapacity is the capacity of `InputFrame`_ buffer. If the count of `InputFrame`_ which has been output from the device and have not been released is more than this number, the device will not output new `InputFrame`_ , until previous `InputFrame`_ have been released. This may cause screen stuck. Refer to `Overview &lt;Overview.html&gt;`_ .
-/// Caution: Currently, ARCore(v1.13.0) has memory leaks on creating and destroying sessions. Repeated creations and destructions will cause an increasing and non-reclaimable memory footprint.
-/// </summary>
-class ARCoreCameraDevice
-{
-protected:
-    std::shared_ptr<easyar_ARCoreCameraDevice> cdata_;
-    void init_cdata(std::shared_ptr<easyar_ARCoreCameraDevice> cdata);
-    ARCoreCameraDevice & operator=(const ARCoreCameraDevice & data) = delete;
-public:
-    ARCoreCameraDevice(std::shared_ptr<easyar_ARCoreCameraDevice> cdata);
-    virtual ~ARCoreCameraDevice();
-
-    std::shared_ptr<easyar_ARCoreCameraDevice> get_cdata();
-    static std::shared_ptr<ARCoreCameraDevice> from_cdata(std::shared_ptr<easyar_ARCoreCameraDevice> cdata);
-
-    ARCoreCameraDevice();
-    /// <summary>
-    /// Checks if the component is available. It returns true only on Android when ARCore is installed.
-    /// If called with libarcore_sdk_c.so not loaded, it returns false.
-    /// Notice: If ARCore is not supported on the device but ARCore apk is installed via side-loading, it will return true, but ARCore will not function properly.
-    /// </summary>
-    static bool isAvailable();
-    /// <summary>
-    /// `InputFrame`_ buffer capacity. The default is 8.
-    /// </summary>
-    int bufferCapacity();
-    /// <summary>
-    /// Sets `InputFrame`_ buffer capacity.
-    /// </summary>
-    void setBufferCapacity(int capacity);
-    /// <summary>
-    /// `InputFrame`_ output port.
-    /// </summary>
-    std::shared_ptr<InputFrameSource> inputFrameSource();
-    /// <summary>
-    /// Starts video stream capture.
-    /// </summary>
-    bool start();
-    /// <summary>
-    /// Stops video stream capture.
-    /// </summary>
-    void stop();
-    /// <summary>
-    /// Close. The component shall not be used after calling close.
-    /// </summary>
-    void close();
-};
-
-/// <summary>
-/// ARKitCameraDevice implements a camera device based on ARKit, which outputs `InputFrame`_ (including image, camera parameters, timestamp, 6DOF location, and tracking status).
-/// After creation, start/stop can be invoked to start or stop data collection.
-/// When the component is not needed anymore, call close function to close it. It shall not be used after calling close.
-/// ARKitCameraDevice outputs `InputFrame`_ from inputFrameSource. inputFrameSource shall be connected to `InputFrameSink`_ for use. Refer to `Overview &lt;Overview.html&gt;`_ .
-/// bufferCapacity is the capacity of `InputFrame`_ buffer. If the count of `InputFrame`_ which has been output from the device and have not been released is more than this number, the device will not output new `InputFrame`_ , until previous `InputFrame`_ have been released. This may cause screen stuck. Refer to `Overview &lt;Overview.html&gt;`_ .
-/// </summary>
-class ARKitCameraDevice
-{
-protected:
-    std::shared_ptr<easyar_ARKitCameraDevice> cdata_;
-    void init_cdata(std::shared_ptr<easyar_ARKitCameraDevice> cdata);
-    ARKitCameraDevice & operator=(const ARKitCameraDevice & data) = delete;
-public:
-    ARKitCameraDevice(std::shared_ptr<easyar_ARKitCameraDevice> cdata);
-    virtual ~ARKitCameraDevice();
-
-    std::shared_ptr<easyar_ARKitCameraDevice> get_cdata();
-    static std::shared_ptr<ARKitCameraDevice> from_cdata(std::shared_ptr<easyar_ARKitCameraDevice> cdata);
-
-    ARKitCameraDevice();
-    /// <summary>
-    /// Checks if the component is available. It returns true only on iOS 11 or later when ARKit is supported by hardware.
-    /// </summary>
-    static bool isAvailable();
-    /// <summary>
-    /// `InputFrame`_ buffer capacity. The default is 8.
-    /// </summary>
-    int bufferCapacity();
-    /// <summary>
-    /// Sets `InputFrame`_ buffer capacity.
-    /// </summary>
-    void setBufferCapacity(int capacity);
-    /// <summary>
-    /// `InputFrame`_ output port.
-    /// </summary>
-    std::shared_ptr<InputFrameSource> inputFrameSource();
-    /// <summary>
-    /// Starts video stream capture.
-    /// </summary>
-    bool start();
-    /// <summary>
-    /// Stops video stream capture.
-    /// </summary>
-    void stop();
-    /// <summary>
-    /// Close. The component shall not be used after calling close.
-    /// </summary>
-    void close();
-};
-
-/// <summary>
-/// Callback scheduler.
-/// There are two subclasses: `DelayedCallbackScheduler`_ and `ImmediateCallbackScheduler`_ .
-/// `DelayedCallbackScheduler`_ is used to delay callback to be invoked manually, and it can be used in single-threaded environments (such as various UI environments).
-/// `ImmediateCallbackScheduler`_ is used to mark callback to be invoked when event is dispatched, and it can be used in multi-threaded environments (such as server or service daemon).
-/// </summary>
-class CallbackScheduler
-{
-protected:
-    std::shared_ptr<easyar_CallbackScheduler> cdata_;
-    void init_cdata(std::shared_ptr<easyar_CallbackScheduler> cdata);
-    CallbackScheduler & operator=(const CallbackScheduler & data) = delete;
-public:
-    CallbackScheduler(std::shared_ptr<easyar_CallbackScheduler> cdata);
-    virtual ~CallbackScheduler();
-
-    std::shared_ptr<easyar_CallbackScheduler> get_cdata();
-    static std::shared_ptr<CallbackScheduler> from_cdata(std::shared_ptr<easyar_CallbackScheduler> cdata);
-
-};
-
-/// <summary>
-/// Delayed callback scheduler.
-/// It is used to delay callback to be invoked manually, and it can be used in single-threaded environments (such as various UI environments).
-/// All members of this class is thread-safe.
-/// </summary>
-class DelayedCallbackScheduler : public CallbackScheduler
-{
-protected:
-    std::shared_ptr<easyar_DelayedCallbackScheduler> cdata_;
-    void init_cdata(std::shared_ptr<easyar_DelayedCallbackScheduler> cdata);
-    DelayedCallbackScheduler & operator=(const DelayedCallbackScheduler & data) = delete;
-public:
-    DelayedCallbackScheduler(std::shared_ptr<easyar_DelayedCallbackScheduler> cdata);
-    virtual ~DelayedCallbackScheduler();
-
-    std::shared_ptr<easyar_DelayedCallbackScheduler> get_cdata();
-    static std::shared_ptr<DelayedCallbackScheduler> from_cdata(std::shared_ptr<easyar_DelayedCallbackScheduler> cdata);
-
-    DelayedCallbackScheduler();
-    /// <summary>
-    /// Executes a callback. If there is no callback to execute, false is returned.
-    /// </summary>
-    bool runOne();
-};
-
-/// <summary>
-/// Immediate callback scheduler.
-/// It is used to mark callback to be invoked when event is dispatched, and it can be used in multi-threaded environments (such as server or service daemon).
-/// All members of this class is thread-safe.
-/// </summary>
-class ImmediateCallbackScheduler : public CallbackScheduler
-{
-protected:
-    std::shared_ptr<easyar_ImmediateCallbackScheduler> cdata_;
-    void init_cdata(std::shared_ptr<easyar_ImmediateCallbackScheduler> cdata);
-    ImmediateCallbackScheduler & operator=(const ImmediateCallbackScheduler & data) = delete;
-public:
-    ImmediateCallbackScheduler(std::shared_ptr<easyar_ImmediateCallbackScheduler> cdata);
-    virtual ~ImmediateCallbackScheduler();
-
-    std::shared_ptr<easyar_ImmediateCallbackScheduler> get_cdata();
-    static std::shared_ptr<ImmediateCallbackScheduler> from_cdata(std::shared_ptr<easyar_ImmediateCallbackScheduler> cdata);
-
-    /// <summary>
-    /// Gets a default immediate callback scheduler.
-    /// </summary>
-    static std::shared_ptr<ImmediateCallbackScheduler> getDefault();
-};
-
-/// <summary>
-/// CameraDevice implements a camera device, which outputs `InputFrame`_ (including image, camera paramters, and timestamp). It is available on Windows, Mac, Android and iOS.
-/// After open, start/stop can be invoked to start or stop data collection. start/stop will not change previous set camera parameters.
-/// When the component is not needed anymore, call close function to close it. It shall not be used after calling close.
-/// CameraDevice outputs `InputFrame`_ from inputFrameSource. inputFrameSource shall be connected to `InputFrameSink`_ for use. Refer to `Overview &lt;Overview.html&gt;`_ .
-/// bufferCapacity is the capacity of `InputFrame`_ buffer. If the count of `InputFrame`_ which has been output from the device and have not been released is more than this number, the device will not output new `InputFrame`_ , until previous `InputFrame`_ have been released. This may cause screen stuck. Refer to `Overview &lt;Overview.html&gt;`_ .
-/// </summary>
-class CameraDevice
-{
-protected:
-    std::shared_ptr<easyar_CameraDevice> cdata_;
-    void init_cdata(std::shared_ptr<easyar_CameraDevice> cdata);
-    CameraDevice & operator=(const CameraDevice & data) = delete;
-public:
-    CameraDevice(std::shared_ptr<easyar_CameraDevice> cdata);
-    virtual ~CameraDevice();
-
-    std::shared_ptr<easyar_CameraDevice> get_cdata();
-    static std::shared_ptr<CameraDevice> from_cdata(std::shared_ptr<easyar_CameraDevice> cdata);
-
-    CameraDevice();
-    /// <summary>
-    /// Checks if the component is available. It returns true only on Windows, Mac, Android or iOS.
-    /// </summary>
-    static bool isAvailable();
-    /// <summary>
-    /// Gets current camera API (camera1 or camera2) on Android. camera1 is better for compatibility, but lacks some necessary information such as timestamp. camera2 has compatibility issues on some devices.
-    /// </summary>
-    AndroidCameraApiType androidCameraApiType();
-    /// <summary>
-    /// Sets current camera API (camera1 or camera2) on Android. It must be called before calling openWithIndex, openWithSpecificType or openWithPreferredType, or it will not take effect.
-    /// It is recommended to use `CameraDeviceSelector`_ to create camera with camera API set to recommended based on primary algorithm to run.
-    /// </summary>
-    void setAndroidCameraApiType(AndroidCameraApiType type);
-    /// <summary>
-    /// `InputFrame`_ buffer capacity. The default is 8.
-    /// </summary>
-    int bufferCapacity();
-    /// <summary>
-    /// Sets `InputFrame`_ buffer capacity.
-    /// </summary>
-    void setBufferCapacity(int capacity);
-    /// <summary>
-    /// `InputFrame`_ output port.
-    /// </summary>
-    std::shared_ptr<InputFrameSource> inputFrameSource();
-    /// <summary>
-    /// Sets callback on state change to notify state of camera disconnection or preemption. It is only available on Windows.
-    /// </summary>
-    void setStateChangedCallback(std::shared_ptr<CallbackScheduler> callbackScheduler, std::optional<std::function<void(CameraState)>> stateChangedCallback);
-    /// <summary>
-    /// Requests camera permission from operating system. You can call this function or request permission directly from operating system. It is only available on Android and iOS. On other platforms, it will call the callback directly with status being granted. This function need to be called from the UI thread.
-    /// </summary>
-    static void requestPermissions(std::shared_ptr<CallbackScheduler> callbackScheduler, std::optional<std::function<void(PermissionStatus, std::string)>> permissionCallback);
-    /// <summary>
-    /// Gets count of cameras recognized by the operating system.
-    /// </summary>
-    static int cameraCount();
-    /// <summary>
-    /// Opens a camera by index.
-    /// </summary>
-    bool openWithIndex(int cameraIndex);
-    /// <summary>
-    /// Opens a camera by specific camera device type. If no camera is matched, false will be returned. On Mac, camera device types can not be distinguished.
-    /// </summary>
-    bool openWithSpecificType(CameraDeviceType type);
-    /// <summary>
-    /// Opens a camera by camera device type. If no camera is matched, the first camera will be used.
-    /// </summary>
-    bool openWithPreferredType(CameraDeviceType type);
-    /// <summary>
-    /// Starts video stream capture.
-    /// </summary>
-    bool start();
-    /// <summary>
-    /// Stops video stream capture. It will only stop capture and will not change previous set camera parameters.
-    /// </summary>
-    void stop();
-    /// <summary>
-    /// Close. The component shall not be used after calling close.
-    /// </summary>
-    void close();
-    /// <summary>
-    /// Camera index.
-    /// </summary>
-    int index();
-    /// <summary>
-    /// Camera type.
-    /// </summary>
-    CameraDeviceType type();
-    /// <summary>
-    /// Camera parameters, including image size, focal length, principal point, camera type and camera rotation against natural orientation. Call after a successful open.
-    /// </summary>
-    std::shared_ptr<CameraParameters> cameraParameters();
-    /// <summary>
-    /// Sets camera parameters. Call after a successful open.
-    /// </summary>
-    void setCameraParameters(std::shared_ptr<CameraParameters> cameraParameters);
-    /// <summary>
-    /// Gets the current preview size. Call after a successful open.
-    /// </summary>
-    Vec2I size();
-    /// <summary>
-    /// Gets the number of supported preview sizes. Call after a successful open.
-    /// </summary>
-    int supportedSizeCount();
-    /// <summary>
-    /// Gets the index-th supported preview size. It returns {0, 0} if index is out of range. Call after a successful open.
-    /// </summary>
-    Vec2I supportedSize(int index);
-    /// <summary>
-    /// Sets the preview size. The available nearest value will be selected. Call size to get the actual size. Call after a successful open. frameRateRange may change after calling setSize.
-    /// </summary>
-    bool setSize(Vec2I size);
-    /// <summary>
-    /// Gets the number of supported frame rate ranges. Call after a successful open.
-    /// </summary>
-    int supportedFrameRateRangeCount();
-    /// <summary>
-    /// Gets range lower bound of the index-th supported frame rate range. Call after a successful open.
-    /// </summary>
-    float supportedFrameRateRangeLower(int index);
-    /// <summary>
-    /// Gets range upper bound of the index-th supported frame rate range. Call after a successful open.
-    /// </summary>
-    float supportedFrameRateRangeUpper(int index);
-    /// <summary>
-    /// Gets current index of frame rate range. Call after a successful open.
-    /// </summary>
-    int frameRateRange();
-    /// <summary>
-    /// Sets current index of frame rate range. Call after a successful open.
-    /// </summary>
-    bool setFrameRateRange(int index);
-    /// <summary>
-    /// Sets flash torch mode to on. Call after a successful open.
-    /// </summary>
-    bool setFlashTorchMode(bool on);
-    /// <summary>
-    /// Sets focus mode to focusMode. Call after a successful open.
-    /// </summary>
-    bool setFocusMode(CameraDeviceFocusMode focusMode);
-    /// <summary>
-    /// Does auto focus once. Call after start. It is only available when FocusMode is Normal or Macro.
-    /// </summary>
-    bool autoFocus();
-};
-
-/// <summary>
-/// It is used for selecting camera API (camera1 or camera2) on Android. camera1 is better for compatibility, but lacks some necessary information such as timestamp. camera2 has compatibility issues on some devices.
-/// Different preferences will choose camera1 or camera2 based on usage.
-/// </summary>
-class CameraDeviceSelector
-{
-public:
-    /// <summary>
-    /// Creates `CameraDevice`_ with a specified preference.
-    /// </summary>
-    static std::shared_ptr<CameraDevice> createCameraDevice(CameraDevicePreference preference);
 };
 
 /// <summary>
@@ -2640,7 +3301,7 @@ public:
 /// <summary>
 /// Input frame throttler.
 /// There is a input frame input port and a input frame output port. It can be used to prevent incoming frames from entering algorithm components when they have not finished handling previous workload.
-/// InputFrameThrottler occupies one buffer of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`_ .
+/// InputFrameThrottler occupies one buffer of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`__ .
 /// All members of this class is thread-safe.
 /// It shall be noticed that connections and disconnections to signalInput shall not be performed during the flowing of data, or it may stuck in a state that no frame can be output. (It is recommended to complete dataflow connection before start a camera.)
 /// </summary>
@@ -2682,7 +3343,7 @@ public:
 /// <summary>
 /// Output frame buffer.
 /// There is an output frame input port and output frame fetching function. It can be used to convert output frame fetching from asynchronous pattern to synchronous polling pattern, which fits frame by frame rendering.
-/// OutputFrameBuffer occupies one buffer of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`_ .
+/// OutputFrameBuffer occupies one buffer of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`__ .
 /// All members of this class is thread-safe.
 /// </summary>
 class OutputFrameBuffer
@@ -2730,7 +3391,7 @@ public:
 
 /// <summary>
 /// Input frame to output frame adapter.
-/// There is an input frame input port and an output frame output port. It can be used to wrap an input frame into an output frame, which can be used for rendering without an algorithm component. Refer to `Overview &lt;Overview.html&gt;`_ .
+/// There is an input frame input port and an output frame output port. It can be used to wrap an input frame into an output frame, which can be used for rendering without an algorithm component. Refer to `Overview &lt;Overview.html&gt;`__ .
 /// All members of this class is thread-safe.
 /// </summary>
 class InputFrameToOutputFrameAdapter
@@ -2764,7 +3425,7 @@ public:
 /// Input frame to feedback frame adapter.
 /// There is an input frame input port, a historic output frame input port and a feedback frame output port. It can be used to combine an input frame and a historic output frame into a feedback frame, which is required by algorithm components such as `ImageTracker`_ .
 /// On every input of an input frame, a feedback frame is generated with a previously input historic feedback frame. If there is no previously input historic feedback frame, it is null in the feedback frame.
-/// InputFrameToFeedbackFrameAdapter occupies one buffer of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`_ .
+/// InputFrameToFeedbackFrameAdapter occupies one buffer of camera. Use setBufferCapacity of camera to set an amount of buffers that is not less than the sum of amount of buffers occupied by all components. Refer to `Overview &lt;Overview.html&gt;`__ .
 /// All members of this class is thread-safe.
 /// </summary>
 class InputFrameToFeedbackFrameAdapter
@@ -2800,36 +3461,6 @@ public:
     /// Creates an instance.
     /// </summary>
     static std::shared_ptr<InputFrameToFeedbackFrameAdapter> create();
-};
-
-class Engine
-{
-public:
-    /// <summary>
-    /// Gets the version schema hash, which can be used to ensure type declarations consistent with runtime library.
-    /// </summary>
-    static int schemaHash();
-    static bool initialize(std::string key);
-    /// <summary>
-    /// Handles the app onPause, pauses internal tasks.
-    /// </summary>
-    static void onPause();
-    /// <summary>
-    /// Handles the app onResume, resumes internal tasks.
-    /// </summary>
-    static void onResume();
-    /// <summary>
-    /// Gets error message on initialization failure.
-    /// </summary>
-    static std::string errorMessage();
-    /// <summary>
-    /// Gets the version number of EasyARSense.
-    /// </summary>
-    static std::string versionString();
-    /// <summary>
-    /// Gets the product name of EasyARSense. (Including variant, operating system and CPU architecture.)
-    /// </summary>
-    static std::string name();
 };
 
 /// <summary>
@@ -2871,7 +3502,7 @@ public:
     /// </summary>
     bool hasTemporalInformation();
     /// <summary>
-    /// Timestamp.
+    /// Timestamp. In seconds.
     /// </summary>
     double timestamp();
     /// <summary>
@@ -3031,515 +3662,6 @@ public:
     static std::shared_ptr<TextureId> fromPointer(void * ptr);
 };
 
-/// <summary>
-/// VideoPlayer is the class for video playback.
-/// EasyAR supports normal videos, transparent videos and streaming videos. The video content will be rendered into a texture passed into the player through setRenderTexture.
-/// This class only supports OpenGLES2 texture.
-/// Due to the dependency to OpenGLES, every method in this class (including the destructor) has to be called in a single thread containing an OpenGLES context.
-/// Current version requires width and height being mutiples of 16.
-///
-/// Supported video file formats
-/// Windows: Media Foundation-compatible formats, more can be supported via extra codecs. Please refer to `Supported Media Formats in Media Foundation &lt;https://docs.microsoft.com/en-us/windows/win32/medfound/supported-media-formats-in-media-foundation&gt;`__ . DirectShow is not supported.
-/// Mac: Not supported.
-/// Android: System supported formats. Please refer to `Supported media formats &lt;https://developer.android.com/guide/topics/media/media-formats&gt;`__ .
-/// iOS: System supported formats. There is no reference in effect currently.
-/// </summary>
-class VideoPlayer
-{
-protected:
-    std::shared_ptr<easyar_VideoPlayer> cdata_;
-    void init_cdata(std::shared_ptr<easyar_VideoPlayer> cdata);
-    VideoPlayer & operator=(const VideoPlayer & data) = delete;
-public:
-    VideoPlayer(std::shared_ptr<easyar_VideoPlayer> cdata);
-    virtual ~VideoPlayer();
-
-    std::shared_ptr<easyar_VideoPlayer> get_cdata();
-    static std::shared_ptr<VideoPlayer> from_cdata(std::shared_ptr<easyar_VideoPlayer> cdata);
-
-    VideoPlayer();
-    /// <summary>
-    /// Checks if the component is available. It returns true only on Windows, Android or iOS. It&#39;s not available on Mac.
-    /// </summary>
-    static bool isAvailable();
-    /// <summary>
-    /// Sets the video type. The type will default to normal video if not set manually. It should be called before open.
-    /// </summary>
-    void setVideoType(VideoType videoType);
-    /// <summary>
-    /// Passes the texture to display video into player. It should be set before open.
-    /// </summary>
-    void setRenderTexture(std::shared_ptr<TextureId> texture);
-    /// <summary>
-    /// Opens a video from path.
-    /// path can be a local video file (path/to/video.mp4) or url (http://www.../.../video.mp4). storageType indicates the type of path. See `StorageType`_ for more description.
-    /// This method is an asynchronous method. Open may take some time to finish. If you want to know the open result or the play status while playing, you have to handle callback. The callback will be called from a different thread. You can check if the open finished successfully and start play after a successful open.
-    /// </summary>
-    void open(std::string path, StorageType storageType, std::shared_ptr<CallbackScheduler> callbackScheduler, std::optional<std::function<void(VideoStatus)>> callback);
-    /// <summary>
-    /// Closes the video.
-    /// </summary>
-    void close();
-    /// <summary>
-    /// Starts or continues to play video.
-    /// </summary>
-    bool play();
-    /// <summary>
-    /// Stops the video playback.
-    /// </summary>
-    void stop();
-    /// <summary>
-    /// Pauses the video playback.
-    /// </summary>
-    void pause();
-    /// <summary>
-    /// Checks whether video texture is ready for render. Use this to check if texture passed into the player has been touched.
-    /// </summary>
-    bool isRenderTextureAvailable();
-    /// <summary>
-    /// Updates texture data. This should be called in the renderer thread when isRenderTextureAvailable returns true.
-    /// </summary>
-    void updateFrame();
-    /// <summary>
-    /// Returns the video duration. Use after a successful open.
-    /// </summary>
-    int duration();
-    /// <summary>
-    /// Returns the current position of video. Use after a successful open.
-    /// </summary>
-    int currentPosition();
-    /// <summary>
-    /// Seeks to play to position . Use after a successful open.
-    /// </summary>
-    bool seek(int position);
-    /// <summary>
-    /// Returns the video size. Use after a successful open.
-    /// </summary>
-    Vec2I size();
-    /// <summary>
-    /// Returns current volume. Use after a successful open.
-    /// </summary>
-    float volume();
-    /// <summary>
-    /// Sets volume of the video. Use after a successful open.
-    /// </summary>
-    bool setVolume(float volume);
-};
-
-/// <summary>
-/// Buffer stores a raw byte array, which can be used to access image data.
-/// To access image data in Java API, get buffer from `Image`_ and copy to a Java byte array.
-/// You can always access image data since the first version of EasyAR Sense. Refer to `Image`_ .
-/// </summary>
-class Buffer
-{
-protected:
-    std::shared_ptr<easyar_Buffer> cdata_;
-    void init_cdata(std::shared_ptr<easyar_Buffer> cdata);
-    Buffer & operator=(const Buffer & data) = delete;
-public:
-    Buffer(std::shared_ptr<easyar_Buffer> cdata);
-    virtual ~Buffer();
-
-    std::shared_ptr<easyar_Buffer> get_cdata();
-    static std::shared_ptr<Buffer> from_cdata(std::shared_ptr<easyar_Buffer> cdata);
-
-    /// <summary>
-    /// Wraps a raw memory block. When Buffer is released by all holders, deleter callback will be invoked to execute user-defined memory destruction. deleter must be thread-safe.
-    /// </summary>
-    static std::shared_ptr<Buffer> wrap(void * ptr, int size, std::function<void()> deleter);
-    /// <summary>
-    /// Creates a Buffer of specified byte size.
-    /// </summary>
-    static std::shared_ptr<Buffer> create(int size);
-    /// <summary>
-    /// Returns raw data address.
-    /// </summary>
-    void * data();
-    /// <summary>
-    /// Byte size of raw data.
-    /// </summary>
-    int size();
-    /// <summary>
-    /// Copies raw memory. It can be used in languages or platforms without complete support for memory operations.
-    /// </summary>
-    static void memoryCopy(void * src, void * dest, int length);
-    /// <summary>
-    /// Tries to copy data from a raw memory address into Buffer. If copy succeeds, it returns true, or else it returns false. Possible failure causes includes: source or destination data range overflow.
-    /// </summary>
-    bool tryCopyFrom(void * src, int srcIndex, int index, int length);
-    /// <summary>
-    /// Copies buffer data to user array.
-    /// </summary>
-    bool tryCopyTo(int index, void * dest, int destIndex, int length);
-    /// <summary>
-    /// Creates a sub-buffer with a reference to the original Buffer. A Buffer will only be released after all its sub-buffers are released.
-    /// </summary>
-    std::shared_ptr<Buffer> partition(int index, int length);
-};
-
-/// <summary>
-/// A mapping from file path to `Buffer`_ . It can be used to represent multiple files in the memory.
-/// </summary>
-class BufferDictionary
-{
-protected:
-    std::shared_ptr<easyar_BufferDictionary> cdata_;
-    void init_cdata(std::shared_ptr<easyar_BufferDictionary> cdata);
-    BufferDictionary & operator=(const BufferDictionary & data) = delete;
-public:
-    BufferDictionary(std::shared_ptr<easyar_BufferDictionary> cdata);
-    virtual ~BufferDictionary();
-
-    std::shared_ptr<easyar_BufferDictionary> get_cdata();
-    static std::shared_ptr<BufferDictionary> from_cdata(std::shared_ptr<easyar_BufferDictionary> cdata);
-
-    BufferDictionary();
-    /// <summary>
-    /// Current file count.
-    /// </summary>
-    int count();
-    /// <summary>
-    /// Checks if a specified path is in the dictionary.
-    /// </summary>
-    bool contains(std::string path);
-    /// <summary>
-    /// Tries to get the corresponding `Buffer`_ for a specified path.
-    /// </summary>
-    std::optional<std::shared_ptr<Buffer>> tryGet(std::string path);
-    /// <summary>
-    /// Sets `Buffer`_ for a specified path.
-    /// </summary>
-    void set(std::string path, std::shared_ptr<Buffer> buffer);
-    /// <summary>
-    /// Removes a specified path.
-    /// </summary>
-    bool remove(std::string path);
-    /// <summary>
-    /// Clears the dictionary.
-    /// </summary>
-    void clear();
-};
-
-/// <summary>
-/// BufferPool is a memory pool to reduce memory allocation time consumption for functionality like custom camera interoperability, which needs to allocate memory buffers of a fixed size repeatedly.
-/// </summary>
-class BufferPool
-{
-protected:
-    std::shared_ptr<easyar_BufferPool> cdata_;
-    void init_cdata(std::shared_ptr<easyar_BufferPool> cdata);
-    BufferPool & operator=(const BufferPool & data) = delete;
-public:
-    BufferPool(std::shared_ptr<easyar_BufferPool> cdata);
-    virtual ~BufferPool();
-
-    std::shared_ptr<easyar_BufferPool> get_cdata();
-    static std::shared_ptr<BufferPool> from_cdata(std::shared_ptr<easyar_BufferPool> cdata);
-
-    /// <summary>
-    /// block_size is the byte size of each `Buffer`_ .
-    /// capacity is the maximum count of `Buffer`_ .
-    /// </summary>
-    BufferPool(int block_size, int capacity);
-    /// <summary>
-    /// The byte size of each `Buffer`_ .
-    /// </summary>
-    int block_size();
-    /// <summary>
-    /// The maximum count of `Buffer`_ .
-    /// </summary>
-    int capacity();
-    /// <summary>
-    /// Current acquired count of `Buffer`_ .
-    /// </summary>
-    int size();
-    /// <summary>
-    /// Tries to acquire a memory block. If current acquired count of `Buffer`_ does not reach maximum, a new `Buffer`_ is fetched or allocated, or else null is returned.
-    /// </summary>
-    std::optional<std::shared_ptr<Buffer>> tryAcquire();
-};
-
-/// <summary>
-/// Camera parameters, including image size, focal length, principal point, camera type and camera rotation against natural orientation.
-/// </summary>
-class CameraParameters
-{
-protected:
-    std::shared_ptr<easyar_CameraParameters> cdata_;
-    void init_cdata(std::shared_ptr<easyar_CameraParameters> cdata);
-    CameraParameters & operator=(const CameraParameters & data) = delete;
-public:
-    CameraParameters(std::shared_ptr<easyar_CameraParameters> cdata);
-    virtual ~CameraParameters();
-
-    std::shared_ptr<easyar_CameraParameters> get_cdata();
-    static std::shared_ptr<CameraParameters> from_cdata(std::shared_ptr<easyar_CameraParameters> cdata);
-
-    CameraParameters(Vec2I size, Vec2F focalLength, Vec2F principalPoint, CameraDeviceType cameraDeviceType, int cameraOrientation);
-    /// <summary>
-    /// Image size.
-    /// </summary>
-    Vec2I size();
-    /// <summary>
-    /// Focal length, the distance from effective optical center to CCD plane, divided by unit pixel density in width and height directions. The unit is pixel.
-    /// </summary>
-    Vec2F focalLength();
-    /// <summary>
-    /// Principal point, coordinates of the intersection point of principal axis on CCD plane against the left-top corner of the image. The unit is pixel.
-    /// </summary>
-    Vec2F principalPoint();
-    /// <summary>
-    /// Camera device type. Default, back or front camera. On desktop devices, there are only default cameras. On mobile devices, there is a differentiation between back and front cameras.
-    /// </summary>
-    CameraDeviceType cameraDeviceType();
-    /// <summary>
-    /// Camera rotation against device natural orientation.
-    /// For Android phones and some Android tablets, this value is 90 degrees.
-    /// For Android eye-wear and some Android tablets, this value is 0 degrees.
-    /// For all current iOS devices, this value is 90 degrees.
-    /// </summary>
-    int cameraOrientation();
-    /// <summary>
-    /// Creates CameraParameters with default camera intrinsics. Default intrinsics are calculated by image size, which is not very precise.
-    /// </summary>
-    static std::shared_ptr<CameraParameters> createWithDefaultIntrinsics(Vec2I size, CameraDeviceType cameraDeviceType, int cameraOrientation);
-    /// <summary>
-    /// Calculates the angle required to rotate the camera image clockwise to align it with the screen.
-    /// screenRotation is the angle of rotation of displaying screen image against device natural orientation in clockwise in degrees.
-    /// For iOS(UIInterfaceOrientationPortrait as natural orientation):
-    /// * UIInterfaceOrientationPortrait: rotation = 0
-    /// * UIInterfaceOrientationLandscapeRight: rotation = 90
-    /// * UIInterfaceOrientationPortraitUpsideDown: rotation = 180
-    /// * UIInterfaceOrientationLandscapeLeft: rotation = 270
-    /// For Android:
-    /// * Surface.ROTATION_0 = 0
-    /// * Surface.ROTATION_90 = 90
-    /// * Surface.ROTATION_180 = 180
-    /// * Surface.ROTATION_270 = 270
-    /// </summary>
-    int imageOrientation(int screenRotation);
-    /// <summary>
-    /// Calculates whether the image needed to be flipped horizontally. The image is rotated, then flipped in rendering. When cameraDeviceType is front, a flip is automatically applied. Pass manualHorizontalFlip with true to add a manual flip.
-    /// </summary>
-    bool imageHorizontalFlip(bool manualHorizontalFlip);
-    /// <summary>
-    /// Calculates the perspective projection matrix needed by virtual object rendering. The projection transforms points from camera coordinate system to clip coordinate system ([-1, 1]^4). The form of perspective projection matrix is the same as OpenGL, that matrix multiply column vector of homogeneous coordinates of point on the right, ant not like Direct3D, that matrix multiply row vector of homogeneous coordinates of point on the left. But data arrangement is row-major, not like OpenGL&#39;s column-major. Clip coordinate system and normalized device coordinate system are defined as the same as OpenGL&#39;s default.
-    /// </summary>
-    Matrix44F projection(float nearPlane, float farPlane, float viewportAspectRatio, int screenRotation, bool combiningFlip, bool manualHorizontalFlip);
-    /// <summary>
-    /// Calculates the orthogonal projection matrix needed by camera background rendering. The projection transforms points from image quad coordinate system ([-1, 1]^2) to clip coordinate system ([-1, 1]^4), with the undefined two dimensions unchanged. The form of orthogonal projection matrix is the same as OpenGL, that matrix multiply column vector of homogeneous coordinates of point on the right, ant not like Direct3D, that matrix multiply row vector of homogeneous coordinates of point on the left. But data arrangement is row-major, not like OpenGL&#39;s column-major. Clip coordinate system and normalized device coordinate system are defined as the same as OpenGL&#39;s default.
-    /// </summary>
-    Matrix44F imageProjection(float viewportAspectRatio, int screenRotation, bool combiningFlip, bool manualHorizontalFlip);
-    /// <summary>
-    /// Transforms points from image coordinate system ([0, 1]^2) to screen coordinate system ([0, 1]^2). Both coordinate system is x-left, y-down, with origin at left-top.
-    /// </summary>
-    Vec2F screenCoordinatesFromImageCoordinates(float viewportAspectRatio, int screenRotation, bool combiningFlip, bool manualHorizontalFlip, Vec2F imageCoordinates);
-    /// <summary>
-    /// Transforms points from screen coordinate system ([0, 1]^2) to image coordinate system ([0, 1]^2). Both coordinate system is x-left, y-down, with origin at left-top.
-    /// </summary>
-    Vec2F imageCoordinatesFromScreenCoordinates(float viewportAspectRatio, int screenRotation, bool combiningFlip, bool manualHorizontalFlip, Vec2F screenCoordinates);
-    /// <summary>
-    /// Checks if two groups of parameters are equal.
-    /// </summary>
-    bool equalsTo(std::shared_ptr<CameraParameters> other);
-};
-
-/// <summary>
-/// Image stores an image data and represents an image in memory.
-/// Image raw data can be accessed as byte array. The width/height/etc information are also accessible.
-/// You can always access image data since the first version of EasyAR Sense.
-///
-/// You can do this in iOS
-/// ::
-///
-///     #import &lt;easyar/buffer.oc.h&gt;
-///     #import &lt;easyar/image.oc.h&gt;
-///
-///     easyar_OutputFrame * outputFrame = [outputFrameBuffer peek];
-///     if (outputFrame != nil) {
-///         easyar_Image * i = [[outputFrame inputFrame] image];
-///         easyar_Buffer * b = [i buffer];
-///         char * bytes = calloc([b size], 1);
-///         memcpy(bytes, [b data], [b size]);
-///         // use bytes here
-///         free(bytes);
-///     }
-///
-/// Or in Android
-/// ::
-///
-///     import cn.easyar.*;
-///
-///     OutputFrame outputFrame = outputFrameBuffer.peek();
-///     if (outputFrame != null) {
-///         InputFrame inputFrame = outputFrame.inputFrame();
-///         Image i = inputFrame.image();
-///         Buffer b = i.buffer();
-///         byte[] bytes = new byte[b.size()];
-///         b.copyToByteArray(0, bytes, 0, bytes.length);
-///         // use bytes here
-///         b.dispose();
-///         i.dispose();
-///         inputFrame.dispose();
-///         outputFrame.dispose();
-///     }
-/// </summary>
-class Image
-{
-protected:
-    std::shared_ptr<easyar_Image> cdata_;
-    void init_cdata(std::shared_ptr<easyar_Image> cdata);
-    Image & operator=(const Image & data) = delete;
-public:
-    Image(std::shared_ptr<easyar_Image> cdata);
-    virtual ~Image();
-
-    std::shared_ptr<easyar_Image> get_cdata();
-    static std::shared_ptr<Image> from_cdata(std::shared_ptr<easyar_Image> cdata);
-
-    Image(std::shared_ptr<Buffer> buffer, PixelFormat format, int width, int height);
-    /// <summary>
-    /// Returns buffer inside image. It can be used to access internal data of image. The content of `Buffer`_ shall not be modified, as they may be accessed from other threads.
-    /// </summary>
-    std::shared_ptr<Buffer> buffer();
-    /// <summary>
-    /// Returns image format.
-    /// </summary>
-    PixelFormat format();
-    /// <summary>
-    /// Returns image width.
-    /// </summary>
-    int width();
-    /// <summary>
-    /// Returns image height.
-    /// </summary>
-    int height();
-    /// <summary>
-    /// Checks if the image is empty.
-    /// </summary>
-    bool empty();
-};
-
-/// <summary>
-/// JNI utility class.
-/// It is used in Unity to wrap Java byte array and ByteBuffer.
-/// It is not supported on iOS.
-/// </summary>
-class JniUtility
-{
-public:
-    /// <summary>
-    /// Wraps Java&#39;s byte[]。
-    /// </summary>
-    static std::shared_ptr<Buffer> wrapByteArray(void * bytes, bool readOnly, std::function<void()> deleter);
-    /// <summary>
-    /// Wraps Java&#39;s java.nio.ByteBuffer, which must be a direct buffer.
-    /// </summary>
-    static std::shared_ptr<Buffer> wrapBuffer(void * directBuffer, std::function<void()> deleter);
-};
-
-/// <summary>
-/// Log class.
-/// It is used to setup a custom log output function.
-/// </summary>
-class Log
-{
-public:
-    /// <summary>
-    /// Sets custom log output function.
-    /// </summary>
-    static void setLogFunc(std::function<void(LogLevel, std::string)> func);
-    /// <summary>
-    /// Clears custom log output function and reverts to default log output function.
-    /// </summary>
-    static void resetLogFunc();
-};
-
-/// <summary>
-/// record
-/// Square matrix of 4. The data arrangement is row-major.
-/// </summary>
-struct Matrix44F
-{
-    /// <summary>
-    /// The raw data of matrix.
-    /// </summary>
-    std::array<float, 16> data;
-};
-
-/// <summary>
-/// record
-/// Square matrix of 3. The data arrangement is row-major.
-/// </summary>
-struct Matrix33F
-{
-    /// <summary>
-    /// The raw data of matrix.
-    /// </summary>
-    std::array<float, 9> data;
-};
-
-/// <summary>
-/// record
-/// 4 dimensional vector of float.
-/// </summary>
-struct Vec4F
-{
-    /// <summary>
-    /// The raw data of vector.
-    /// </summary>
-    std::array<float, 4> data;
-};
-
-/// <summary>
-/// record
-/// 3 dimensional vector of float.
-/// </summary>
-struct Vec3F
-{
-    /// <summary>
-    /// The raw data of vector.
-    /// </summary>
-    std::array<float, 3> data;
-};
-
-/// <summary>
-/// record
-/// 2 dimensional vector of float.
-/// </summary>
-struct Vec2F
-{
-    /// <summary>
-    /// The raw data of vector.
-    /// </summary>
-    std::array<float, 2> data;
-};
-
-/// <summary>
-/// record
-/// 4 dimensional vector of int.
-/// </summary>
-struct Vec4I
-{
-    /// <summary>
-    /// The raw data of vector.
-    /// </summary>
-    std::array<int, 4> data;
-};
-
-/// <summary>
-/// record
-/// 2 dimensional vector of int.
-/// </summary>
-struct Vec2I
-{
-    /// <summary>
-    /// The raw data of vector.
-    /// </summary>
-    std::array<int, 2> data;
-};
-
 }
 
 #endif
@@ -3548,34 +3670,35 @@ struct Vec2I
 
 #include "easyar/objecttarget.h"
 #include "easyar/objecttracker.h"
-#include "easyar/cloud.h"
+#include "easyar/cloudrecognizer.h"
+#include "easyar/buffer.h"
+#include "easyar/bufferpool.h"
+#include "easyar/cameraparameters.h"
+#include "easyar/image.h"
 #include "easyar/densespatialmap.h"
 #include "easyar/scenemesh.h"
+#include "easyar/arcorecamera.h"
+#include "easyar/arkitcamera.h"
+#include "easyar/camera.h"
 #include "easyar/surfacetracker.h"
 #include "easyar/motiontracker.h"
+#include "easyar/framerecorder.h"
+#include "easyar/callbackscheduler.h"
+#include "easyar/jniutility.h"
+#include "easyar/log.h"
 #include "easyar/imagetarget.h"
 #include "easyar/imagetracker.h"
 #include "easyar/recorder.h"
 #include "easyar/recorder_configuration.h"
 #include "easyar/sparsespatialmap.h"
 #include "easyar/sparsespatialmapmanager.h"
-#include "easyar/imagehelper.h"
-#include "easyar/arcorecamera.h"
-#include "easyar/arkitcamera.h"
-#include "easyar/callbackscheduler.h"
-#include "easyar/camera.h"
-#include "easyar/dataflow.h"
 #include "easyar/engine.h"
+#include "easyar/videoplayer.h"
+#include "easyar/imagehelper.h"
+#include "easyar/dataflow.h"
 #include "easyar/frame.h"
 #include "easyar/target.h"
 #include "easyar/texture.h"
-#include "easyar/videoplayer.h"
-#include "easyar/buffer.h"
-#include "easyar/bufferpool.h"
-#include "easyar/cameraparameters.h"
-#include "easyar/image.h"
-#include "easyar/jniutility.h"
-#include "easyar/log.h"
 
 namespace easyar {
 
@@ -3593,10 +3716,6 @@ static inline std::string std_string_from_easyar_String(std::shared_ptr<easyar_S
 static void FunctorOfVoid_func(void * _state, /* OUT */ easyar_String * * _exception);
 static void FunctorOfVoid_destroy(void * _state);
 static inline easyar_FunctorOfVoid FunctorOfVoid_to_c(std::function<void()> f);
-
-static inline std::shared_ptr<easyar_ListOfObjectTarget> std_vector_to_easyar_ListOfObjectTarget(std::vector<std::shared_ptr<ObjectTarget>> l);
-static inline std::vector<std::shared_ptr<ObjectTarget>> std_vector_from_easyar_ListOfObjectTarget(std::shared_ptr<easyar_ListOfObjectTarget> pl);
-static inline bool easyar_ListOfObjectTarget_check_external_cpp(const std::vector<std::shared_ptr<ObjectTarget>> & l);
 
 static inline std::shared_ptr<easyar_ListOfVec3F> std_vector_to_easyar_ListOfVec3F(std::vector<Vec3F> l);
 static inline std::vector<Vec3F> std_vector_from_easyar_ListOfVec3F(std::shared_ptr<easyar_ListOfVec3F> pl);
@@ -3622,9 +3741,13 @@ static inline std::shared_ptr<easyar_ListOfTarget> std_vector_to_easyar_ListOfTa
 static inline std::vector<std::shared_ptr<Target>> std_vector_from_easyar_ListOfTarget(std::shared_ptr<easyar_ListOfTarget> pl);
 static inline bool easyar_ListOfTarget_check_external_cpp(const std::vector<std::shared_ptr<Target>> & l);
 
-static void FunctorOfVoidFromCloudStatusAndListOfTarget_func(void * _state, easyar_CloudStatus, easyar_ListOfTarget *, /* OUT */ easyar_String * * _exception);
-static void FunctorOfVoidFromCloudStatusAndListOfTarget_destroy(void * _state);
-static inline easyar_FunctorOfVoidFromCloudStatusAndListOfTarget FunctorOfVoidFromCloudStatusAndListOfTarget_to_c(std::function<void(CloudStatus, std::vector<std::shared_ptr<Target>>)> f);
+static inline std::shared_ptr<easyar_ListOfImage> std_vector_to_easyar_ListOfImage(std::vector<std::shared_ptr<Image>> l);
+static inline std::vector<std::shared_ptr<Image>> std_vector_from_easyar_ListOfImage(std::shared_ptr<easyar_ListOfImage> pl);
+static inline bool easyar_ListOfImage_check_external_cpp(const std::vector<std::shared_ptr<Image>> & l);
+
+static void FunctorOfVoidFromCloudRecognizationResult_func(void * _state, easyar_CloudRecognizationResult *, /* OUT */ easyar_String * * _exception);
+static void FunctorOfVoidFromCloudRecognizationResult_destroy(void * _state);
+static inline easyar_FunctorOfVoidFromCloudRecognizationResult FunctorOfVoidFromCloudRecognizationResult_to_c(std::function<void(std::shared_ptr<CloudRecognizationResult>)> f);
 
 static inline std::shared_ptr<easyar_ListOfBlockInfo> std_vector_to_easyar_ListOfBlockInfo(std::vector<BlockInfo> l);
 static inline std::vector<BlockInfo> std_vector_from_easyar_ListOfBlockInfo(std::shared_ptr<easyar_ListOfBlockInfo> pl);
@@ -3634,17 +3757,17 @@ static void FunctorOfVoidFromInputFrame_func(void * _state, easyar_InputFrame *,
 static void FunctorOfVoidFromInputFrame_destroy(void * _state);
 static inline easyar_FunctorOfVoidFromInputFrame FunctorOfVoidFromInputFrame_to_c(std::function<void(std::shared_ptr<InputFrame>)> f);
 
-static inline std::shared_ptr<easyar_ListOfImageTarget> std_vector_to_easyar_ListOfImageTarget(std::vector<std::shared_ptr<ImageTarget>> l);
-static inline std::vector<std::shared_ptr<ImageTarget>> std_vector_from_easyar_ListOfImageTarget(std::shared_ptr<easyar_ListOfImageTarget> pl);
-static inline bool easyar_ListOfImageTarget_check_external_cpp(const std::vector<std::shared_ptr<ImageTarget>> & l);
-
-static inline std::shared_ptr<easyar_ListOfImage> std_vector_to_easyar_ListOfImage(std::vector<std::shared_ptr<Image>> l);
-static inline std::vector<std::shared_ptr<Image>> std_vector_from_easyar_ListOfImage(std::shared_ptr<easyar_ListOfImage> pl);
-static inline bool easyar_ListOfImage_check_external_cpp(const std::vector<std::shared_ptr<Image>> & l);
+static void FunctorOfVoidFromCameraState_func(void * _state, easyar_CameraState, /* OUT */ easyar_String * * _exception);
+static void FunctorOfVoidFromCameraState_destroy(void * _state);
+static inline easyar_FunctorOfVoidFromCameraState FunctorOfVoidFromCameraState_to_c(std::function<void(CameraState)> f);
 
 static void FunctorOfVoidFromPermissionStatusAndString_func(void * _state, easyar_PermissionStatus, easyar_String *, /* OUT */ easyar_String * * _exception);
 static void FunctorOfVoidFromPermissionStatusAndString_destroy(void * _state);
 static inline easyar_FunctorOfVoidFromPermissionStatusAndString FunctorOfVoidFromPermissionStatusAndString_to_c(std::function<void(PermissionStatus, std::string)> f);
+
+static void FunctorOfVoidFromLogLevelAndString_func(void * _state, easyar_LogLevel, easyar_String *, /* OUT */ easyar_String * * _exception);
+static void FunctorOfVoidFromLogLevelAndString_destroy(void * _state);
+static inline easyar_FunctorOfVoidFromLogLevelAndString FunctorOfVoidFromLogLevelAndString_to_c(std::function<void(LogLevel, std::string)> f);
 
 static void FunctorOfVoidFromRecordStatusAndString_func(void * _state, easyar_RecordStatus, easyar_String *, /* OUT */ easyar_String * * _exception);
 static void FunctorOfVoidFromRecordStatusAndString_destroy(void * _state);
@@ -3666,9 +3789,9 @@ static void FunctorOfVoidFromBoolAndString_func(void * _state, bool, easyar_Stri
 static void FunctorOfVoidFromBoolAndString_destroy(void * _state);
 static inline easyar_FunctorOfVoidFromBoolAndString FunctorOfVoidFromBoolAndString_to_c(std::function<void(bool, std::string)> f);
 
-static void FunctorOfVoidFromCameraState_func(void * _state, easyar_CameraState, /* OUT */ easyar_String * * _exception);
-static void FunctorOfVoidFromCameraState_destroy(void * _state);
-static inline easyar_FunctorOfVoidFromCameraState FunctorOfVoidFromCameraState_to_c(std::function<void(CameraState)> f);
+static void FunctorOfVoidFromVideoStatus_func(void * _state, easyar_VideoStatus, /* OUT */ easyar_String * * _exception);
+static void FunctorOfVoidFromVideoStatus_destroy(void * _state);
+static inline easyar_FunctorOfVoidFromVideoStatus FunctorOfVoidFromVideoStatus_to_c(std::function<void(VideoStatus)> f);
 
 static void FunctorOfVoidFromFeedbackFrame_func(void * _state, easyar_FeedbackFrame *, /* OUT */ easyar_String * * _exception);
 static void FunctorOfVoidFromFeedbackFrame_destroy(void * _state);
@@ -3681,14 +3804,6 @@ static inline easyar_FunctorOfOutputFrameFromListOfOutputFrame FunctorOfOutputFr
 static inline std::shared_ptr<easyar_ListOfOutputFrame> std_vector_to_easyar_ListOfOutputFrame(std::vector<std::shared_ptr<OutputFrame>> l);
 static inline std::vector<std::shared_ptr<OutputFrame>> std_vector_from_easyar_ListOfOutputFrame(std::shared_ptr<easyar_ListOfOutputFrame> pl);
 static inline bool easyar_ListOfOutputFrame_check_external_cpp(const std::vector<std::shared_ptr<OutputFrame>> & l);
-
-static void FunctorOfVoidFromVideoStatus_func(void * _state, easyar_VideoStatus, /* OUT */ easyar_String * * _exception);
-static void FunctorOfVoidFromVideoStatus_destroy(void * _state);
-static inline easyar_FunctorOfVoidFromVideoStatus FunctorOfVoidFromVideoStatus_to_c(std::function<void(VideoStatus)> f);
-
-static void FunctorOfVoidFromLogLevelAndString_func(void * _state, easyar_LogLevel, easyar_String *, /* OUT */ easyar_String * * _exception);
-static void FunctorOfVoidFromLogLevelAndString_destroy(void * _state);
-static inline easyar_FunctorOfVoidFromLogLevelAndString FunctorOfVoidFromLogLevelAndString_to_c(std::function<void(LogLevel, std::string)> f);
 
 _INLINE_SPECIFIER_ ObjectTargetParameters::ObjectTargetParameters(std::shared_ptr<easyar_ObjectTargetParameters> cdata)
     :
@@ -3859,13 +3974,6 @@ _INLINE_SPECIFIER_ std::optional<std::shared_ptr<ObjectTarget>> ObjectTarget::cr
     easyar_ObjectTarget_createFromObjectFile(std_string_to_easyar_String(arg0).get(), static_cast<easyar_StorageType>(arg1), std_string_to_easyar_String(arg2).get(), std_string_to_easyar_String(arg3).get(), std_string_to_easyar_String(arg4).get(), arg5, &_return_value_);
     if (!(!_return_value_.has_value || (_return_value_.value != nullptr))) { throw std::runtime_error("InvalidReturnValue"); }
     return (_return_value_.has_value ? ObjectTarget::from_cdata(std::shared_ptr<easyar_ObjectTarget>(_return_value_.value, [](easyar_ObjectTarget * ptr) { easyar_ObjectTarget__dtor(ptr); })) : std::optional<std::shared_ptr<ObjectTarget>>{});
-}
-_INLINE_SPECIFIER_ std::vector<std::shared_ptr<ObjectTarget>> ObjectTarget::setupAll(std::string arg0, StorageType arg1)
-{
-    easyar_ListOfObjectTarget * _return_value_;
-    easyar_ObjectTarget_setupAll(std_string_to_easyar_String(arg0).get(), static_cast<easyar_StorageType>(arg1), &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return std_vector_from_easyar_ListOfObjectTarget(std::shared_ptr<easyar_ListOfObjectTarget>(_return_value_, [](easyar_ListOfObjectTarget * ptr) { easyar_ListOfObjectTarget__dtor(ptr); }));
 }
 _INLINE_SPECIFIER_ float ObjectTarget::scale()
 {
@@ -4088,6 +4196,55 @@ _INLINE_SPECIFIER_ int ObjectTracker::simultaneousNum()
     return _return_value_;
 }
 
+_INLINE_SPECIFIER_ CloudRecognizationResult::CloudRecognizationResult(std::shared_ptr<easyar_CloudRecognizationResult> cdata)
+    :
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ CloudRecognizationResult::~CloudRecognizationResult()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_CloudRecognizationResult> CloudRecognizationResult::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void CloudRecognizationResult::init_cdata(std::shared_ptr<easyar_CloudRecognizationResult> cdata)
+{
+    cdata_ = cdata;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<CloudRecognizationResult> CloudRecognizationResult::from_cdata(std::shared_ptr<easyar_CloudRecognizationResult> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<CloudRecognizationResult>(cdata);
+}
+_INLINE_SPECIFIER_ CloudRecognizationStatus CloudRecognizationResult::getStatus()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CloudRecognizationResult_getStatus(cdata_.get());
+    return static_cast<CloudRecognizationStatus>(_return_value_);
+}
+_INLINE_SPECIFIER_ std::optional<std::shared_ptr<ImageTarget>> CloudRecognizationResult::getTarget()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_OptionalOfImageTarget _return_value_;
+    easyar_CloudRecognizationResult_getTarget(cdata_.get(), &_return_value_);
+    if (!(!_return_value_.has_value || (_return_value_.value != nullptr))) { throw std::runtime_error("InvalidReturnValue"); }
+    return (_return_value_.has_value ? ImageTarget::from_cdata(std::shared_ptr<easyar_ImageTarget>(_return_value_.value, [](easyar_ImageTarget * ptr) { easyar_ImageTarget__dtor(ptr); })) : std::optional<std::shared_ptr<ImageTarget>>{});
+}
+_INLINE_SPECIFIER_ std::optional<std::string> CloudRecognizationResult::getUnknownErrorMessage()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_OptionalOfString _return_value_;
+    easyar_CloudRecognizationResult_getUnknownErrorMessage(cdata_.get(), &_return_value_);
+    if (!(!_return_value_.has_value || (_return_value_.value != nullptr))) { throw std::runtime_error("InvalidReturnValue"); }
+    return (_return_value_.has_value ? std_string_from_easyar_String(std::shared_ptr<easyar_String>(_return_value_.value, [](easyar_String * ptr) { easyar_String__dtor(ptr); })) : std::optional<std::string>{});
+}
+
 _INLINE_SPECIFIER_ CloudRecognizer::CloudRecognizer(std::shared_ptr<easyar_CloudRecognizer> cdata)
     :
     cdata_(nullptr)
@@ -4119,44 +4276,432 @@ _INLINE_SPECIFIER_ bool CloudRecognizer::isAvailable()
     auto _return_value_ = easyar_CloudRecognizer_isAvailable();
     return _return_value_;
 }
-_INLINE_SPECIFIER_ std::shared_ptr<InputFrameSink> CloudRecognizer::inputFrameSink()
+_INLINE_SPECIFIER_ std::shared_ptr<CloudRecognizer> CloudRecognizer::create(std::string arg0, std::string arg1, std::string arg2, std::string arg3)
 {
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_InputFrameSink * _return_value_;
-    easyar_CloudRecognizer_inputFrameSink(cdata_.get(), &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return InputFrameSink::from_cdata(std::shared_ptr<easyar_InputFrameSink>(_return_value_, [](easyar_InputFrameSink * ptr) { easyar_InputFrameSink__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ int CloudRecognizer::bufferRequirement()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CloudRecognizer_bufferRequirement(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ std::shared_ptr<CloudRecognizer> CloudRecognizer::create(std::string arg0, std::string arg1, std::string arg2, std::string arg3, std::shared_ptr<CallbackScheduler> arg4, std::optional<std::function<void(CloudStatus, std::vector<std::shared_ptr<Target>>)>> arg5)
-{
-    if (!(arg4 != nullptr)) { throw std::runtime_error("InvalidArgument: callbackScheduler"); }
-    if (!(!arg5.has_value() || (arg5.value() != nullptr))) { throw std::runtime_error("InvalidArgument: callback"); }
     easyar_CloudRecognizer * _return_value_;
-    easyar_CloudRecognizer_create(std_string_to_easyar_String(arg0).get(), std_string_to_easyar_String(arg1).get(), std_string_to_easyar_String(arg2).get(), std_string_to_easyar_String(arg3).get(), arg4->get_cdata().get(), (arg5.has_value() ? easyar_OptionalOfFunctorOfVoidFromCloudStatusAndListOfTarget{true, FunctorOfVoidFromCloudStatusAndListOfTarget_to_c(arg5.value())} : easyar_OptionalOfFunctorOfVoidFromCloudStatusAndListOfTarget{false, {}}), &_return_value_);
+    easyar_CloudRecognizer_create(std_string_to_easyar_String(arg0).get(), std_string_to_easyar_String(arg1).get(), std_string_to_easyar_String(arg2).get(), std_string_to_easyar_String(arg3).get(), &_return_value_);
     if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
     return CloudRecognizer::from_cdata(std::shared_ptr<easyar_CloudRecognizer>(_return_value_, [](easyar_CloudRecognizer * ptr) { easyar_CloudRecognizer__dtor(ptr); }));
 }
-_INLINE_SPECIFIER_ bool CloudRecognizer::start()
+_INLINE_SPECIFIER_ std::shared_ptr<CloudRecognizer> CloudRecognizer::createByCloudSecret(std::string arg0, std::string arg1, std::string arg2)
 {
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CloudRecognizer_start(cdata_.get());
-    return _return_value_;
+    easyar_CloudRecognizer * _return_value_;
+    easyar_CloudRecognizer_createByCloudSecret(std_string_to_easyar_String(arg0).get(), std_string_to_easyar_String(arg1).get(), std_string_to_easyar_String(arg2).get(), &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return CloudRecognizer::from_cdata(std::shared_ptr<easyar_CloudRecognizer>(_return_value_, [](easyar_CloudRecognizer * ptr) { easyar_CloudRecognizer__dtor(ptr); }));
 }
-_INLINE_SPECIFIER_ void CloudRecognizer::stop()
+_INLINE_SPECIFIER_ void CloudRecognizer::resolve(std::shared_ptr<InputFrame> arg0, std::shared_ptr<CallbackScheduler> arg1, std::function<void(std::shared_ptr<CloudRecognizationResult>)> arg2)
 {
     if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_CloudRecognizer_stop(cdata_.get());
+    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: inputFrame"); }
+    if (!(arg1 != nullptr)) { throw std::runtime_error("InvalidArgument: callbackScheduler"); }
+    if (!(arg2 != nullptr)) { throw std::runtime_error("InvalidArgument: callback"); }
+    easyar_CloudRecognizer_resolve(cdata_.get(), arg0->get_cdata().get(), arg1->get_cdata().get(), FunctorOfVoidFromCloudRecognizationResult_to_c(arg2));
 }
 _INLINE_SPECIFIER_ void CloudRecognizer::close()
 {
     if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
     easyar_CloudRecognizer_close(cdata_.get());
+}
+
+_INLINE_SPECIFIER_ Buffer::Buffer(std::shared_ptr<easyar_Buffer> cdata)
+    :
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ Buffer::~Buffer()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_Buffer> Buffer::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void Buffer::init_cdata(std::shared_ptr<easyar_Buffer> cdata)
+{
+    cdata_ = cdata;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<Buffer> Buffer::from_cdata(std::shared_ptr<easyar_Buffer> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<Buffer>(cdata);
+}
+_INLINE_SPECIFIER_ std::shared_ptr<Buffer> Buffer::wrap(void * arg0, int arg1, std::function<void()> arg2)
+{
+    if (!(arg2 != nullptr)) { throw std::runtime_error("InvalidArgument: deleter"); }
+    easyar_Buffer * _return_value_;
+    easyar_Buffer_wrap(arg0, arg1, FunctorOfVoid_to_c(arg2), &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ std::shared_ptr<Buffer> Buffer::create(int arg0)
+{
+    easyar_Buffer * _return_value_;
+    easyar_Buffer_create(arg0, &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ void * Buffer::data()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_Buffer_data(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ int Buffer::size()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_Buffer_size(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ void Buffer::memoryCopy(void * arg0, void * arg1, int arg2)
+{
+    easyar_Buffer_memoryCopy(arg0, arg1, arg2);
+}
+_INLINE_SPECIFIER_ bool Buffer::tryCopyFrom(void * arg0, int arg1, int arg2, int arg3)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_Buffer_tryCopyFrom(cdata_.get(), arg0, arg1, arg2, arg3);
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ bool Buffer::tryCopyTo(int arg0, void * arg1, int arg2, int arg3)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_Buffer_tryCopyTo(cdata_.get(), arg0, arg1, arg2, arg3);
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<Buffer> Buffer::partition(int arg0, int arg1)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_Buffer * _return_value_;
+    easyar_Buffer_partition(cdata_.get(), arg0, arg1, &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); }));
+}
+
+_INLINE_SPECIFIER_ BufferDictionary::BufferDictionary(std::shared_ptr<easyar_BufferDictionary> cdata)
+    :
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ BufferDictionary::~BufferDictionary()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_BufferDictionary> BufferDictionary::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void BufferDictionary::init_cdata(std::shared_ptr<easyar_BufferDictionary> cdata)
+{
+    cdata_ = cdata;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<BufferDictionary> BufferDictionary::from_cdata(std::shared_ptr<easyar_BufferDictionary> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<BufferDictionary>(cdata);
+}
+_INLINE_SPECIFIER_ BufferDictionary::BufferDictionary()
+    :
+    cdata_(nullptr)
+{
+    easyar_BufferDictionary * _return_value_;
+    easyar_BufferDictionary__ctor(&_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
+    init_cdata(std::shared_ptr<easyar_BufferDictionary>(_return_value_, [](easyar_BufferDictionary * ptr) { easyar_BufferDictionary__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ int BufferDictionary::count()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_BufferDictionary_count(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ bool BufferDictionary::contains(std::string arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_BufferDictionary_contains(cdata_.get(), std_string_to_easyar_String(arg0).get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ std::optional<std::shared_ptr<Buffer>> BufferDictionary::tryGet(std::string arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_OptionalOfBuffer _return_value_;
+    easyar_BufferDictionary_tryGet(cdata_.get(), std_string_to_easyar_String(arg0).get(), &_return_value_);
+    if (!(!_return_value_.has_value || (_return_value_.value != nullptr))) { throw std::runtime_error("InvalidReturnValue"); }
+    return (_return_value_.has_value ? Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_.value, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); })) : std::optional<std::shared_ptr<Buffer>>{});
+}
+_INLINE_SPECIFIER_ void BufferDictionary::set(std::string arg0, std::shared_ptr<Buffer> arg1)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    if (!(arg1 != nullptr)) { throw std::runtime_error("InvalidArgument: buffer"); }
+    easyar_BufferDictionary_set(cdata_.get(), std_string_to_easyar_String(arg0).get(), arg1->get_cdata().get());
+}
+_INLINE_SPECIFIER_ bool BufferDictionary::remove(std::string arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_BufferDictionary_remove(cdata_.get(), std_string_to_easyar_String(arg0).get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ void BufferDictionary::clear()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_BufferDictionary_clear(cdata_.get());
+}
+
+_INLINE_SPECIFIER_ BufferPool::BufferPool(std::shared_ptr<easyar_BufferPool> cdata)
+    :
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ BufferPool::~BufferPool()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_BufferPool> BufferPool::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void BufferPool::init_cdata(std::shared_ptr<easyar_BufferPool> cdata)
+{
+    cdata_ = cdata;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<BufferPool> BufferPool::from_cdata(std::shared_ptr<easyar_BufferPool> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<BufferPool>(cdata);
+}
+_INLINE_SPECIFIER_ BufferPool::BufferPool(int arg0, int arg1)
+    :
+    cdata_(nullptr)
+{
+    easyar_BufferPool * _return_value_;
+    easyar_BufferPool__ctor(arg0, arg1, &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
+    init_cdata(std::shared_ptr<easyar_BufferPool>(_return_value_, [](easyar_BufferPool * ptr) { easyar_BufferPool__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ int BufferPool::block_size()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_BufferPool_block_size(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ int BufferPool::capacity()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_BufferPool_capacity(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ int BufferPool::size()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_BufferPool_size(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ std::optional<std::shared_ptr<Buffer>> BufferPool::tryAcquire()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_OptionalOfBuffer _return_value_;
+    easyar_BufferPool_tryAcquire(cdata_.get(), &_return_value_);
+    if (!(!_return_value_.has_value || (_return_value_.value != nullptr))) { throw std::runtime_error("InvalidReturnValue"); }
+    return (_return_value_.has_value ? Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_.value, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); })) : std::optional<std::shared_ptr<Buffer>>{});
+}
+
+_INLINE_SPECIFIER_ CameraParameters::CameraParameters(std::shared_ptr<easyar_CameraParameters> cdata)
+    :
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ CameraParameters::~CameraParameters()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_CameraParameters> CameraParameters::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void CameraParameters::init_cdata(std::shared_ptr<easyar_CameraParameters> cdata)
+{
+    cdata_ = cdata;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<CameraParameters> CameraParameters::from_cdata(std::shared_ptr<easyar_CameraParameters> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<CameraParameters>(cdata);
+}
+_INLINE_SPECIFIER_ CameraParameters::CameraParameters(Vec2I arg0, Vec2F arg1, Vec2F arg2, CameraDeviceType arg3, int arg4)
+    :
+    cdata_(nullptr)
+{
+    easyar_CameraParameters * _return_value_;
+    easyar_CameraParameters__ctor(easyar_Vec2I{{arg0.data[0], arg0.data[1]}}, easyar_Vec2F{{arg1.data[0], arg1.data[1]}}, easyar_Vec2F{{arg2.data[0], arg2.data[1]}}, static_cast<easyar_CameraDeviceType>(arg3), arg4, &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
+    init_cdata(std::shared_ptr<easyar_CameraParameters>(_return_value_, [](easyar_CameraParameters * ptr) { easyar_CameraParameters__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ Vec2I CameraParameters::size()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraParameters_size(cdata_.get());
+    return Vec2I{{{_return_value_.data[0], _return_value_.data[1]}}};
+}
+_INLINE_SPECIFIER_ Vec2F CameraParameters::focalLength()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraParameters_focalLength(cdata_.get());
+    return Vec2F{{{_return_value_.data[0], _return_value_.data[1]}}};
+}
+_INLINE_SPECIFIER_ Vec2F CameraParameters::principalPoint()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraParameters_principalPoint(cdata_.get());
+    return Vec2F{{{_return_value_.data[0], _return_value_.data[1]}}};
+}
+_INLINE_SPECIFIER_ CameraDeviceType CameraParameters::cameraDeviceType()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraParameters_cameraDeviceType(cdata_.get());
+    return static_cast<CameraDeviceType>(_return_value_);
+}
+_INLINE_SPECIFIER_ int CameraParameters::cameraOrientation()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraParameters_cameraOrientation(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<CameraParameters> CameraParameters::createWithDefaultIntrinsics(Vec2I arg0, CameraDeviceType arg1, int arg2)
+{
+    easyar_CameraParameters * _return_value_;
+    easyar_CameraParameters_createWithDefaultIntrinsics(easyar_Vec2I{{arg0.data[0], arg0.data[1]}}, static_cast<easyar_CameraDeviceType>(arg1), arg2, &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return CameraParameters::from_cdata(std::shared_ptr<easyar_CameraParameters>(_return_value_, [](easyar_CameraParameters * ptr) { easyar_CameraParameters__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ std::shared_ptr<CameraParameters> CameraParameters::getResized(Vec2I arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_CameraParameters * _return_value_;
+    easyar_CameraParameters_getResized(cdata_.get(), easyar_Vec2I{{arg0.data[0], arg0.data[1]}}, &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return CameraParameters::from_cdata(std::shared_ptr<easyar_CameraParameters>(_return_value_, [](easyar_CameraParameters * ptr) { easyar_CameraParameters__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ int CameraParameters::imageOrientation(int arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraParameters_imageOrientation(cdata_.get(), arg0);
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ bool CameraParameters::imageHorizontalFlip(bool arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraParameters_imageHorizontalFlip(cdata_.get(), arg0);
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ Matrix44F CameraParameters::projection(float arg0, float arg1, float arg2, int arg3, bool arg4, bool arg5)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraParameters_projection(cdata_.get(), arg0, arg1, arg2, arg3, arg4, arg5);
+    return Matrix44F{{{_return_value_.data[0], _return_value_.data[1], _return_value_.data[2], _return_value_.data[3], _return_value_.data[4], _return_value_.data[5], _return_value_.data[6], _return_value_.data[7], _return_value_.data[8], _return_value_.data[9], _return_value_.data[10], _return_value_.data[11], _return_value_.data[12], _return_value_.data[13], _return_value_.data[14], _return_value_.data[15]}}};
+}
+_INLINE_SPECIFIER_ Matrix44F CameraParameters::imageProjection(float arg0, int arg1, bool arg2, bool arg3)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraParameters_imageProjection(cdata_.get(), arg0, arg1, arg2, arg3);
+    return Matrix44F{{{_return_value_.data[0], _return_value_.data[1], _return_value_.data[2], _return_value_.data[3], _return_value_.data[4], _return_value_.data[5], _return_value_.data[6], _return_value_.data[7], _return_value_.data[8], _return_value_.data[9], _return_value_.data[10], _return_value_.data[11], _return_value_.data[12], _return_value_.data[13], _return_value_.data[14], _return_value_.data[15]}}};
+}
+_INLINE_SPECIFIER_ Vec2F CameraParameters::screenCoordinatesFromImageCoordinates(float arg0, int arg1, bool arg2, bool arg3, Vec2F arg4)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraParameters_screenCoordinatesFromImageCoordinates(cdata_.get(), arg0, arg1, arg2, arg3, easyar_Vec2F{{arg4.data[0], arg4.data[1]}});
+    return Vec2F{{{_return_value_.data[0], _return_value_.data[1]}}};
+}
+_INLINE_SPECIFIER_ Vec2F CameraParameters::imageCoordinatesFromScreenCoordinates(float arg0, int arg1, bool arg2, bool arg3, Vec2F arg4)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraParameters_imageCoordinatesFromScreenCoordinates(cdata_.get(), arg0, arg1, arg2, arg3, easyar_Vec2F{{arg4.data[0], arg4.data[1]}});
+    return Vec2F{{{_return_value_.data[0], _return_value_.data[1]}}};
+}
+_INLINE_SPECIFIER_ bool CameraParameters::equalsTo(std::shared_ptr<CameraParameters> arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: other"); }
+    auto _return_value_ = easyar_CameraParameters_equalsTo(cdata_.get(), arg0->get_cdata().get());
+    return _return_value_;
+}
+
+_INLINE_SPECIFIER_ Image::Image(std::shared_ptr<easyar_Image> cdata)
+    :
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ Image::~Image()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_Image> Image::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void Image::init_cdata(std::shared_ptr<easyar_Image> cdata)
+{
+    cdata_ = cdata;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<Image> Image::from_cdata(std::shared_ptr<easyar_Image> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<Image>(cdata);
+}
+_INLINE_SPECIFIER_ Image::Image(std::shared_ptr<Buffer> arg0, PixelFormat arg1, int arg2, int arg3)
+    :
+    cdata_(nullptr)
+{
+    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: buffer"); }
+    easyar_Image * _return_value_;
+    easyar_Image__ctor(arg0->get_cdata().get(), static_cast<easyar_PixelFormat>(arg1), arg2, arg3, &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
+    init_cdata(std::shared_ptr<easyar_Image>(_return_value_, [](easyar_Image * ptr) { easyar_Image__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ std::shared_ptr<Buffer> Image::buffer()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_Buffer * _return_value_;
+    easyar_Image_buffer(cdata_.get(), &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ PixelFormat Image::format()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_Image_format(cdata_.get());
+    return static_cast<PixelFormat>(_return_value_);
+}
+_INLINE_SPECIFIER_ int Image::width()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_Image_width(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ int Image::height()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_Image_height(cdata_.get());
+    return _return_value_;
 }
 
 _INLINE_SPECIFIER_ DenseSpatialMap::DenseSpatialMap(std::shared_ptr<easyar_DenseSpatialMap> cdata)
@@ -4355,6 +4900,392 @@ _INLINE_SPECIFIER_ float SceneMesh::getBlockDimensionInMeters()
     return _return_value_;
 }
 
+_INLINE_SPECIFIER_ ARCoreCameraDevice::ARCoreCameraDevice(std::shared_ptr<easyar_ARCoreCameraDevice> cdata)
+    :
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ ARCoreCameraDevice::~ARCoreCameraDevice()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_ARCoreCameraDevice> ARCoreCameraDevice::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void ARCoreCameraDevice::init_cdata(std::shared_ptr<easyar_ARCoreCameraDevice> cdata)
+{
+    cdata_ = cdata;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<ARCoreCameraDevice> ARCoreCameraDevice::from_cdata(std::shared_ptr<easyar_ARCoreCameraDevice> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<ARCoreCameraDevice>(cdata);
+}
+_INLINE_SPECIFIER_ ARCoreCameraDevice::ARCoreCameraDevice()
+    :
+    cdata_(nullptr)
+{
+    easyar_ARCoreCameraDevice * _return_value_;
+    easyar_ARCoreCameraDevice__ctor(&_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
+    init_cdata(std::shared_ptr<easyar_ARCoreCameraDevice>(_return_value_, [](easyar_ARCoreCameraDevice * ptr) { easyar_ARCoreCameraDevice__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ bool ARCoreCameraDevice::isAvailable()
+{
+    auto _return_value_ = easyar_ARCoreCameraDevice_isAvailable();
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ int ARCoreCameraDevice::bufferCapacity()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_ARCoreCameraDevice_bufferCapacity(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ void ARCoreCameraDevice::setBufferCapacity(int arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_ARCoreCameraDevice_setBufferCapacity(cdata_.get(), arg0);
+}
+_INLINE_SPECIFIER_ std::shared_ptr<InputFrameSource> ARCoreCameraDevice::inputFrameSource()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_InputFrameSource * _return_value_;
+    easyar_ARCoreCameraDevice_inputFrameSource(cdata_.get(), &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return InputFrameSource::from_cdata(std::shared_ptr<easyar_InputFrameSource>(_return_value_, [](easyar_InputFrameSource * ptr) { easyar_InputFrameSource__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ bool ARCoreCameraDevice::start()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_ARCoreCameraDevice_start(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ void ARCoreCameraDevice::stop()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_ARCoreCameraDevice_stop(cdata_.get());
+}
+_INLINE_SPECIFIER_ void ARCoreCameraDevice::close()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_ARCoreCameraDevice_close(cdata_.get());
+}
+
+_INLINE_SPECIFIER_ ARKitCameraDevice::ARKitCameraDevice(std::shared_ptr<easyar_ARKitCameraDevice> cdata)
+    :
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ ARKitCameraDevice::~ARKitCameraDevice()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_ARKitCameraDevice> ARKitCameraDevice::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void ARKitCameraDevice::init_cdata(std::shared_ptr<easyar_ARKitCameraDevice> cdata)
+{
+    cdata_ = cdata;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<ARKitCameraDevice> ARKitCameraDevice::from_cdata(std::shared_ptr<easyar_ARKitCameraDevice> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<ARKitCameraDevice>(cdata);
+}
+_INLINE_SPECIFIER_ ARKitCameraDevice::ARKitCameraDevice()
+    :
+    cdata_(nullptr)
+{
+    easyar_ARKitCameraDevice * _return_value_;
+    easyar_ARKitCameraDevice__ctor(&_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
+    init_cdata(std::shared_ptr<easyar_ARKitCameraDevice>(_return_value_, [](easyar_ARKitCameraDevice * ptr) { easyar_ARKitCameraDevice__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ bool ARKitCameraDevice::isAvailable()
+{
+    auto _return_value_ = easyar_ARKitCameraDevice_isAvailable();
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ int ARKitCameraDevice::bufferCapacity()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_ARKitCameraDevice_bufferCapacity(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ void ARKitCameraDevice::setBufferCapacity(int arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_ARKitCameraDevice_setBufferCapacity(cdata_.get(), arg0);
+}
+_INLINE_SPECIFIER_ std::shared_ptr<InputFrameSource> ARKitCameraDevice::inputFrameSource()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_InputFrameSource * _return_value_;
+    easyar_ARKitCameraDevice_inputFrameSource(cdata_.get(), &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return InputFrameSource::from_cdata(std::shared_ptr<easyar_InputFrameSource>(_return_value_, [](easyar_InputFrameSource * ptr) { easyar_InputFrameSource__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ bool ARKitCameraDevice::start()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_ARKitCameraDevice_start(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ void ARKitCameraDevice::stop()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_ARKitCameraDevice_stop(cdata_.get());
+}
+_INLINE_SPECIFIER_ void ARKitCameraDevice::close()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_ARKitCameraDevice_close(cdata_.get());
+}
+
+_INLINE_SPECIFIER_ CameraDevice::CameraDevice(std::shared_ptr<easyar_CameraDevice> cdata)
+    :
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ CameraDevice::~CameraDevice()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_CameraDevice> CameraDevice::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void CameraDevice::init_cdata(std::shared_ptr<easyar_CameraDevice> cdata)
+{
+    cdata_ = cdata;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<CameraDevice> CameraDevice::from_cdata(std::shared_ptr<easyar_CameraDevice> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<CameraDevice>(cdata);
+}
+_INLINE_SPECIFIER_ CameraDevice::CameraDevice()
+    :
+    cdata_(nullptr)
+{
+    easyar_CameraDevice * _return_value_;
+    easyar_CameraDevice__ctor(&_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
+    init_cdata(std::shared_ptr<easyar_CameraDevice>(_return_value_, [](easyar_CameraDevice * ptr) { easyar_CameraDevice__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ bool CameraDevice::isAvailable()
+{
+    auto _return_value_ = easyar_CameraDevice_isAvailable();
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ AndroidCameraApiType CameraDevice::androidCameraApiType()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_androidCameraApiType(cdata_.get());
+    return static_cast<AndroidCameraApiType>(_return_value_);
+}
+_INLINE_SPECIFIER_ void CameraDevice::setAndroidCameraApiType(AndroidCameraApiType arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_CameraDevice_setAndroidCameraApiType(cdata_.get(), static_cast<easyar_AndroidCameraApiType>(arg0));
+}
+_INLINE_SPECIFIER_ int CameraDevice::bufferCapacity()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_bufferCapacity(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ void CameraDevice::setBufferCapacity(int arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_CameraDevice_setBufferCapacity(cdata_.get(), arg0);
+}
+_INLINE_SPECIFIER_ std::shared_ptr<InputFrameSource> CameraDevice::inputFrameSource()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_InputFrameSource * _return_value_;
+    easyar_CameraDevice_inputFrameSource(cdata_.get(), &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return InputFrameSource::from_cdata(std::shared_ptr<easyar_InputFrameSource>(_return_value_, [](easyar_InputFrameSource * ptr) { easyar_InputFrameSource__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ void CameraDevice::setStateChangedCallback(std::shared_ptr<CallbackScheduler> arg0, std::optional<std::function<void(CameraState)>> arg1)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: callbackScheduler"); }
+    if (!(!arg1.has_value() || (arg1.value() != nullptr))) { throw std::runtime_error("InvalidArgument: stateChangedCallback"); }
+    easyar_CameraDevice_setStateChangedCallback(cdata_.get(), arg0->get_cdata().get(), (arg1.has_value() ? easyar_OptionalOfFunctorOfVoidFromCameraState{true, FunctorOfVoidFromCameraState_to_c(arg1.value())} : easyar_OptionalOfFunctorOfVoidFromCameraState{false, {}}));
+}
+_INLINE_SPECIFIER_ void CameraDevice::requestPermissions(std::shared_ptr<CallbackScheduler> arg0, std::optional<std::function<void(PermissionStatus, std::string)>> arg1)
+{
+    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: callbackScheduler"); }
+    if (!(!arg1.has_value() || (arg1.value() != nullptr))) { throw std::runtime_error("InvalidArgument: permissionCallback"); }
+    easyar_CameraDevice_requestPermissions(arg0->get_cdata().get(), (arg1.has_value() ? easyar_OptionalOfFunctorOfVoidFromPermissionStatusAndString{true, FunctorOfVoidFromPermissionStatusAndString_to_c(arg1.value())} : easyar_OptionalOfFunctorOfVoidFromPermissionStatusAndString{false, {}}));
+}
+_INLINE_SPECIFIER_ int CameraDevice::cameraCount()
+{
+    auto _return_value_ = easyar_CameraDevice_cameraCount();
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ bool CameraDevice::openWithIndex(int arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_openWithIndex(cdata_.get(), arg0);
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ bool CameraDevice::openWithSpecificType(CameraDeviceType arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_openWithSpecificType(cdata_.get(), static_cast<easyar_CameraDeviceType>(arg0));
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ bool CameraDevice::openWithPreferredType(CameraDeviceType arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_openWithPreferredType(cdata_.get(), static_cast<easyar_CameraDeviceType>(arg0));
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ bool CameraDevice::start()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_start(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ void CameraDevice::stop()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_CameraDevice_stop(cdata_.get());
+}
+_INLINE_SPECIFIER_ void CameraDevice::close()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_CameraDevice_close(cdata_.get());
+}
+_INLINE_SPECIFIER_ int CameraDevice::index()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_index(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ CameraDeviceType CameraDevice::type()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_type(cdata_.get());
+    return static_cast<CameraDeviceType>(_return_value_);
+}
+_INLINE_SPECIFIER_ std::shared_ptr<CameraParameters> CameraDevice::cameraParameters()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_CameraParameters * _return_value_;
+    easyar_CameraDevice_cameraParameters(cdata_.get(), &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return CameraParameters::from_cdata(std::shared_ptr<easyar_CameraParameters>(_return_value_, [](easyar_CameraParameters * ptr) { easyar_CameraParameters__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ void CameraDevice::setCameraParameters(std::shared_ptr<CameraParameters> arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: cameraParameters"); }
+    easyar_CameraDevice_setCameraParameters(cdata_.get(), arg0->get_cdata().get());
+}
+_INLINE_SPECIFIER_ Vec2I CameraDevice::size()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_size(cdata_.get());
+    return Vec2I{{{_return_value_.data[0], _return_value_.data[1]}}};
+}
+_INLINE_SPECIFIER_ int CameraDevice::supportedSizeCount()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_supportedSizeCount(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ Vec2I CameraDevice::supportedSize(int arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_supportedSize(cdata_.get(), arg0);
+    return Vec2I{{{_return_value_.data[0], _return_value_.data[1]}}};
+}
+_INLINE_SPECIFIER_ bool CameraDevice::setSize(Vec2I arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_setSize(cdata_.get(), easyar_Vec2I{{arg0.data[0], arg0.data[1]}});
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ int CameraDevice::supportedFrameRateRangeCount()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_supportedFrameRateRangeCount(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ float CameraDevice::supportedFrameRateRangeLower(int arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_supportedFrameRateRangeLower(cdata_.get(), arg0);
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ float CameraDevice::supportedFrameRateRangeUpper(int arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_supportedFrameRateRangeUpper(cdata_.get(), arg0);
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ int CameraDevice::frameRateRange()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_frameRateRange(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ bool CameraDevice::setFrameRateRange(int arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_setFrameRateRange(cdata_.get(), arg0);
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ bool CameraDevice::setFlashTorchMode(bool arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_setFlashTorchMode(cdata_.get(), arg0);
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ bool CameraDevice::setFocusMode(CameraDeviceFocusMode arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_setFocusMode(cdata_.get(), static_cast<easyar_CameraDeviceFocusMode>(arg0));
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ bool CameraDevice::autoFocus()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_CameraDevice_autoFocus(cdata_.get());
+    return _return_value_;
+}
+
+_INLINE_SPECIFIER_ AndroidCameraApiType CameraDeviceSelector::getAndroidCameraApiType(CameraDevicePreference arg0)
+{
+    auto _return_value_ = easyar_CameraDeviceSelector_getAndroidCameraApiType(static_cast<easyar_CameraDevicePreference>(arg0));
+    return static_cast<AndroidCameraApiType>(_return_value_);
+}
+_INLINE_SPECIFIER_ std::shared_ptr<CameraDevice> CameraDeviceSelector::createCameraDevice(CameraDevicePreference arg0)
+{
+    easyar_CameraDevice * _return_value_;
+    easyar_CameraDeviceSelector_createCameraDevice(static_cast<easyar_CameraDevicePreference>(arg0), &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return CameraDevice::from_cdata(std::shared_ptr<easyar_CameraDevice>(_return_value_, [](easyar_CameraDevice * ptr) { easyar_CameraDevice__dtor(ptr); }));
+}
+
 _INLINE_SPECIFIER_ SurfaceTrackerResult::SurfaceTrackerResult(std::shared_ptr<easyar_SurfaceTrackerResult> cdata)
     :
     FrameFilterResult(std::shared_ptr<easyar_FrameFilterResult>(nullptr)),
@@ -4551,6 +5482,309 @@ _INLINE_SPECIFIER_ void MotionTrackerCameraDevice::close()
     if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
     easyar_MotionTrackerCameraDevice_close(cdata_.get());
 }
+_INLINE_SPECIFIER_ std::vector<Vec3F> MotionTrackerCameraDevice::hitTestAgainstPointCloud(Vec2F arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_ListOfVec3F * _return_value_;
+    easyar_MotionTrackerCameraDevice_hitTestAgainstPointCloud(cdata_.get(), easyar_Vec2F{{arg0.data[0], arg0.data[1]}}, &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return std_vector_from_easyar_ListOfVec3F(std::shared_ptr<easyar_ListOfVec3F>(_return_value_, [](easyar_ListOfVec3F * ptr) { easyar_ListOfVec3F__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ std::vector<Vec3F> MotionTrackerCameraDevice::hitTestAgainstHorizontalPlane(Vec2F arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_ListOfVec3F * _return_value_;
+    easyar_MotionTrackerCameraDevice_hitTestAgainstHorizontalPlane(cdata_.get(), easyar_Vec2F{{arg0.data[0], arg0.data[1]}}, &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return std_vector_from_easyar_ListOfVec3F(std::shared_ptr<easyar_ListOfVec3F>(_return_value_, [](easyar_ListOfVec3F * ptr) { easyar_ListOfVec3F__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ std::vector<Vec3F> MotionTrackerCameraDevice::getLocalPointsCloud()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_ListOfVec3F * _return_value_;
+    easyar_MotionTrackerCameraDevice_getLocalPointsCloud(cdata_.get(), &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return std_vector_from_easyar_ListOfVec3F(std::shared_ptr<easyar_ListOfVec3F>(_return_value_, [](easyar_ListOfVec3F * ptr) { easyar_ListOfVec3F__dtor(ptr); }));
+}
+
+_INLINE_SPECIFIER_ InputFrameRecorder::InputFrameRecorder(std::shared_ptr<easyar_InputFrameRecorder> cdata)
+    :
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ InputFrameRecorder::~InputFrameRecorder()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_InputFrameRecorder> InputFrameRecorder::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void InputFrameRecorder::init_cdata(std::shared_ptr<easyar_InputFrameRecorder> cdata)
+{
+    cdata_ = cdata;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<InputFrameRecorder> InputFrameRecorder::from_cdata(std::shared_ptr<easyar_InputFrameRecorder> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<InputFrameRecorder>(cdata);
+}
+_INLINE_SPECIFIER_ std::shared_ptr<InputFrameSink> InputFrameRecorder::input()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_InputFrameSink * _return_value_;
+    easyar_InputFrameRecorder_input(cdata_.get(), &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return InputFrameSink::from_cdata(std::shared_ptr<easyar_InputFrameSink>(_return_value_, [](easyar_InputFrameSink * ptr) { easyar_InputFrameSink__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ int InputFrameRecorder::bufferRequirement()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_InputFrameRecorder_bufferRequirement(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<InputFrameSource> InputFrameRecorder::output()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_InputFrameSource * _return_value_;
+    easyar_InputFrameRecorder_output(cdata_.get(), &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return InputFrameSource::from_cdata(std::shared_ptr<easyar_InputFrameSource>(_return_value_, [](easyar_InputFrameSource * ptr) { easyar_InputFrameSource__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ std::shared_ptr<InputFrameRecorder> InputFrameRecorder::create()
+{
+    easyar_InputFrameRecorder * _return_value_;
+    easyar_InputFrameRecorder_create(&_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return InputFrameRecorder::from_cdata(std::shared_ptr<easyar_InputFrameRecorder>(_return_value_, [](easyar_InputFrameRecorder * ptr) { easyar_InputFrameRecorder__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ bool InputFrameRecorder::start(std::string arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_InputFrameRecorder_start(cdata_.get(), std_string_to_easyar_String(arg0).get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ void InputFrameRecorder::stop()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_InputFrameRecorder_stop(cdata_.get());
+}
+
+_INLINE_SPECIFIER_ InputFramePlayer::InputFramePlayer(std::shared_ptr<easyar_InputFramePlayer> cdata)
+    :
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ InputFramePlayer::~InputFramePlayer()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_InputFramePlayer> InputFramePlayer::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void InputFramePlayer::init_cdata(std::shared_ptr<easyar_InputFramePlayer> cdata)
+{
+    cdata_ = cdata;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<InputFramePlayer> InputFramePlayer::from_cdata(std::shared_ptr<easyar_InputFramePlayer> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<InputFramePlayer>(cdata);
+}
+_INLINE_SPECIFIER_ std::shared_ptr<InputFrameSource> InputFramePlayer::output()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_InputFrameSource * _return_value_;
+    easyar_InputFramePlayer_output(cdata_.get(), &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return InputFrameSource::from_cdata(std::shared_ptr<easyar_InputFrameSource>(_return_value_, [](easyar_InputFrameSource * ptr) { easyar_InputFrameSource__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ std::shared_ptr<InputFramePlayer> InputFramePlayer::create()
+{
+    easyar_InputFramePlayer * _return_value_;
+    easyar_InputFramePlayer_create(&_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return InputFramePlayer::from_cdata(std::shared_ptr<easyar_InputFramePlayer>(_return_value_, [](easyar_InputFramePlayer * ptr) { easyar_InputFramePlayer__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ bool InputFramePlayer::start(std::string arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_InputFramePlayer_start(cdata_.get(), std_string_to_easyar_String(arg0).get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ void InputFramePlayer::stop()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_InputFramePlayer_stop(cdata_.get());
+}
+
+_INLINE_SPECIFIER_ CallbackScheduler::CallbackScheduler(std::shared_ptr<easyar_CallbackScheduler> cdata)
+    :
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ CallbackScheduler::~CallbackScheduler()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_CallbackScheduler> CallbackScheduler::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void CallbackScheduler::init_cdata(std::shared_ptr<easyar_CallbackScheduler> cdata)
+{
+    cdata_ = cdata;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<CallbackScheduler> CallbackScheduler::from_cdata(std::shared_ptr<easyar_CallbackScheduler> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    std::string typeName = easyar_CallbackScheduler__typeName(cdata.get());
+    if (typeName == "DelayedCallbackScheduler") {
+        easyar_DelayedCallbackScheduler * st_cdata;
+        easyar_tryCastCallbackSchedulerToDelayedCallbackScheduler(cdata.get(), &st_cdata);
+        return std::static_pointer_cast<CallbackScheduler>(std::make_shared<DelayedCallbackScheduler>(std::shared_ptr<easyar_DelayedCallbackScheduler>(st_cdata, [](easyar_DelayedCallbackScheduler * ptr) { easyar_DelayedCallbackScheduler__dtor(ptr); })));
+    }
+    if (typeName == "ImmediateCallbackScheduler") {
+        easyar_ImmediateCallbackScheduler * st_cdata;
+        easyar_tryCastCallbackSchedulerToImmediateCallbackScheduler(cdata.get(), &st_cdata);
+        return std::static_pointer_cast<CallbackScheduler>(std::make_shared<ImmediateCallbackScheduler>(std::shared_ptr<easyar_ImmediateCallbackScheduler>(st_cdata, [](easyar_ImmediateCallbackScheduler * ptr) { easyar_ImmediateCallbackScheduler__dtor(ptr); })));
+    }
+    return std::make_shared<CallbackScheduler>(cdata);
+}
+
+_INLINE_SPECIFIER_ DelayedCallbackScheduler::DelayedCallbackScheduler(std::shared_ptr<easyar_DelayedCallbackScheduler> cdata)
+    :
+    CallbackScheduler(std::shared_ptr<easyar_CallbackScheduler>(nullptr)),
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ DelayedCallbackScheduler::~DelayedCallbackScheduler()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_DelayedCallbackScheduler> DelayedCallbackScheduler::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void DelayedCallbackScheduler::init_cdata(std::shared_ptr<easyar_DelayedCallbackScheduler> cdata)
+{
+    cdata_ = cdata;
+    {
+        easyar_CallbackScheduler * ptr = nullptr;
+        easyar_castDelayedCallbackSchedulerToCallbackScheduler(cdata_.get(), &ptr);
+        CallbackScheduler::init_cdata(std::shared_ptr<easyar_CallbackScheduler>(ptr, [](easyar_CallbackScheduler * ptr) { easyar_CallbackScheduler__dtor(ptr); }));
+    }
+}
+_INLINE_SPECIFIER_ std::shared_ptr<DelayedCallbackScheduler> DelayedCallbackScheduler::from_cdata(std::shared_ptr<easyar_DelayedCallbackScheduler> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<DelayedCallbackScheduler>(cdata);
+}
+_INLINE_SPECIFIER_ DelayedCallbackScheduler::DelayedCallbackScheduler()
+    :
+    CallbackScheduler(std::shared_ptr<easyar_CallbackScheduler>(nullptr)),
+    cdata_(nullptr)
+{
+    easyar_DelayedCallbackScheduler * _return_value_;
+    easyar_DelayedCallbackScheduler__ctor(&_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
+    init_cdata(std::shared_ptr<easyar_DelayedCallbackScheduler>(_return_value_, [](easyar_DelayedCallbackScheduler * ptr) { easyar_DelayedCallbackScheduler__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ bool DelayedCallbackScheduler::runOne()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_DelayedCallbackScheduler_runOne(cdata_.get());
+    return _return_value_;
+}
+
+_INLINE_SPECIFIER_ ImmediateCallbackScheduler::ImmediateCallbackScheduler(std::shared_ptr<easyar_ImmediateCallbackScheduler> cdata)
+    :
+    CallbackScheduler(std::shared_ptr<easyar_CallbackScheduler>(nullptr)),
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ ImmediateCallbackScheduler::~ImmediateCallbackScheduler()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_ImmediateCallbackScheduler> ImmediateCallbackScheduler::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void ImmediateCallbackScheduler::init_cdata(std::shared_ptr<easyar_ImmediateCallbackScheduler> cdata)
+{
+    cdata_ = cdata;
+    {
+        easyar_CallbackScheduler * ptr = nullptr;
+        easyar_castImmediateCallbackSchedulerToCallbackScheduler(cdata_.get(), &ptr);
+        CallbackScheduler::init_cdata(std::shared_ptr<easyar_CallbackScheduler>(ptr, [](easyar_CallbackScheduler * ptr) { easyar_CallbackScheduler__dtor(ptr); }));
+    }
+}
+_INLINE_SPECIFIER_ std::shared_ptr<ImmediateCallbackScheduler> ImmediateCallbackScheduler::from_cdata(std::shared_ptr<easyar_ImmediateCallbackScheduler> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<ImmediateCallbackScheduler>(cdata);
+}
+_INLINE_SPECIFIER_ std::shared_ptr<ImmediateCallbackScheduler> ImmediateCallbackScheduler::getDefault()
+{
+    easyar_ImmediateCallbackScheduler * _return_value_;
+    easyar_ImmediateCallbackScheduler_getDefault(&_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return ImmediateCallbackScheduler::from_cdata(std::shared_ptr<easyar_ImmediateCallbackScheduler>(_return_value_, [](easyar_ImmediateCallbackScheduler * ptr) { easyar_ImmediateCallbackScheduler__dtor(ptr); }));
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<Buffer> JniUtility::wrapByteArray(void * arg0, bool arg1, std::function<void()> arg2)
+{
+    if (!(arg2 != nullptr)) { throw std::runtime_error("InvalidArgument: deleter"); }
+    easyar_Buffer * _return_value_;
+    easyar_JniUtility_wrapByteArray(arg0, arg1, FunctorOfVoid_to_c(arg2), &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ std::shared_ptr<Buffer> JniUtility::wrapBuffer(void * arg0, std::function<void()> arg1)
+{
+    if (!(arg1 != nullptr)) { throw std::runtime_error("InvalidArgument: deleter"); }
+    easyar_Buffer * _return_value_;
+    easyar_JniUtility_wrapBuffer(arg0, FunctorOfVoid_to_c(arg1), &_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ void * JniUtility::getDirectBufferAddress(void * arg0)
+{
+    auto _return_value_ = easyar_JniUtility_getDirectBufferAddress(arg0);
+    return _return_value_;
+}
+
+_INLINE_SPECIFIER_ void Log::setLogFunc(std::function<void(LogLevel, std::string)> arg0)
+{
+    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: func"); }
+    easyar_Log_setLogFunc(FunctorOfVoidFromLogLevelAndString_to_c(arg0));
+}
+_INLINE_SPECIFIER_ void Log::resetLogFunc()
+{
+    easyar_Log_resetLogFunc();
+}
 
 _INLINE_SPECIFIER_ ImageTargetParameters::ImageTargetParameters(std::shared_ptr<easyar_ImageTargetParameters> cdata)
     :
@@ -4729,13 +5963,6 @@ _INLINE_SPECIFIER_ std::optional<std::shared_ptr<ImageTarget>> ImageTarget::crea
     easyar_ImageTarget_createFromImageFile(std_string_to_easyar_String(arg0).get(), static_cast<easyar_StorageType>(arg1), std_string_to_easyar_String(arg2).get(), std_string_to_easyar_String(arg3).get(), std_string_to_easyar_String(arg4).get(), arg5, &_return_value_);
     if (!(!_return_value_.has_value || (_return_value_.value != nullptr))) { throw std::runtime_error("InvalidReturnValue"); }
     return (_return_value_.has_value ? ImageTarget::from_cdata(std::shared_ptr<easyar_ImageTarget>(_return_value_.value, [](easyar_ImageTarget * ptr) { easyar_ImageTarget__dtor(ptr); })) : std::optional<std::shared_ptr<ImageTarget>>{});
-}
-_INLINE_SPECIFIER_ std::vector<std::shared_ptr<ImageTarget>> ImageTarget::setupAll(std::string arg0, StorageType arg1)
-{
-    easyar_ListOfImageTarget * _return_value_;
-    easyar_ImageTarget_setupAll(std_string_to_easyar_String(arg0).get(), static_cast<easyar_StorageType>(arg1), &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return std_vector_from_easyar_ListOfImageTarget(std::shared_ptr<easyar_ListOfImageTarget>(_return_value_, [](easyar_ListOfImageTarget * ptr) { easyar_ListOfImageTarget__dtor(ptr); }));
 }
 _INLINE_SPECIFIER_ float ImageTarget::scale()
 {
@@ -5499,6 +6726,176 @@ _INLINE_SPECIFIER_ void SparseSpatialMapManager::clear()
     easyar_SparseSpatialMapManager_clear(cdata_.get());
 }
 
+_INLINE_SPECIFIER_ int Engine::schemaHash()
+{
+    auto _return_value_ = easyar_Engine_schemaHash();
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ bool Engine::initialize(std::string arg0)
+{
+    if (easyar_Engine_schemaHash() != 2058628672) {
+        throw std::runtime_error("SchemaHashNotMatched");
+    }
+    auto _return_value_ = easyar_Engine_initialize(std_string_to_easyar_String(arg0).get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ void Engine::onPause()
+{
+    easyar_Engine_onPause();
+}
+_INLINE_SPECIFIER_ void Engine::onResume()
+{
+    easyar_Engine_onResume();
+}
+_INLINE_SPECIFIER_ std::string Engine::errorMessage()
+{
+    easyar_String * _return_value_;
+    easyar_Engine_errorMessage(&_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return std_string_from_easyar_String(std::shared_ptr<easyar_String>(_return_value_, [](easyar_String * ptr) { easyar_String__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ std::string Engine::versionString()
+{
+    easyar_String * _return_value_;
+    easyar_Engine_versionString(&_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return std_string_from_easyar_String(std::shared_ptr<easyar_String>(_return_value_, [](easyar_String * ptr) { easyar_String__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ std::string Engine::name()
+{
+    easyar_String * _return_value_;
+    easyar_Engine_name(&_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
+    return std_string_from_easyar_String(std::shared_ptr<easyar_String>(_return_value_, [](easyar_String * ptr) { easyar_String__dtor(ptr); }));
+}
+
+_INLINE_SPECIFIER_ VideoPlayer::VideoPlayer(std::shared_ptr<easyar_VideoPlayer> cdata)
+    :
+    cdata_(nullptr)
+{
+    init_cdata(cdata);
+}
+_INLINE_SPECIFIER_ VideoPlayer::~VideoPlayer()
+{
+    cdata_ = nullptr;
+}
+
+_INLINE_SPECIFIER_ std::shared_ptr<easyar_VideoPlayer> VideoPlayer::get_cdata()
+{
+    return cdata_;
+}
+_INLINE_SPECIFIER_ void VideoPlayer::init_cdata(std::shared_ptr<easyar_VideoPlayer> cdata)
+{
+    cdata_ = cdata;
+}
+_INLINE_SPECIFIER_ std::shared_ptr<VideoPlayer> VideoPlayer::from_cdata(std::shared_ptr<easyar_VideoPlayer> cdata)
+{
+    if (cdata == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<VideoPlayer>(cdata);
+}
+_INLINE_SPECIFIER_ VideoPlayer::VideoPlayer()
+    :
+    cdata_(nullptr)
+{
+    easyar_VideoPlayer * _return_value_;
+    easyar_VideoPlayer__ctor(&_return_value_);
+    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
+    init_cdata(std::shared_ptr<easyar_VideoPlayer>(_return_value_, [](easyar_VideoPlayer * ptr) { easyar_VideoPlayer__dtor(ptr); }));
+}
+_INLINE_SPECIFIER_ bool VideoPlayer::isAvailable()
+{
+    auto _return_value_ = easyar_VideoPlayer_isAvailable();
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ void VideoPlayer::setVideoType(VideoType arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_VideoPlayer_setVideoType(cdata_.get(), static_cast<easyar_VideoType>(arg0));
+}
+_INLINE_SPECIFIER_ void VideoPlayer::setRenderTexture(std::shared_ptr<TextureId> arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: texture"); }
+    easyar_VideoPlayer_setRenderTexture(cdata_.get(), arg0->get_cdata().get());
+}
+_INLINE_SPECIFIER_ void VideoPlayer::open(std::string arg0, StorageType arg1, std::shared_ptr<CallbackScheduler> arg2, std::optional<std::function<void(VideoStatus)>> arg3)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    if (!(arg2 != nullptr)) { throw std::runtime_error("InvalidArgument: callbackScheduler"); }
+    if (!(!arg3.has_value() || (arg3.value() != nullptr))) { throw std::runtime_error("InvalidArgument: callback"); }
+    easyar_VideoPlayer_open(cdata_.get(), std_string_to_easyar_String(arg0).get(), static_cast<easyar_StorageType>(arg1), arg2->get_cdata().get(), (arg3.has_value() ? easyar_OptionalOfFunctorOfVoidFromVideoStatus{true, FunctorOfVoidFromVideoStatus_to_c(arg3.value())} : easyar_OptionalOfFunctorOfVoidFromVideoStatus{false, {}}));
+}
+_INLINE_SPECIFIER_ void VideoPlayer::close()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_VideoPlayer_close(cdata_.get());
+}
+_INLINE_SPECIFIER_ bool VideoPlayer::play()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_VideoPlayer_play(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ void VideoPlayer::stop()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_VideoPlayer_stop(cdata_.get());
+}
+_INLINE_SPECIFIER_ void VideoPlayer::pause()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_VideoPlayer_pause(cdata_.get());
+}
+_INLINE_SPECIFIER_ bool VideoPlayer::isRenderTextureAvailable()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_VideoPlayer_isRenderTextureAvailable(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ void VideoPlayer::updateFrame()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    easyar_VideoPlayer_updateFrame(cdata_.get());
+}
+_INLINE_SPECIFIER_ int VideoPlayer::duration()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_VideoPlayer_duration(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ int VideoPlayer::currentPosition()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_VideoPlayer_currentPosition(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ bool VideoPlayer::seek(int arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_VideoPlayer_seek(cdata_.get(), arg0);
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ Vec2I VideoPlayer::size()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_VideoPlayer_size(cdata_.get());
+    return Vec2I{{{_return_value_.data[0], _return_value_.data[1]}}};
+}
+_INLINE_SPECIFIER_ float VideoPlayer::volume()
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_VideoPlayer_volume(cdata_.get());
+    return _return_value_;
+}
+_INLINE_SPECIFIER_ bool VideoPlayer::setVolume(float arg0)
+{
+    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
+    auto _return_value_ = easyar_VideoPlayer_setVolume(cdata_.get(), arg0);
+    return _return_value_;
+}
+
 _INLINE_SPECIFIER_ std::optional<std::shared_ptr<Image>> ImageHelper::decode(std::shared_ptr<Buffer> arg0)
 {
     if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: buffer"); }
@@ -5506,514 +6903,6 @@ _INLINE_SPECIFIER_ std::optional<std::shared_ptr<Image>> ImageHelper::decode(std
     easyar_ImageHelper_decode(arg0->get_cdata().get(), &_return_value_);
     if (!(!_return_value_.has_value || (_return_value_.value != nullptr))) { throw std::runtime_error("InvalidReturnValue"); }
     return (_return_value_.has_value ? Image::from_cdata(std::shared_ptr<easyar_Image>(_return_value_.value, [](easyar_Image * ptr) { easyar_Image__dtor(ptr); })) : std::optional<std::shared_ptr<Image>>{});
-}
-
-_INLINE_SPECIFIER_ ARCoreCameraDevice::ARCoreCameraDevice(std::shared_ptr<easyar_ARCoreCameraDevice> cdata)
-    :
-    cdata_(nullptr)
-{
-    init_cdata(cdata);
-}
-_INLINE_SPECIFIER_ ARCoreCameraDevice::~ARCoreCameraDevice()
-{
-    cdata_ = nullptr;
-}
-
-_INLINE_SPECIFIER_ std::shared_ptr<easyar_ARCoreCameraDevice> ARCoreCameraDevice::get_cdata()
-{
-    return cdata_;
-}
-_INLINE_SPECIFIER_ void ARCoreCameraDevice::init_cdata(std::shared_ptr<easyar_ARCoreCameraDevice> cdata)
-{
-    cdata_ = cdata;
-}
-_INLINE_SPECIFIER_ std::shared_ptr<ARCoreCameraDevice> ARCoreCameraDevice::from_cdata(std::shared_ptr<easyar_ARCoreCameraDevice> cdata)
-{
-    if (cdata == nullptr) {
-        return nullptr;
-    }
-    return std::make_shared<ARCoreCameraDevice>(cdata);
-}
-_INLINE_SPECIFIER_ ARCoreCameraDevice::ARCoreCameraDevice()
-    :
-    cdata_(nullptr)
-{
-    easyar_ARCoreCameraDevice * _return_value_;
-    easyar_ARCoreCameraDevice__ctor(&_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
-    init_cdata(std::shared_ptr<easyar_ARCoreCameraDevice>(_return_value_, [](easyar_ARCoreCameraDevice * ptr) { easyar_ARCoreCameraDevice__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ bool ARCoreCameraDevice::isAvailable()
-{
-    auto _return_value_ = easyar_ARCoreCameraDevice_isAvailable();
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ int ARCoreCameraDevice::bufferCapacity()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_ARCoreCameraDevice_bufferCapacity(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ void ARCoreCameraDevice::setBufferCapacity(int arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_ARCoreCameraDevice_setBufferCapacity(cdata_.get(), arg0);
-}
-_INLINE_SPECIFIER_ std::shared_ptr<InputFrameSource> ARCoreCameraDevice::inputFrameSource()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_InputFrameSource * _return_value_;
-    easyar_ARCoreCameraDevice_inputFrameSource(cdata_.get(), &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return InputFrameSource::from_cdata(std::shared_ptr<easyar_InputFrameSource>(_return_value_, [](easyar_InputFrameSource * ptr) { easyar_InputFrameSource__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ bool ARCoreCameraDevice::start()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_ARCoreCameraDevice_start(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ void ARCoreCameraDevice::stop()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_ARCoreCameraDevice_stop(cdata_.get());
-}
-_INLINE_SPECIFIER_ void ARCoreCameraDevice::close()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_ARCoreCameraDevice_close(cdata_.get());
-}
-
-_INLINE_SPECIFIER_ ARKitCameraDevice::ARKitCameraDevice(std::shared_ptr<easyar_ARKitCameraDevice> cdata)
-    :
-    cdata_(nullptr)
-{
-    init_cdata(cdata);
-}
-_INLINE_SPECIFIER_ ARKitCameraDevice::~ARKitCameraDevice()
-{
-    cdata_ = nullptr;
-}
-
-_INLINE_SPECIFIER_ std::shared_ptr<easyar_ARKitCameraDevice> ARKitCameraDevice::get_cdata()
-{
-    return cdata_;
-}
-_INLINE_SPECIFIER_ void ARKitCameraDevice::init_cdata(std::shared_ptr<easyar_ARKitCameraDevice> cdata)
-{
-    cdata_ = cdata;
-}
-_INLINE_SPECIFIER_ std::shared_ptr<ARKitCameraDevice> ARKitCameraDevice::from_cdata(std::shared_ptr<easyar_ARKitCameraDevice> cdata)
-{
-    if (cdata == nullptr) {
-        return nullptr;
-    }
-    return std::make_shared<ARKitCameraDevice>(cdata);
-}
-_INLINE_SPECIFIER_ ARKitCameraDevice::ARKitCameraDevice()
-    :
-    cdata_(nullptr)
-{
-    easyar_ARKitCameraDevice * _return_value_;
-    easyar_ARKitCameraDevice__ctor(&_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
-    init_cdata(std::shared_ptr<easyar_ARKitCameraDevice>(_return_value_, [](easyar_ARKitCameraDevice * ptr) { easyar_ARKitCameraDevice__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ bool ARKitCameraDevice::isAvailable()
-{
-    auto _return_value_ = easyar_ARKitCameraDevice_isAvailable();
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ int ARKitCameraDevice::bufferCapacity()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_ARKitCameraDevice_bufferCapacity(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ void ARKitCameraDevice::setBufferCapacity(int arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_ARKitCameraDevice_setBufferCapacity(cdata_.get(), arg0);
-}
-_INLINE_SPECIFIER_ std::shared_ptr<InputFrameSource> ARKitCameraDevice::inputFrameSource()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_InputFrameSource * _return_value_;
-    easyar_ARKitCameraDevice_inputFrameSource(cdata_.get(), &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return InputFrameSource::from_cdata(std::shared_ptr<easyar_InputFrameSource>(_return_value_, [](easyar_InputFrameSource * ptr) { easyar_InputFrameSource__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ bool ARKitCameraDevice::start()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_ARKitCameraDevice_start(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ void ARKitCameraDevice::stop()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_ARKitCameraDevice_stop(cdata_.get());
-}
-_INLINE_SPECIFIER_ void ARKitCameraDevice::close()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_ARKitCameraDevice_close(cdata_.get());
-}
-
-_INLINE_SPECIFIER_ CallbackScheduler::CallbackScheduler(std::shared_ptr<easyar_CallbackScheduler> cdata)
-    :
-    cdata_(nullptr)
-{
-    init_cdata(cdata);
-}
-_INLINE_SPECIFIER_ CallbackScheduler::~CallbackScheduler()
-{
-    cdata_ = nullptr;
-}
-
-_INLINE_SPECIFIER_ std::shared_ptr<easyar_CallbackScheduler> CallbackScheduler::get_cdata()
-{
-    return cdata_;
-}
-_INLINE_SPECIFIER_ void CallbackScheduler::init_cdata(std::shared_ptr<easyar_CallbackScheduler> cdata)
-{
-    cdata_ = cdata;
-}
-_INLINE_SPECIFIER_ std::shared_ptr<CallbackScheduler> CallbackScheduler::from_cdata(std::shared_ptr<easyar_CallbackScheduler> cdata)
-{
-    if (cdata == nullptr) {
-        return nullptr;
-    }
-    std::string typeName = easyar_CallbackScheduler__typeName(cdata.get());
-    if (typeName == "DelayedCallbackScheduler") {
-        easyar_DelayedCallbackScheduler * st_cdata;
-        easyar_tryCastCallbackSchedulerToDelayedCallbackScheduler(cdata.get(), &st_cdata);
-        return std::static_pointer_cast<CallbackScheduler>(std::make_shared<DelayedCallbackScheduler>(std::shared_ptr<easyar_DelayedCallbackScheduler>(st_cdata, [](easyar_DelayedCallbackScheduler * ptr) { easyar_DelayedCallbackScheduler__dtor(ptr); })));
-    }
-    if (typeName == "ImmediateCallbackScheduler") {
-        easyar_ImmediateCallbackScheduler * st_cdata;
-        easyar_tryCastCallbackSchedulerToImmediateCallbackScheduler(cdata.get(), &st_cdata);
-        return std::static_pointer_cast<CallbackScheduler>(std::make_shared<ImmediateCallbackScheduler>(std::shared_ptr<easyar_ImmediateCallbackScheduler>(st_cdata, [](easyar_ImmediateCallbackScheduler * ptr) { easyar_ImmediateCallbackScheduler__dtor(ptr); })));
-    }
-    return std::make_shared<CallbackScheduler>(cdata);
-}
-
-_INLINE_SPECIFIER_ DelayedCallbackScheduler::DelayedCallbackScheduler(std::shared_ptr<easyar_DelayedCallbackScheduler> cdata)
-    :
-    CallbackScheduler(std::shared_ptr<easyar_CallbackScheduler>(nullptr)),
-    cdata_(nullptr)
-{
-    init_cdata(cdata);
-}
-_INLINE_SPECIFIER_ DelayedCallbackScheduler::~DelayedCallbackScheduler()
-{
-    cdata_ = nullptr;
-}
-
-_INLINE_SPECIFIER_ std::shared_ptr<easyar_DelayedCallbackScheduler> DelayedCallbackScheduler::get_cdata()
-{
-    return cdata_;
-}
-_INLINE_SPECIFIER_ void DelayedCallbackScheduler::init_cdata(std::shared_ptr<easyar_DelayedCallbackScheduler> cdata)
-{
-    cdata_ = cdata;
-    {
-        easyar_CallbackScheduler * ptr = nullptr;
-        easyar_castDelayedCallbackSchedulerToCallbackScheduler(cdata_.get(), &ptr);
-        CallbackScheduler::init_cdata(std::shared_ptr<easyar_CallbackScheduler>(ptr, [](easyar_CallbackScheduler * ptr) { easyar_CallbackScheduler__dtor(ptr); }));
-    }
-}
-_INLINE_SPECIFIER_ std::shared_ptr<DelayedCallbackScheduler> DelayedCallbackScheduler::from_cdata(std::shared_ptr<easyar_DelayedCallbackScheduler> cdata)
-{
-    if (cdata == nullptr) {
-        return nullptr;
-    }
-    return std::make_shared<DelayedCallbackScheduler>(cdata);
-}
-_INLINE_SPECIFIER_ DelayedCallbackScheduler::DelayedCallbackScheduler()
-    :
-    CallbackScheduler(std::shared_ptr<easyar_CallbackScheduler>(nullptr)),
-    cdata_(nullptr)
-{
-    easyar_DelayedCallbackScheduler * _return_value_;
-    easyar_DelayedCallbackScheduler__ctor(&_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
-    init_cdata(std::shared_ptr<easyar_DelayedCallbackScheduler>(_return_value_, [](easyar_DelayedCallbackScheduler * ptr) { easyar_DelayedCallbackScheduler__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ bool DelayedCallbackScheduler::runOne()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_DelayedCallbackScheduler_runOne(cdata_.get());
-    return _return_value_;
-}
-
-_INLINE_SPECIFIER_ ImmediateCallbackScheduler::ImmediateCallbackScheduler(std::shared_ptr<easyar_ImmediateCallbackScheduler> cdata)
-    :
-    CallbackScheduler(std::shared_ptr<easyar_CallbackScheduler>(nullptr)),
-    cdata_(nullptr)
-{
-    init_cdata(cdata);
-}
-_INLINE_SPECIFIER_ ImmediateCallbackScheduler::~ImmediateCallbackScheduler()
-{
-    cdata_ = nullptr;
-}
-
-_INLINE_SPECIFIER_ std::shared_ptr<easyar_ImmediateCallbackScheduler> ImmediateCallbackScheduler::get_cdata()
-{
-    return cdata_;
-}
-_INLINE_SPECIFIER_ void ImmediateCallbackScheduler::init_cdata(std::shared_ptr<easyar_ImmediateCallbackScheduler> cdata)
-{
-    cdata_ = cdata;
-    {
-        easyar_CallbackScheduler * ptr = nullptr;
-        easyar_castImmediateCallbackSchedulerToCallbackScheduler(cdata_.get(), &ptr);
-        CallbackScheduler::init_cdata(std::shared_ptr<easyar_CallbackScheduler>(ptr, [](easyar_CallbackScheduler * ptr) { easyar_CallbackScheduler__dtor(ptr); }));
-    }
-}
-_INLINE_SPECIFIER_ std::shared_ptr<ImmediateCallbackScheduler> ImmediateCallbackScheduler::from_cdata(std::shared_ptr<easyar_ImmediateCallbackScheduler> cdata)
-{
-    if (cdata == nullptr) {
-        return nullptr;
-    }
-    return std::make_shared<ImmediateCallbackScheduler>(cdata);
-}
-_INLINE_SPECIFIER_ std::shared_ptr<ImmediateCallbackScheduler> ImmediateCallbackScheduler::getDefault()
-{
-    easyar_ImmediateCallbackScheduler * _return_value_;
-    easyar_ImmediateCallbackScheduler_getDefault(&_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return ImmediateCallbackScheduler::from_cdata(std::shared_ptr<easyar_ImmediateCallbackScheduler>(_return_value_, [](easyar_ImmediateCallbackScheduler * ptr) { easyar_ImmediateCallbackScheduler__dtor(ptr); }));
-}
-
-_INLINE_SPECIFIER_ CameraDevice::CameraDevice(std::shared_ptr<easyar_CameraDevice> cdata)
-    :
-    cdata_(nullptr)
-{
-    init_cdata(cdata);
-}
-_INLINE_SPECIFIER_ CameraDevice::~CameraDevice()
-{
-    cdata_ = nullptr;
-}
-
-_INLINE_SPECIFIER_ std::shared_ptr<easyar_CameraDevice> CameraDevice::get_cdata()
-{
-    return cdata_;
-}
-_INLINE_SPECIFIER_ void CameraDevice::init_cdata(std::shared_ptr<easyar_CameraDevice> cdata)
-{
-    cdata_ = cdata;
-}
-_INLINE_SPECIFIER_ std::shared_ptr<CameraDevice> CameraDevice::from_cdata(std::shared_ptr<easyar_CameraDevice> cdata)
-{
-    if (cdata == nullptr) {
-        return nullptr;
-    }
-    return std::make_shared<CameraDevice>(cdata);
-}
-_INLINE_SPECIFIER_ CameraDevice::CameraDevice()
-    :
-    cdata_(nullptr)
-{
-    easyar_CameraDevice * _return_value_;
-    easyar_CameraDevice__ctor(&_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
-    init_cdata(std::shared_ptr<easyar_CameraDevice>(_return_value_, [](easyar_CameraDevice * ptr) { easyar_CameraDevice__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ bool CameraDevice::isAvailable()
-{
-    auto _return_value_ = easyar_CameraDevice_isAvailable();
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ AndroidCameraApiType CameraDevice::androidCameraApiType()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_androidCameraApiType(cdata_.get());
-    return static_cast<AndroidCameraApiType>(_return_value_);
-}
-_INLINE_SPECIFIER_ void CameraDevice::setAndroidCameraApiType(AndroidCameraApiType arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_CameraDevice_setAndroidCameraApiType(cdata_.get(), static_cast<easyar_AndroidCameraApiType>(arg0));
-}
-_INLINE_SPECIFIER_ int CameraDevice::bufferCapacity()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_bufferCapacity(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ void CameraDevice::setBufferCapacity(int arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_CameraDevice_setBufferCapacity(cdata_.get(), arg0);
-}
-_INLINE_SPECIFIER_ std::shared_ptr<InputFrameSource> CameraDevice::inputFrameSource()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_InputFrameSource * _return_value_;
-    easyar_CameraDevice_inputFrameSource(cdata_.get(), &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return InputFrameSource::from_cdata(std::shared_ptr<easyar_InputFrameSource>(_return_value_, [](easyar_InputFrameSource * ptr) { easyar_InputFrameSource__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ void CameraDevice::setStateChangedCallback(std::shared_ptr<CallbackScheduler> arg0, std::optional<std::function<void(CameraState)>> arg1)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: callbackScheduler"); }
-    if (!(!arg1.has_value() || (arg1.value() != nullptr))) { throw std::runtime_error("InvalidArgument: stateChangedCallback"); }
-    easyar_CameraDevice_setStateChangedCallback(cdata_.get(), arg0->get_cdata().get(), (arg1.has_value() ? easyar_OptionalOfFunctorOfVoidFromCameraState{true, FunctorOfVoidFromCameraState_to_c(arg1.value())} : easyar_OptionalOfFunctorOfVoidFromCameraState{false, {}}));
-}
-_INLINE_SPECIFIER_ void CameraDevice::requestPermissions(std::shared_ptr<CallbackScheduler> arg0, std::optional<std::function<void(PermissionStatus, std::string)>> arg1)
-{
-    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: callbackScheduler"); }
-    if (!(!arg1.has_value() || (arg1.value() != nullptr))) { throw std::runtime_error("InvalidArgument: permissionCallback"); }
-    easyar_CameraDevice_requestPermissions(arg0->get_cdata().get(), (arg1.has_value() ? easyar_OptionalOfFunctorOfVoidFromPermissionStatusAndString{true, FunctorOfVoidFromPermissionStatusAndString_to_c(arg1.value())} : easyar_OptionalOfFunctorOfVoidFromPermissionStatusAndString{false, {}}));
-}
-_INLINE_SPECIFIER_ int CameraDevice::cameraCount()
-{
-    auto _return_value_ = easyar_CameraDevice_cameraCount();
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool CameraDevice::openWithIndex(int arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_openWithIndex(cdata_.get(), arg0);
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool CameraDevice::openWithSpecificType(CameraDeviceType arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_openWithSpecificType(cdata_.get(), static_cast<easyar_CameraDeviceType>(arg0));
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool CameraDevice::openWithPreferredType(CameraDeviceType arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_openWithPreferredType(cdata_.get(), static_cast<easyar_CameraDeviceType>(arg0));
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool CameraDevice::start()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_start(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ void CameraDevice::stop()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_CameraDevice_stop(cdata_.get());
-}
-_INLINE_SPECIFIER_ void CameraDevice::close()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_CameraDevice_close(cdata_.get());
-}
-_INLINE_SPECIFIER_ int CameraDevice::index()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_index(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ CameraDeviceType CameraDevice::type()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_type(cdata_.get());
-    return static_cast<CameraDeviceType>(_return_value_);
-}
-_INLINE_SPECIFIER_ std::shared_ptr<CameraParameters> CameraDevice::cameraParameters()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_CameraParameters * _return_value_;
-    easyar_CameraDevice_cameraParameters(cdata_.get(), &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return CameraParameters::from_cdata(std::shared_ptr<easyar_CameraParameters>(_return_value_, [](easyar_CameraParameters * ptr) { easyar_CameraParameters__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ void CameraDevice::setCameraParameters(std::shared_ptr<CameraParameters> arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: cameraParameters"); }
-    easyar_CameraDevice_setCameraParameters(cdata_.get(), arg0->get_cdata().get());
-}
-_INLINE_SPECIFIER_ Vec2I CameraDevice::size()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_size(cdata_.get());
-    return Vec2I{{{_return_value_.data[0], _return_value_.data[1]}}};
-}
-_INLINE_SPECIFIER_ int CameraDevice::supportedSizeCount()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_supportedSizeCount(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ Vec2I CameraDevice::supportedSize(int arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_supportedSize(cdata_.get(), arg0);
-    return Vec2I{{{_return_value_.data[0], _return_value_.data[1]}}};
-}
-_INLINE_SPECIFIER_ bool CameraDevice::setSize(Vec2I arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_setSize(cdata_.get(), easyar_Vec2I{{arg0.data[0], arg0.data[1]}});
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ int CameraDevice::supportedFrameRateRangeCount()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_supportedFrameRateRangeCount(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ float CameraDevice::supportedFrameRateRangeLower(int arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_supportedFrameRateRangeLower(cdata_.get(), arg0);
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ float CameraDevice::supportedFrameRateRangeUpper(int arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_supportedFrameRateRangeUpper(cdata_.get(), arg0);
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ int CameraDevice::frameRateRange()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_frameRateRange(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool CameraDevice::setFrameRateRange(int arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_setFrameRateRange(cdata_.get(), arg0);
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool CameraDevice::setFlashTorchMode(bool arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_setFlashTorchMode(cdata_.get(), arg0);
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool CameraDevice::setFocusMode(CameraDeviceFocusMode arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_setFocusMode(cdata_.get(), static_cast<easyar_CameraDeviceFocusMode>(arg0));
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool CameraDevice::autoFocus()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraDevice_autoFocus(cdata_.get());
-    return _return_value_;
-}
-
-_INLINE_SPECIFIER_ std::shared_ptr<CameraDevice> CameraDeviceSelector::createCameraDevice(CameraDevicePreference arg0)
-{
-    easyar_CameraDevice * _return_value_;
-    easyar_CameraDeviceSelector_createCameraDevice(static_cast<easyar_CameraDevicePreference>(arg0), &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return CameraDevice::from_cdata(std::shared_ptr<easyar_CameraDevice>(_return_value_, [](easyar_CameraDevice * ptr) { easyar_CameraDevice__dtor(ptr); }));
 }
 
 _INLINE_SPECIFIER_ SignalSink::SignalSink(std::shared_ptr<easyar_SignalSink> cdata)
@@ -6807,49 +7696,6 @@ _INLINE_SPECIFIER_ std::shared_ptr<InputFrameToFeedbackFrameAdapter> InputFrameT
     return InputFrameToFeedbackFrameAdapter::from_cdata(std::shared_ptr<easyar_InputFrameToFeedbackFrameAdapter>(_return_value_, [](easyar_InputFrameToFeedbackFrameAdapter * ptr) { easyar_InputFrameToFeedbackFrameAdapter__dtor(ptr); }));
 }
 
-_INLINE_SPECIFIER_ int Engine::schemaHash()
-{
-    auto _return_value_ = easyar_Engine_schemaHash();
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool Engine::initialize(std::string arg0)
-{
-    if (easyar_Engine_schemaHash() != -279124390) {
-        throw std::runtime_error("SchemaHashNotMatched");
-    }
-    auto _return_value_ = easyar_Engine_initialize(std_string_to_easyar_String(arg0).get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ void Engine::onPause()
-{
-    easyar_Engine_onPause();
-}
-_INLINE_SPECIFIER_ void Engine::onResume()
-{
-    easyar_Engine_onResume();
-}
-_INLINE_SPECIFIER_ std::string Engine::errorMessage()
-{
-    easyar_String * _return_value_;
-    easyar_Engine_errorMessage(&_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return std_string_from_easyar_String(std::shared_ptr<easyar_String>(_return_value_, [](easyar_String * ptr) { easyar_String__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ std::string Engine::versionString()
-{
-    easyar_String * _return_value_;
-    easyar_Engine_versionString(&_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return std_string_from_easyar_String(std::shared_ptr<easyar_String>(_return_value_, [](easyar_String * ptr) { easyar_String__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ std::string Engine::name()
-{
-    easyar_String * _return_value_;
-    easyar_Engine_name(&_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return std_string_from_easyar_String(std::shared_ptr<easyar_String>(_return_value_, [](easyar_String * ptr) { easyar_String__dtor(ptr); }));
-}
-
 _INLINE_SPECIFIER_ InputFrame::InputFrame(std::shared_ptr<easyar_InputFrame> cdata)
     :
     cdata_(nullptr)
@@ -7382,558 +8228,6 @@ _INLINE_SPECIFIER_ std::shared_ptr<TextureId> TextureId::fromPointer(void * arg0
     return TextureId::from_cdata(std::shared_ptr<easyar_TextureId>(_return_value_, [](easyar_TextureId * ptr) { easyar_TextureId__dtor(ptr); }));
 }
 
-_INLINE_SPECIFIER_ VideoPlayer::VideoPlayer(std::shared_ptr<easyar_VideoPlayer> cdata)
-    :
-    cdata_(nullptr)
-{
-    init_cdata(cdata);
-}
-_INLINE_SPECIFIER_ VideoPlayer::~VideoPlayer()
-{
-    cdata_ = nullptr;
-}
-
-_INLINE_SPECIFIER_ std::shared_ptr<easyar_VideoPlayer> VideoPlayer::get_cdata()
-{
-    return cdata_;
-}
-_INLINE_SPECIFIER_ void VideoPlayer::init_cdata(std::shared_ptr<easyar_VideoPlayer> cdata)
-{
-    cdata_ = cdata;
-}
-_INLINE_SPECIFIER_ std::shared_ptr<VideoPlayer> VideoPlayer::from_cdata(std::shared_ptr<easyar_VideoPlayer> cdata)
-{
-    if (cdata == nullptr) {
-        return nullptr;
-    }
-    return std::make_shared<VideoPlayer>(cdata);
-}
-_INLINE_SPECIFIER_ VideoPlayer::VideoPlayer()
-    :
-    cdata_(nullptr)
-{
-    easyar_VideoPlayer * _return_value_;
-    easyar_VideoPlayer__ctor(&_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
-    init_cdata(std::shared_ptr<easyar_VideoPlayer>(_return_value_, [](easyar_VideoPlayer * ptr) { easyar_VideoPlayer__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ bool VideoPlayer::isAvailable()
-{
-    auto _return_value_ = easyar_VideoPlayer_isAvailable();
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ void VideoPlayer::setVideoType(VideoType arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_VideoPlayer_setVideoType(cdata_.get(), static_cast<easyar_VideoType>(arg0));
-}
-_INLINE_SPECIFIER_ void VideoPlayer::setRenderTexture(std::shared_ptr<TextureId> arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: texture"); }
-    easyar_VideoPlayer_setRenderTexture(cdata_.get(), arg0->get_cdata().get());
-}
-_INLINE_SPECIFIER_ void VideoPlayer::open(std::string arg0, StorageType arg1, std::shared_ptr<CallbackScheduler> arg2, std::optional<std::function<void(VideoStatus)>> arg3)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    if (!(arg2 != nullptr)) { throw std::runtime_error("InvalidArgument: callbackScheduler"); }
-    if (!(!arg3.has_value() || (arg3.value() != nullptr))) { throw std::runtime_error("InvalidArgument: callback"); }
-    easyar_VideoPlayer_open(cdata_.get(), std_string_to_easyar_String(arg0).get(), static_cast<easyar_StorageType>(arg1), arg2->get_cdata().get(), (arg3.has_value() ? easyar_OptionalOfFunctorOfVoidFromVideoStatus{true, FunctorOfVoidFromVideoStatus_to_c(arg3.value())} : easyar_OptionalOfFunctorOfVoidFromVideoStatus{false, {}}));
-}
-_INLINE_SPECIFIER_ void VideoPlayer::close()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_VideoPlayer_close(cdata_.get());
-}
-_INLINE_SPECIFIER_ bool VideoPlayer::play()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_VideoPlayer_play(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ void VideoPlayer::stop()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_VideoPlayer_stop(cdata_.get());
-}
-_INLINE_SPECIFIER_ void VideoPlayer::pause()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_VideoPlayer_pause(cdata_.get());
-}
-_INLINE_SPECIFIER_ bool VideoPlayer::isRenderTextureAvailable()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_VideoPlayer_isRenderTextureAvailable(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ void VideoPlayer::updateFrame()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_VideoPlayer_updateFrame(cdata_.get());
-}
-_INLINE_SPECIFIER_ int VideoPlayer::duration()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_VideoPlayer_duration(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ int VideoPlayer::currentPosition()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_VideoPlayer_currentPosition(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool VideoPlayer::seek(int arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_VideoPlayer_seek(cdata_.get(), arg0);
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ Vec2I VideoPlayer::size()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_VideoPlayer_size(cdata_.get());
-    return Vec2I{{{_return_value_.data[0], _return_value_.data[1]}}};
-}
-_INLINE_SPECIFIER_ float VideoPlayer::volume()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_VideoPlayer_volume(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool VideoPlayer::setVolume(float arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_VideoPlayer_setVolume(cdata_.get(), arg0);
-    return _return_value_;
-}
-
-_INLINE_SPECIFIER_ Buffer::Buffer(std::shared_ptr<easyar_Buffer> cdata)
-    :
-    cdata_(nullptr)
-{
-    init_cdata(cdata);
-}
-_INLINE_SPECIFIER_ Buffer::~Buffer()
-{
-    cdata_ = nullptr;
-}
-
-_INLINE_SPECIFIER_ std::shared_ptr<easyar_Buffer> Buffer::get_cdata()
-{
-    return cdata_;
-}
-_INLINE_SPECIFIER_ void Buffer::init_cdata(std::shared_ptr<easyar_Buffer> cdata)
-{
-    cdata_ = cdata;
-}
-_INLINE_SPECIFIER_ std::shared_ptr<Buffer> Buffer::from_cdata(std::shared_ptr<easyar_Buffer> cdata)
-{
-    if (cdata == nullptr) {
-        return nullptr;
-    }
-    return std::make_shared<Buffer>(cdata);
-}
-_INLINE_SPECIFIER_ std::shared_ptr<Buffer> Buffer::wrap(void * arg0, int arg1, std::function<void()> arg2)
-{
-    if (!(arg2 != nullptr)) { throw std::runtime_error("InvalidArgument: deleter"); }
-    easyar_Buffer * _return_value_;
-    easyar_Buffer_wrap(arg0, arg1, FunctorOfVoid_to_c(arg2), &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ std::shared_ptr<Buffer> Buffer::create(int arg0)
-{
-    easyar_Buffer * _return_value_;
-    easyar_Buffer_create(arg0, &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ void * Buffer::data()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_Buffer_data(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ int Buffer::size()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_Buffer_size(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ void Buffer::memoryCopy(void * arg0, void * arg1, int arg2)
-{
-    easyar_Buffer_memoryCopy(arg0, arg1, arg2);
-}
-_INLINE_SPECIFIER_ bool Buffer::tryCopyFrom(void * arg0, int arg1, int arg2, int arg3)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_Buffer_tryCopyFrom(cdata_.get(), arg0, arg1, arg2, arg3);
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool Buffer::tryCopyTo(int arg0, void * arg1, int arg2, int arg3)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_Buffer_tryCopyTo(cdata_.get(), arg0, arg1, arg2, arg3);
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ std::shared_ptr<Buffer> Buffer::partition(int arg0, int arg1)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_Buffer * _return_value_;
-    easyar_Buffer_partition(cdata_.get(), arg0, arg1, &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); }));
-}
-
-_INLINE_SPECIFIER_ BufferDictionary::BufferDictionary(std::shared_ptr<easyar_BufferDictionary> cdata)
-    :
-    cdata_(nullptr)
-{
-    init_cdata(cdata);
-}
-_INLINE_SPECIFIER_ BufferDictionary::~BufferDictionary()
-{
-    cdata_ = nullptr;
-}
-
-_INLINE_SPECIFIER_ std::shared_ptr<easyar_BufferDictionary> BufferDictionary::get_cdata()
-{
-    return cdata_;
-}
-_INLINE_SPECIFIER_ void BufferDictionary::init_cdata(std::shared_ptr<easyar_BufferDictionary> cdata)
-{
-    cdata_ = cdata;
-}
-_INLINE_SPECIFIER_ std::shared_ptr<BufferDictionary> BufferDictionary::from_cdata(std::shared_ptr<easyar_BufferDictionary> cdata)
-{
-    if (cdata == nullptr) {
-        return nullptr;
-    }
-    return std::make_shared<BufferDictionary>(cdata);
-}
-_INLINE_SPECIFIER_ BufferDictionary::BufferDictionary()
-    :
-    cdata_(nullptr)
-{
-    easyar_BufferDictionary * _return_value_;
-    easyar_BufferDictionary__ctor(&_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
-    init_cdata(std::shared_ptr<easyar_BufferDictionary>(_return_value_, [](easyar_BufferDictionary * ptr) { easyar_BufferDictionary__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ int BufferDictionary::count()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_BufferDictionary_count(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool BufferDictionary::contains(std::string arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_BufferDictionary_contains(cdata_.get(), std_string_to_easyar_String(arg0).get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ std::optional<std::shared_ptr<Buffer>> BufferDictionary::tryGet(std::string arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_OptionalOfBuffer _return_value_;
-    easyar_BufferDictionary_tryGet(cdata_.get(), std_string_to_easyar_String(arg0).get(), &_return_value_);
-    if (!(!_return_value_.has_value || (_return_value_.value != nullptr))) { throw std::runtime_error("InvalidReturnValue"); }
-    return (_return_value_.has_value ? Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_.value, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); })) : std::optional<std::shared_ptr<Buffer>>{});
-}
-_INLINE_SPECIFIER_ void BufferDictionary::set(std::string arg0, std::shared_ptr<Buffer> arg1)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    if (!(arg1 != nullptr)) { throw std::runtime_error("InvalidArgument: buffer"); }
-    easyar_BufferDictionary_set(cdata_.get(), std_string_to_easyar_String(arg0).get(), arg1->get_cdata().get());
-}
-_INLINE_SPECIFIER_ bool BufferDictionary::remove(std::string arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_BufferDictionary_remove(cdata_.get(), std_string_to_easyar_String(arg0).get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ void BufferDictionary::clear()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_BufferDictionary_clear(cdata_.get());
-}
-
-_INLINE_SPECIFIER_ BufferPool::BufferPool(std::shared_ptr<easyar_BufferPool> cdata)
-    :
-    cdata_(nullptr)
-{
-    init_cdata(cdata);
-}
-_INLINE_SPECIFIER_ BufferPool::~BufferPool()
-{
-    cdata_ = nullptr;
-}
-
-_INLINE_SPECIFIER_ std::shared_ptr<easyar_BufferPool> BufferPool::get_cdata()
-{
-    return cdata_;
-}
-_INLINE_SPECIFIER_ void BufferPool::init_cdata(std::shared_ptr<easyar_BufferPool> cdata)
-{
-    cdata_ = cdata;
-}
-_INLINE_SPECIFIER_ std::shared_ptr<BufferPool> BufferPool::from_cdata(std::shared_ptr<easyar_BufferPool> cdata)
-{
-    if (cdata == nullptr) {
-        return nullptr;
-    }
-    return std::make_shared<BufferPool>(cdata);
-}
-_INLINE_SPECIFIER_ BufferPool::BufferPool(int arg0, int arg1)
-    :
-    cdata_(nullptr)
-{
-    easyar_BufferPool * _return_value_;
-    easyar_BufferPool__ctor(arg0, arg1, &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
-    init_cdata(std::shared_ptr<easyar_BufferPool>(_return_value_, [](easyar_BufferPool * ptr) { easyar_BufferPool__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ int BufferPool::block_size()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_BufferPool_block_size(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ int BufferPool::capacity()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_BufferPool_capacity(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ int BufferPool::size()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_BufferPool_size(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ std::optional<std::shared_ptr<Buffer>> BufferPool::tryAcquire()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_OptionalOfBuffer _return_value_;
-    easyar_BufferPool_tryAcquire(cdata_.get(), &_return_value_);
-    if (!(!_return_value_.has_value || (_return_value_.value != nullptr))) { throw std::runtime_error("InvalidReturnValue"); }
-    return (_return_value_.has_value ? Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_.value, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); })) : std::optional<std::shared_ptr<Buffer>>{});
-}
-
-_INLINE_SPECIFIER_ CameraParameters::CameraParameters(std::shared_ptr<easyar_CameraParameters> cdata)
-    :
-    cdata_(nullptr)
-{
-    init_cdata(cdata);
-}
-_INLINE_SPECIFIER_ CameraParameters::~CameraParameters()
-{
-    cdata_ = nullptr;
-}
-
-_INLINE_SPECIFIER_ std::shared_ptr<easyar_CameraParameters> CameraParameters::get_cdata()
-{
-    return cdata_;
-}
-_INLINE_SPECIFIER_ void CameraParameters::init_cdata(std::shared_ptr<easyar_CameraParameters> cdata)
-{
-    cdata_ = cdata;
-}
-_INLINE_SPECIFIER_ std::shared_ptr<CameraParameters> CameraParameters::from_cdata(std::shared_ptr<easyar_CameraParameters> cdata)
-{
-    if (cdata == nullptr) {
-        return nullptr;
-    }
-    return std::make_shared<CameraParameters>(cdata);
-}
-_INLINE_SPECIFIER_ CameraParameters::CameraParameters(Vec2I arg0, Vec2F arg1, Vec2F arg2, CameraDeviceType arg3, int arg4)
-    :
-    cdata_(nullptr)
-{
-    easyar_CameraParameters * _return_value_;
-    easyar_CameraParameters__ctor(easyar_Vec2I{{arg0.data[0], arg0.data[1]}}, easyar_Vec2F{{arg1.data[0], arg1.data[1]}}, easyar_Vec2F{{arg2.data[0], arg2.data[1]}}, static_cast<easyar_CameraDeviceType>(arg3), arg4, &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
-    init_cdata(std::shared_ptr<easyar_CameraParameters>(_return_value_, [](easyar_CameraParameters * ptr) { easyar_CameraParameters__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ Vec2I CameraParameters::size()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraParameters_size(cdata_.get());
-    return Vec2I{{{_return_value_.data[0], _return_value_.data[1]}}};
-}
-_INLINE_SPECIFIER_ Vec2F CameraParameters::focalLength()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraParameters_focalLength(cdata_.get());
-    return Vec2F{{{_return_value_.data[0], _return_value_.data[1]}}};
-}
-_INLINE_SPECIFIER_ Vec2F CameraParameters::principalPoint()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraParameters_principalPoint(cdata_.get());
-    return Vec2F{{{_return_value_.data[0], _return_value_.data[1]}}};
-}
-_INLINE_SPECIFIER_ CameraDeviceType CameraParameters::cameraDeviceType()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraParameters_cameraDeviceType(cdata_.get());
-    return static_cast<CameraDeviceType>(_return_value_);
-}
-_INLINE_SPECIFIER_ int CameraParameters::cameraOrientation()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraParameters_cameraOrientation(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ std::shared_ptr<CameraParameters> CameraParameters::createWithDefaultIntrinsics(Vec2I arg0, CameraDeviceType arg1, int arg2)
-{
-    easyar_CameraParameters * _return_value_;
-    easyar_CameraParameters_createWithDefaultIntrinsics(easyar_Vec2I{{arg0.data[0], arg0.data[1]}}, static_cast<easyar_CameraDeviceType>(arg1), arg2, &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return CameraParameters::from_cdata(std::shared_ptr<easyar_CameraParameters>(_return_value_, [](easyar_CameraParameters * ptr) { easyar_CameraParameters__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ int CameraParameters::imageOrientation(int arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraParameters_imageOrientation(cdata_.get(), arg0);
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool CameraParameters::imageHorizontalFlip(bool arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraParameters_imageHorizontalFlip(cdata_.get(), arg0);
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ Matrix44F CameraParameters::projection(float arg0, float arg1, float arg2, int arg3, bool arg4, bool arg5)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraParameters_projection(cdata_.get(), arg0, arg1, arg2, arg3, arg4, arg5);
-    return Matrix44F{{{_return_value_.data[0], _return_value_.data[1], _return_value_.data[2], _return_value_.data[3], _return_value_.data[4], _return_value_.data[5], _return_value_.data[6], _return_value_.data[7], _return_value_.data[8], _return_value_.data[9], _return_value_.data[10], _return_value_.data[11], _return_value_.data[12], _return_value_.data[13], _return_value_.data[14], _return_value_.data[15]}}};
-}
-_INLINE_SPECIFIER_ Matrix44F CameraParameters::imageProjection(float arg0, int arg1, bool arg2, bool arg3)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraParameters_imageProjection(cdata_.get(), arg0, arg1, arg2, arg3);
-    return Matrix44F{{{_return_value_.data[0], _return_value_.data[1], _return_value_.data[2], _return_value_.data[3], _return_value_.data[4], _return_value_.data[5], _return_value_.data[6], _return_value_.data[7], _return_value_.data[8], _return_value_.data[9], _return_value_.data[10], _return_value_.data[11], _return_value_.data[12], _return_value_.data[13], _return_value_.data[14], _return_value_.data[15]}}};
-}
-_INLINE_SPECIFIER_ Vec2F CameraParameters::screenCoordinatesFromImageCoordinates(float arg0, int arg1, bool arg2, bool arg3, Vec2F arg4)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraParameters_screenCoordinatesFromImageCoordinates(cdata_.get(), arg0, arg1, arg2, arg3, easyar_Vec2F{{arg4.data[0], arg4.data[1]}});
-    return Vec2F{{{_return_value_.data[0], _return_value_.data[1]}}};
-}
-_INLINE_SPECIFIER_ Vec2F CameraParameters::imageCoordinatesFromScreenCoordinates(float arg0, int arg1, bool arg2, bool arg3, Vec2F arg4)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_CameraParameters_imageCoordinatesFromScreenCoordinates(cdata_.get(), arg0, arg1, arg2, arg3, easyar_Vec2F{{arg4.data[0], arg4.data[1]}});
-    return Vec2F{{{_return_value_.data[0], _return_value_.data[1]}}};
-}
-_INLINE_SPECIFIER_ bool CameraParameters::equalsTo(std::shared_ptr<CameraParameters> arg0)
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: other"); }
-    auto _return_value_ = easyar_CameraParameters_equalsTo(cdata_.get(), arg0->get_cdata().get());
-    return _return_value_;
-}
-
-_INLINE_SPECIFIER_ Image::Image(std::shared_ptr<easyar_Image> cdata)
-    :
-    cdata_(nullptr)
-{
-    init_cdata(cdata);
-}
-_INLINE_SPECIFIER_ Image::~Image()
-{
-    cdata_ = nullptr;
-}
-
-_INLINE_SPECIFIER_ std::shared_ptr<easyar_Image> Image::get_cdata()
-{
-    return cdata_;
-}
-_INLINE_SPECIFIER_ void Image::init_cdata(std::shared_ptr<easyar_Image> cdata)
-{
-    cdata_ = cdata;
-}
-_INLINE_SPECIFIER_ std::shared_ptr<Image> Image::from_cdata(std::shared_ptr<easyar_Image> cdata)
-{
-    if (cdata == nullptr) {
-        return nullptr;
-    }
-    return std::make_shared<Image>(cdata);
-}
-_INLINE_SPECIFIER_ Image::Image(std::shared_ptr<Buffer> arg0, PixelFormat arg1, int arg2, int arg3)
-    :
-    cdata_(nullptr)
-{
-    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: buffer"); }
-    easyar_Image * _return_value_;
-    easyar_Image__ctor(arg0->get_cdata().get(), static_cast<easyar_PixelFormat>(arg1), arg2, arg3, &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); };
-    init_cdata(std::shared_ptr<easyar_Image>(_return_value_, [](easyar_Image * ptr) { easyar_Image__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ std::shared_ptr<Buffer> Image::buffer()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    easyar_Buffer * _return_value_;
-    easyar_Image_buffer(cdata_.get(), &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ PixelFormat Image::format()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_Image_format(cdata_.get());
-    return static_cast<PixelFormat>(_return_value_);
-}
-_INLINE_SPECIFIER_ int Image::width()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_Image_width(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ int Image::height()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_Image_height(cdata_.get());
-    return _return_value_;
-}
-_INLINE_SPECIFIER_ bool Image::empty()
-{
-    if (cdata_ == nullptr) { throw std::runtime_error("InvalidArgument: this"); }
-    auto _return_value_ = easyar_Image_empty(cdata_.get());
-    return _return_value_;
-}
-
-_INLINE_SPECIFIER_ std::shared_ptr<Buffer> JniUtility::wrapByteArray(void * arg0, bool arg1, std::function<void()> arg2)
-{
-    if (!(arg2 != nullptr)) { throw std::runtime_error("InvalidArgument: deleter"); }
-    easyar_Buffer * _return_value_;
-    easyar_JniUtility_wrapByteArray(arg0, arg1, FunctorOfVoid_to_c(arg2), &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); }));
-}
-_INLINE_SPECIFIER_ std::shared_ptr<Buffer> JniUtility::wrapBuffer(void * arg0, std::function<void()> arg1)
-{
-    if (!(arg1 != nullptr)) { throw std::runtime_error("InvalidArgument: deleter"); }
-    easyar_Buffer * _return_value_;
-    easyar_JniUtility_wrapBuffer(arg0, FunctorOfVoid_to_c(arg1), &_return_value_);
-    if (!(_return_value_ != nullptr)) { throw std::runtime_error("InvalidReturnValue"); }
-    return Buffer::from_cdata(std::shared_ptr<easyar_Buffer>(_return_value_, [](easyar_Buffer * ptr) { easyar_Buffer__dtor(ptr); }));
-}
-
-_INLINE_SPECIFIER_ void Log::setLogFunc(std::function<void(LogLevel, std::string)> arg0)
-{
-    if (!(arg0 != nullptr)) { throw std::runtime_error("InvalidArgument: func"); }
-    easyar_Log_setLogFunc(FunctorOfVoidFromLogLevelAndString_to_c(arg0));
-}
-_INLINE_SPECIFIER_ void Log::resetLogFunc()
-{
-    easyar_Log_resetLogFunc();
-}
-
 static void FunctorOfVoid_func(void * _state, /* OUT */ easyar_String * * _exception)
 {
     *_exception = nullptr;
@@ -7953,39 +8247,6 @@ static void FunctorOfVoid_destroy(void * _state)
 static inline easyar_FunctorOfVoid FunctorOfVoid_to_c(std::function<void()> f)
 {
     return easyar_FunctorOfVoid{new std::function<void()>(f), FunctorOfVoid_func, FunctorOfVoid_destroy};
-}
-
-static inline std::shared_ptr<easyar_ListOfObjectTarget> std_vector_to_easyar_ListOfObjectTarget(std::vector<std::shared_ptr<ObjectTarget>> l)
-{
-    std::vector<easyar_ObjectTarget *> values;
-    values.reserve(l.size());
-    for (auto v : l) {
-        auto cv = v->get_cdata().get();
-        easyar_ObjectTarget__retain(cv, &cv);
-        values.push_back(cv);
-    }
-    easyar_ListOfObjectTarget * ptr;
-    easyar_ListOfObjectTarget__ctor(values.data(), values.data() + values.size(), &ptr);
-    return std::shared_ptr<easyar_ListOfObjectTarget>(ptr, [](easyar_ListOfObjectTarget * ptr) { easyar_ListOfObjectTarget__dtor(ptr); });
-}
-static inline std::vector<std::shared_ptr<ObjectTarget>> std_vector_from_easyar_ListOfObjectTarget(std::shared_ptr<easyar_ListOfObjectTarget> pl)
-{
-    auto size = easyar_ListOfObjectTarget_size(pl.get());
-    std::vector<std::shared_ptr<ObjectTarget>> values;
-    values.reserve(size);
-    for (int k = 0; k < size; k += 1) {
-        auto v = easyar_ListOfObjectTarget_at(pl.get(), k);
-        easyar_ObjectTarget__retain(v, &v);
-        values.push_back(ObjectTarget::from_cdata(std::shared_ptr<easyar_ObjectTarget>(v, [](easyar_ObjectTarget * ptr) { easyar_ObjectTarget__dtor(ptr); })));
-    }
-    return values;
-}
-static inline bool easyar_ListOfObjectTarget_check_external_cpp(const std::vector<std::shared_ptr<ObjectTarget>> & l)
-{
-    for (auto e : l) {
-        if (!(e != nullptr)) { return false; }
-    }
-    return true;
 }
 
 static inline std::shared_ptr<easyar_ListOfVec3F> std_vector_to_easyar_ListOfVec3F(std::vector<Vec3F> l)
@@ -8162,28 +8423,60 @@ static inline bool easyar_ListOfTarget_check_external_cpp(const std::vector<std:
     return true;
 }
 
-static void FunctorOfVoidFromCloudStatusAndListOfTarget_func(void * _state, easyar_CloudStatus arg0, easyar_ListOfTarget * arg1, /* OUT */ easyar_String * * _exception)
+static inline std::shared_ptr<easyar_ListOfImage> std_vector_to_easyar_ListOfImage(std::vector<std::shared_ptr<Image>> l)
+{
+    std::vector<easyar_Image *> values;
+    values.reserve(l.size());
+    for (auto v : l) {
+        auto cv = v->get_cdata().get();
+        easyar_Image__retain(cv, &cv);
+        values.push_back(cv);
+    }
+    easyar_ListOfImage * ptr;
+    easyar_ListOfImage__ctor(values.data(), values.data() + values.size(), &ptr);
+    return std::shared_ptr<easyar_ListOfImage>(ptr, [](easyar_ListOfImage * ptr) { easyar_ListOfImage__dtor(ptr); });
+}
+static inline std::vector<std::shared_ptr<Image>> std_vector_from_easyar_ListOfImage(std::shared_ptr<easyar_ListOfImage> pl)
+{
+    auto size = easyar_ListOfImage_size(pl.get());
+    std::vector<std::shared_ptr<Image>> values;
+    values.reserve(size);
+    for (int k = 0; k < size; k += 1) {
+        auto v = easyar_ListOfImage_at(pl.get(), k);
+        easyar_Image__retain(v, &v);
+        values.push_back(Image::from_cdata(std::shared_ptr<easyar_Image>(v, [](easyar_Image * ptr) { easyar_Image__dtor(ptr); })));
+    }
+    return values;
+}
+static inline bool easyar_ListOfImage_check_external_cpp(const std::vector<std::shared_ptr<Image>> & l)
+{
+    for (auto e : l) {
+        if (!(e != nullptr)) { return false; }
+    }
+    return true;
+}
+
+static void FunctorOfVoidFromCloudRecognizationResult_func(void * _state, easyar_CloudRecognizationResult * arg0, /* OUT */ easyar_String * * _exception)
 {
     *_exception = nullptr;
     try {
-        CloudStatus cpparg0 = static_cast<CloudStatus>(arg0);
-        easyar_ListOfTarget_copy(arg1, &arg1);
-        std::vector<std::shared_ptr<Target>> cpparg1 = std_vector_from_easyar_ListOfTarget(std::shared_ptr<easyar_ListOfTarget>(arg1, [](easyar_ListOfTarget * ptr) { easyar_ListOfTarget__dtor(ptr); }));
-        auto f = reinterpret_cast<std::function<void(CloudStatus, std::vector<std::shared_ptr<Target>>)> *>(_state);
-        (*f)(cpparg0, cpparg1);
+        easyar_CloudRecognizationResult__retain(arg0, &arg0);
+        std::shared_ptr<CloudRecognizationResult> cpparg0 = CloudRecognizationResult::from_cdata(std::shared_ptr<easyar_CloudRecognizationResult>(arg0, [](easyar_CloudRecognizationResult * ptr) { easyar_CloudRecognizationResult__dtor(ptr); }));
+        auto f = reinterpret_cast<std::function<void(std::shared_ptr<CloudRecognizationResult>)> *>(_state);
+        (*f)(cpparg0);
     } catch (std::exception & ex) {
         auto message = std::string() + typeid(*(&ex)).name() + u8"\n" + ex.what();
         easyar_String_from_utf8_begin(message.c_str(), _exception);
     }
 }
-static void FunctorOfVoidFromCloudStatusAndListOfTarget_destroy(void * _state)
+static void FunctorOfVoidFromCloudRecognizationResult_destroy(void * _state)
 {
-    auto f = reinterpret_cast<std::function<void(CloudStatus, std::vector<std::shared_ptr<Target>>)> *>(_state);
+    auto f = reinterpret_cast<std::function<void(std::shared_ptr<CloudRecognizationResult>)> *>(_state);
     delete f;
 }
-static inline easyar_FunctorOfVoidFromCloudStatusAndListOfTarget FunctorOfVoidFromCloudStatusAndListOfTarget_to_c(std::function<void(CloudStatus, std::vector<std::shared_ptr<Target>>)> f)
+static inline easyar_FunctorOfVoidFromCloudRecognizationResult FunctorOfVoidFromCloudRecognizationResult_to_c(std::function<void(std::shared_ptr<CloudRecognizationResult>)> f)
 {
-    return easyar_FunctorOfVoidFromCloudStatusAndListOfTarget{new std::function<void(CloudStatus, std::vector<std::shared_ptr<Target>>)>(f), FunctorOfVoidFromCloudStatusAndListOfTarget_func, FunctorOfVoidFromCloudStatusAndListOfTarget_destroy};
+    return easyar_FunctorOfVoidFromCloudRecognizationResult{new std::function<void(std::shared_ptr<CloudRecognizationResult>)>(f), FunctorOfVoidFromCloudRecognizationResult_func, FunctorOfVoidFromCloudRecognizationResult_destroy};
 }
 
 static inline std::shared_ptr<easyar_ListOfBlockInfo> std_vector_to_easyar_ListOfBlockInfo(std::vector<BlockInfo> l)
@@ -8237,70 +8530,26 @@ static inline easyar_FunctorOfVoidFromInputFrame FunctorOfVoidFromInputFrame_to_
     return easyar_FunctorOfVoidFromInputFrame{new std::function<void(std::shared_ptr<InputFrame>)>(f), FunctorOfVoidFromInputFrame_func, FunctorOfVoidFromInputFrame_destroy};
 }
 
-static inline std::shared_ptr<easyar_ListOfImageTarget> std_vector_to_easyar_ListOfImageTarget(std::vector<std::shared_ptr<ImageTarget>> l)
+static void FunctorOfVoidFromCameraState_func(void * _state, easyar_CameraState arg0, /* OUT */ easyar_String * * _exception)
 {
-    std::vector<easyar_ImageTarget *> values;
-    values.reserve(l.size());
-    for (auto v : l) {
-        auto cv = v->get_cdata().get();
-        easyar_ImageTarget__retain(cv, &cv);
-        values.push_back(cv);
+    *_exception = nullptr;
+    try {
+        CameraState cpparg0 = static_cast<CameraState>(arg0);
+        auto f = reinterpret_cast<std::function<void(CameraState)> *>(_state);
+        (*f)(cpparg0);
+    } catch (std::exception & ex) {
+        auto message = std::string() + typeid(*(&ex)).name() + u8"\n" + ex.what();
+        easyar_String_from_utf8_begin(message.c_str(), _exception);
     }
-    easyar_ListOfImageTarget * ptr;
-    easyar_ListOfImageTarget__ctor(values.data(), values.data() + values.size(), &ptr);
-    return std::shared_ptr<easyar_ListOfImageTarget>(ptr, [](easyar_ListOfImageTarget * ptr) { easyar_ListOfImageTarget__dtor(ptr); });
 }
-static inline std::vector<std::shared_ptr<ImageTarget>> std_vector_from_easyar_ListOfImageTarget(std::shared_ptr<easyar_ListOfImageTarget> pl)
+static void FunctorOfVoidFromCameraState_destroy(void * _state)
 {
-    auto size = easyar_ListOfImageTarget_size(pl.get());
-    std::vector<std::shared_ptr<ImageTarget>> values;
-    values.reserve(size);
-    for (int k = 0; k < size; k += 1) {
-        auto v = easyar_ListOfImageTarget_at(pl.get(), k);
-        easyar_ImageTarget__retain(v, &v);
-        values.push_back(ImageTarget::from_cdata(std::shared_ptr<easyar_ImageTarget>(v, [](easyar_ImageTarget * ptr) { easyar_ImageTarget__dtor(ptr); })));
-    }
-    return values;
+    auto f = reinterpret_cast<std::function<void(CameraState)> *>(_state);
+    delete f;
 }
-static inline bool easyar_ListOfImageTarget_check_external_cpp(const std::vector<std::shared_ptr<ImageTarget>> & l)
+static inline easyar_FunctorOfVoidFromCameraState FunctorOfVoidFromCameraState_to_c(std::function<void(CameraState)> f)
 {
-    for (auto e : l) {
-        if (!(e != nullptr)) { return false; }
-    }
-    return true;
-}
-
-static inline std::shared_ptr<easyar_ListOfImage> std_vector_to_easyar_ListOfImage(std::vector<std::shared_ptr<Image>> l)
-{
-    std::vector<easyar_Image *> values;
-    values.reserve(l.size());
-    for (auto v : l) {
-        auto cv = v->get_cdata().get();
-        easyar_Image__retain(cv, &cv);
-        values.push_back(cv);
-    }
-    easyar_ListOfImage * ptr;
-    easyar_ListOfImage__ctor(values.data(), values.data() + values.size(), &ptr);
-    return std::shared_ptr<easyar_ListOfImage>(ptr, [](easyar_ListOfImage * ptr) { easyar_ListOfImage__dtor(ptr); });
-}
-static inline std::vector<std::shared_ptr<Image>> std_vector_from_easyar_ListOfImage(std::shared_ptr<easyar_ListOfImage> pl)
-{
-    auto size = easyar_ListOfImage_size(pl.get());
-    std::vector<std::shared_ptr<Image>> values;
-    values.reserve(size);
-    for (int k = 0; k < size; k += 1) {
-        auto v = easyar_ListOfImage_at(pl.get(), k);
-        easyar_Image__retain(v, &v);
-        values.push_back(Image::from_cdata(std::shared_ptr<easyar_Image>(v, [](easyar_Image * ptr) { easyar_Image__dtor(ptr); })));
-    }
-    return values;
-}
-static inline bool easyar_ListOfImage_check_external_cpp(const std::vector<std::shared_ptr<Image>> & l)
-{
-    for (auto e : l) {
-        if (!(e != nullptr)) { return false; }
-    }
-    return true;
+    return easyar_FunctorOfVoidFromCameraState{new std::function<void(CameraState)>(f), FunctorOfVoidFromCameraState_func, FunctorOfVoidFromCameraState_destroy};
 }
 
 static void FunctorOfVoidFromPermissionStatusAndString_func(void * _state, easyar_PermissionStatus arg0, easyar_String * arg1, /* OUT */ easyar_String * * _exception)
@@ -8325,6 +8574,30 @@ static void FunctorOfVoidFromPermissionStatusAndString_destroy(void * _state)
 static inline easyar_FunctorOfVoidFromPermissionStatusAndString FunctorOfVoidFromPermissionStatusAndString_to_c(std::function<void(PermissionStatus, std::string)> f)
 {
     return easyar_FunctorOfVoidFromPermissionStatusAndString{new std::function<void(PermissionStatus, std::string)>(f), FunctorOfVoidFromPermissionStatusAndString_func, FunctorOfVoidFromPermissionStatusAndString_destroy};
+}
+
+static void FunctorOfVoidFromLogLevelAndString_func(void * _state, easyar_LogLevel arg0, easyar_String * arg1, /* OUT */ easyar_String * * _exception)
+{
+    *_exception = nullptr;
+    try {
+        LogLevel cpparg0 = static_cast<LogLevel>(arg0);
+        easyar_String_copy(arg1, &arg1);
+        std::string cpparg1 = std_string_from_easyar_String(std::shared_ptr<easyar_String>(arg1, [](easyar_String * ptr) { easyar_String__dtor(ptr); }));
+        auto f = reinterpret_cast<std::function<void(LogLevel, std::string)> *>(_state);
+        (*f)(cpparg0, cpparg1);
+    } catch (std::exception & ex) {
+        auto message = std::string() + typeid(*(&ex)).name() + u8"\n" + ex.what();
+        easyar_String_from_utf8_begin(message.c_str(), _exception);
+    }
+}
+static void FunctorOfVoidFromLogLevelAndString_destroy(void * _state)
+{
+    auto f = reinterpret_cast<std::function<void(LogLevel, std::string)> *>(_state);
+    delete f;
+}
+static inline easyar_FunctorOfVoidFromLogLevelAndString FunctorOfVoidFromLogLevelAndString_to_c(std::function<void(LogLevel, std::string)> f)
+{
+    return easyar_FunctorOfVoidFromLogLevelAndString{new std::function<void(LogLevel, std::string)>(f), FunctorOfVoidFromLogLevelAndString_func, FunctorOfVoidFromLogLevelAndString_destroy};
 }
 
 static void FunctorOfVoidFromRecordStatusAndString_func(void * _state, easyar_RecordStatus arg0, easyar_String * arg1, /* OUT */ easyar_String * * _exception)
@@ -8456,26 +8729,26 @@ static inline easyar_FunctorOfVoidFromBoolAndString FunctorOfVoidFromBoolAndStri
     return easyar_FunctorOfVoidFromBoolAndString{new std::function<void(bool, std::string)>(f), FunctorOfVoidFromBoolAndString_func, FunctorOfVoidFromBoolAndString_destroy};
 }
 
-static void FunctorOfVoidFromCameraState_func(void * _state, easyar_CameraState arg0, /* OUT */ easyar_String * * _exception)
+static void FunctorOfVoidFromVideoStatus_func(void * _state, easyar_VideoStatus arg0, /* OUT */ easyar_String * * _exception)
 {
     *_exception = nullptr;
     try {
-        CameraState cpparg0 = static_cast<CameraState>(arg0);
-        auto f = reinterpret_cast<std::function<void(CameraState)> *>(_state);
+        VideoStatus cpparg0 = static_cast<VideoStatus>(arg0);
+        auto f = reinterpret_cast<std::function<void(VideoStatus)> *>(_state);
         (*f)(cpparg0);
     } catch (std::exception & ex) {
         auto message = std::string() + typeid(*(&ex)).name() + u8"\n" + ex.what();
         easyar_String_from_utf8_begin(message.c_str(), _exception);
     }
 }
-static void FunctorOfVoidFromCameraState_destroy(void * _state)
+static void FunctorOfVoidFromVideoStatus_destroy(void * _state)
 {
-    auto f = reinterpret_cast<std::function<void(CameraState)> *>(_state);
+    auto f = reinterpret_cast<std::function<void(VideoStatus)> *>(_state);
     delete f;
 }
-static inline easyar_FunctorOfVoidFromCameraState FunctorOfVoidFromCameraState_to_c(std::function<void(CameraState)> f)
+static inline easyar_FunctorOfVoidFromVideoStatus FunctorOfVoidFromVideoStatus_to_c(std::function<void(VideoStatus)> f)
 {
-    return easyar_FunctorOfVoidFromCameraState{new std::function<void(CameraState)>(f), FunctorOfVoidFromCameraState_func, FunctorOfVoidFromCameraState_destroy};
+    return easyar_FunctorOfVoidFromVideoStatus{new std::function<void(VideoStatus)>(f), FunctorOfVoidFromVideoStatus_func, FunctorOfVoidFromVideoStatus_destroy};
 }
 
 static void FunctorOfVoidFromFeedbackFrame_func(void * _state, easyar_FeedbackFrame * arg0, /* OUT */ easyar_String * * _exception)
@@ -8562,52 +8835,6 @@ static inline bool easyar_ListOfOutputFrame_check_external_cpp(const std::vector
         if (!(e != nullptr)) { return false; }
     }
     return true;
-}
-
-static void FunctorOfVoidFromVideoStatus_func(void * _state, easyar_VideoStatus arg0, /* OUT */ easyar_String * * _exception)
-{
-    *_exception = nullptr;
-    try {
-        VideoStatus cpparg0 = static_cast<VideoStatus>(arg0);
-        auto f = reinterpret_cast<std::function<void(VideoStatus)> *>(_state);
-        (*f)(cpparg0);
-    } catch (std::exception & ex) {
-        auto message = std::string() + typeid(*(&ex)).name() + u8"\n" + ex.what();
-        easyar_String_from_utf8_begin(message.c_str(), _exception);
-    }
-}
-static void FunctorOfVoidFromVideoStatus_destroy(void * _state)
-{
-    auto f = reinterpret_cast<std::function<void(VideoStatus)> *>(_state);
-    delete f;
-}
-static inline easyar_FunctorOfVoidFromVideoStatus FunctorOfVoidFromVideoStatus_to_c(std::function<void(VideoStatus)> f)
-{
-    return easyar_FunctorOfVoidFromVideoStatus{new std::function<void(VideoStatus)>(f), FunctorOfVoidFromVideoStatus_func, FunctorOfVoidFromVideoStatus_destroy};
-}
-
-static void FunctorOfVoidFromLogLevelAndString_func(void * _state, easyar_LogLevel arg0, easyar_String * arg1, /* OUT */ easyar_String * * _exception)
-{
-    *_exception = nullptr;
-    try {
-        LogLevel cpparg0 = static_cast<LogLevel>(arg0);
-        easyar_String_copy(arg1, &arg1);
-        std::string cpparg1 = std_string_from_easyar_String(std::shared_ptr<easyar_String>(arg1, [](easyar_String * ptr) { easyar_String__dtor(ptr); }));
-        auto f = reinterpret_cast<std::function<void(LogLevel, std::string)> *>(_state);
-        (*f)(cpparg0, cpparg1);
-    } catch (std::exception & ex) {
-        auto message = std::string() + typeid(*(&ex)).name() + u8"\n" + ex.what();
-        easyar_String_from_utf8_begin(message.c_str(), _exception);
-    }
-}
-static void FunctorOfVoidFromLogLevelAndString_destroy(void * _state)
-{
-    auto f = reinterpret_cast<std::function<void(LogLevel, std::string)> *>(_state);
-    delete f;
-}
-static inline easyar_FunctorOfVoidFromLogLevelAndString FunctorOfVoidFromLogLevelAndString_to_c(std::function<void(LogLevel, std::string)> f)
-{
-    return easyar_FunctorOfVoidFromLogLevelAndString{new std::function<void(LogLevel, std::string)>(f), FunctorOfVoidFromLogLevelAndString_func, FunctorOfVoidFromLogLevelAndString_destroy};
 }
 
 }

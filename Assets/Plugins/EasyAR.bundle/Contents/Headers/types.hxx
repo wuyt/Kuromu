@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -78,27 +78,139 @@ class ObjectTrackerResult;
 
 class ObjectTracker;
 
-enum CloudStatus
+enum CloudRecognizationStatus
 {
     /// <summary>
-    /// Targets are recognized.
+    /// Unknown error
     /// </summary>
-    CloudStatus_FoundTargets = 0,
+    CloudRecognizationStatus_UnknownError = 0,
     /// <summary>
-    /// No targets are recognized.
+    /// A target is recognized.
     /// </summary>
-    CloudStatus_TargetsNotFound = 1,
+    CloudRecognizationStatus_FoundTarget = 1,
     /// <summary>
-    /// Connection broke and auto reconnecting
+    /// No target is recognized.
     /// </summary>
-    CloudStatus_Reconnecting = 2,
+    CloudRecognizationStatus_TargetNotFound = 2,
     /// <summary>
-    /// Protocol error
+    /// Reached the access limit
     /// </summary>
-    CloudStatus_ProtocolError = 3,
+    CloudRecognizationStatus_ReachedAccessLimit = 3,
+    /// <summary>
+    /// Request interval too low
+    /// </summary>
+    CloudRecognizationStatus_RequestIntervalTooLow = 4,
 };
 
+class CloudRecognizationResult;
+
 class CloudRecognizer;
+
+class Buffer;
+
+class BufferDictionary;
+
+class BufferPool;
+
+enum CameraDeviceType
+{
+    /// <summary>
+    /// Unknown location
+    /// </summary>
+    CameraDeviceType_Unknown = 0,
+    /// <summary>
+    /// Rear camera
+    /// </summary>
+    CameraDeviceType_Back = 1,
+    /// <summary>
+    /// Front camera
+    /// </summary>
+    CameraDeviceType_Front = 2,
+};
+
+/// <summary>
+/// MotionTrackingStatus describes the quality of device motion tracking.
+/// </summary>
+enum MotionTrackingStatus
+{
+    /// <summary>
+    /// Result is not available and should not to be used to render virtual objects or do 3D reconstruction. This value occurs temporarily after initializing, tracking lost or relocalizing.
+    /// </summary>
+    MotionTrackingStatus_NotTracking = 0,
+    /// <summary>
+    /// Tracking is available, but the quality of the result is not good enough. This value occurs temporarily due to weak texture or excessive movement. The result can be used to render virtual objects, but should generally not be used to do 3D reconstruction.
+    /// </summary>
+    MotionTrackingStatus_Limited = 1,
+    /// <summary>
+    /// Tracking with a good quality. The result can be used to render virtual objects or do 3D reconstruction.
+    /// </summary>
+    MotionTrackingStatus_Tracking = 2,
+};
+
+class CameraParameters;
+
+/// <summary>
+/// PixelFormat represents the format of image pixel data. All formats follow the pixel direction from left to right and from top to bottom.
+/// </summary>
+enum PixelFormat
+{
+    /// <summary>
+    /// Unknown
+    /// </summary>
+    PixelFormat_Unknown = 0,
+    /// <summary>
+    /// 256 shades grayscale
+    /// </summary>
+    PixelFormat_Gray = 1,
+    /// <summary>
+    /// YUV_NV21
+    /// </summary>
+    PixelFormat_YUV_NV21 = 2,
+    /// <summary>
+    /// YUV_NV12
+    /// </summary>
+    PixelFormat_YUV_NV12 = 3,
+    /// <summary>
+    /// YUV_I420
+    /// </summary>
+    PixelFormat_YUV_I420 = 4,
+    /// <summary>
+    /// YUV_YV12
+    /// </summary>
+    PixelFormat_YUV_YV12 = 5,
+    /// <summary>
+    /// RGB888
+    /// </summary>
+    PixelFormat_RGB888 = 6,
+    /// <summary>
+    /// BGR888
+    /// </summary>
+    PixelFormat_BGR888 = 7,
+    /// <summary>
+    /// RGBA8888
+    /// </summary>
+    PixelFormat_RGBA8888 = 8,
+    /// <summary>
+    /// BGRA8888
+    /// </summary>
+    PixelFormat_BGRA8888 = 9,
+};
+
+class Image;
+
+struct Matrix44F;
+
+struct Matrix33F;
+
+struct Vec4F;
+
+struct Vec3F;
+
+struct Vec2F;
+
+struct Vec4I;
+
+struct Vec2I;
 
 class DenseSpatialMap;
 
@@ -106,11 +218,137 @@ struct BlockInfo;
 
 class SceneMesh;
 
+class ARCoreCameraDevice;
+
+class ARKitCameraDevice;
+
+enum CameraDeviceFocusMode
+{
+    /// <summary>
+    /// Normal auto focus mode. You should call autoFocus to start the focus in this mode.
+    /// </summary>
+    CameraDeviceFocusMode_Normal = 0,
+    /// <summary>
+    /// Continuous auto focus mode
+    /// </summary>
+    CameraDeviceFocusMode_Continousauto = 2,
+    /// <summary>
+    /// Infinity focus mode
+    /// </summary>
+    CameraDeviceFocusMode_Infinity = 3,
+    /// <summary>
+    /// Macro (close-up) focus mode. You should call autoFocus to start the focus in this mode.
+    /// </summary>
+    CameraDeviceFocusMode_Macro = 4,
+    /// <summary>
+    /// Medium distance focus mode
+    /// </summary>
+    CameraDeviceFocusMode_Medium = 5,
+};
+
+enum AndroidCameraApiType
+{
+    /// <summary>
+    /// Android Camera1
+    /// </summary>
+    AndroidCameraApiType_Camera1 = 0,
+    /// <summary>
+    /// Android Camera2
+    /// </summary>
+    AndroidCameraApiType_Camera2 = 1,
+};
+
+enum CameraDevicePresetProfile
+{
+    /// <summary>
+    /// The same as AVCaptureSessionPresetPhoto.
+    /// </summary>
+    CameraDevicePresetProfile_Photo = 0,
+    /// <summary>
+    /// The same as AVCaptureSessionPresetHigh.
+    /// </summary>
+    CameraDevicePresetProfile_High = 1,
+    /// <summary>
+    /// The same as AVCaptureSessionPresetMedium.
+    /// </summary>
+    CameraDevicePresetProfile_Medium = 2,
+    /// <summary>
+    /// The same as AVCaptureSessionPresetLow.
+    /// </summary>
+    CameraDevicePresetProfile_Low = 3,
+};
+
+enum CameraState
+{
+    /// <summary>
+    /// Unknown
+    /// </summary>
+    CameraState_Unknown = 0x00000000,
+    /// <summary>
+    /// Disconnected
+    /// </summary>
+    CameraState_Disconnected = 0x00000001,
+    /// <summary>
+    /// Preempted by another application.
+    /// </summary>
+    CameraState_Preempted = 0x00000002,
+};
+
+class CameraDevice;
+
+enum CameraDevicePreference
+{
+    /// <summary>
+    /// Optimized for `ImageTracker`_ , `ObjectTracker`_ and `CloudRecognizer`_ .
+    /// </summary>
+    CameraDevicePreference_PreferObjectSensing = 0,
+    /// <summary>
+    /// Optimized for `SurfaceTracker`_ .
+    /// </summary>
+    CameraDevicePreference_PreferSurfaceTracking = 1,
+    /// <summary>
+    /// Optimized for Motion Tracking .
+    /// </summary>
+    CameraDevicePreference_PreferMotionTracking = 2,
+};
+
+class CameraDeviceSelector;
+
 class SurfaceTrackerResult;
 
 class SurfaceTracker;
 
 class MotionTrackerCameraDevice;
+
+class InputFrameRecorder;
+
+class InputFramePlayer;
+
+class CallbackScheduler;
+
+class DelayedCallbackScheduler;
+
+class ImmediateCallbackScheduler;
+
+class JniUtility;
+
+enum LogLevel
+{
+    /// <summary>
+    /// Error
+    /// </summary>
+    LogLevel_Error = 0,
+    /// <summary>
+    /// Warning
+    /// </summary>
+    LogLevel_Warning = 1,
+    /// <summary>
+    /// Information
+    /// </summary>
+    LogLevel_Info = 2,
+};
+
+class Log;
 
 class ImageTargetParameters;
 
@@ -294,105 +532,43 @@ class SparseSpatialMap;
 
 class SparseSpatialMapManager;
 
+class Engine;
+
+enum VideoStatus
+{
+    /// <summary>
+    /// Status to indicate something wrong happen in video open or play.
+    /// </summary>
+    VideoStatus_Error = -1,
+    /// <summary>
+    /// Status to show video finished open and is ready for play.
+    /// </summary>
+    VideoStatus_Ready = 0,
+    /// <summary>
+    /// Status to indicate video finished play and reached the end.
+    /// </summary>
+    VideoStatus_Completed = 1,
+};
+
+enum VideoType
+{
+    /// <summary>
+    /// Normal video.
+    /// </summary>
+    VideoType_Normal = 0,
+    /// <summary>
+    /// Transparent video, left half is the RGB channel and right half is alpha channel.
+    /// </summary>
+    VideoType_TransparentSideBySide = 1,
+    /// <summary>
+    /// Transparent video, top half is the RGB channel and bottom half is alpha channel.
+    /// </summary>
+    VideoType_TransparentTopAndBottom = 2,
+};
+
+class VideoPlayer;
+
 class ImageHelper;
-
-class ARCoreCameraDevice;
-
-class ARKitCameraDevice;
-
-class CallbackScheduler;
-
-class DelayedCallbackScheduler;
-
-class ImmediateCallbackScheduler;
-
-enum CameraDeviceFocusMode
-{
-    /// <summary>
-    /// Normal auto focus mode. You should call autoFocus to start the focus in this mode.
-    /// </summary>
-    CameraDeviceFocusMode_Normal = 0,
-    /// <summary>
-    /// Continuous auto focus mode
-    /// </summary>
-    CameraDeviceFocusMode_Continousauto = 2,
-    /// <summary>
-    /// Infinity focus mode
-    /// </summary>
-    CameraDeviceFocusMode_Infinity = 3,
-    /// <summary>
-    /// Macro (close-up) focus mode. You should call autoFocus to start the focus in this mode.
-    /// </summary>
-    CameraDeviceFocusMode_Macro = 4,
-    /// <summary>
-    /// Medium distance focus mode
-    /// </summary>
-    CameraDeviceFocusMode_Medium = 5,
-};
-
-enum AndroidCameraApiType
-{
-    /// <summary>
-    /// Android Camera1
-    /// </summary>
-    AndroidCameraApiType_Camera1 = 0,
-    /// <summary>
-    /// Android Camera2
-    /// </summary>
-    AndroidCameraApiType_Camera2 = 1,
-};
-
-enum CameraDevicePresetProfile
-{
-    /// <summary>
-    /// The same as AVCaptureSessionPresetPhoto.
-    /// </summary>
-    CameraDevicePresetProfile_Photo = 0,
-    /// <summary>
-    /// The same as AVCaptureSessionPresetHigh.
-    /// </summary>
-    CameraDevicePresetProfile_High = 1,
-    /// <summary>
-    /// The same as AVCaptureSessionPresetMedium.
-    /// </summary>
-    CameraDevicePresetProfile_Medium = 2,
-    /// <summary>
-    /// The same as AVCaptureSessionPresetLow.
-    /// </summary>
-    CameraDevicePresetProfile_Low = 3,
-};
-
-enum CameraState
-{
-    /// <summary>
-    /// Unknown
-    /// </summary>
-    CameraState_Unknown = 0x00000000,
-    /// <summary>
-    /// Disconnected
-    /// </summary>
-    CameraState_Disconnected = 0x00000001,
-    /// <summary>
-    /// Preempted by another application.
-    /// </summary>
-    CameraState_Preempted = 0x00000002,
-};
-
-class CameraDevice;
-
-enum CameraDevicePreference
-{
-    /// <summary>
-    /// Optimized for `ImageTracker`_ , `ObjectTracker`_ and `CloudRecognizer`_ .
-    /// </summary>
-    CameraDevicePreference_PreferObjectSensing = 0,
-    /// <summary>
-    /// Optimized for `SurfaceTracker`_ .
-    /// </summary>
-    CameraDevicePreference_PreferSurfaceTracking = 1,
-};
-
-class CameraDeviceSelector;
 
 class SignalSink;
 
@@ -426,8 +602,6 @@ class InputFrameToOutputFrameAdapter;
 
 class InputFrameToFeedbackFrameAdapter;
 
-class Engine;
-
 class InputFrame;
 
 class FrameFilterResult;
@@ -460,7 +634,7 @@ enum StorageType
 {
     /// <summary>
     /// The app path.
-    /// Android: the application&#39;s `persistent data directory &lt;https://developer.android.google.cn/reference/android/content/pm/ApplicationInfo.html#dataDir&gt;`_
+    /// Android: the application&#39;s `persistent data directory &lt;https://developer.android.google.cn/reference/android/content/pm/ApplicationInfo.html#dataDir&gt;`__
     /// iOS: the application&#39;s sandbox directory
     /// Windows: Windows: the application&#39;s executable directory
     /// Mac: the application’s executable directory (if app is a bundle, this path is inside the bundle)
@@ -509,173 +683,11 @@ class TargetTrackerResult;
 
 class TextureId;
 
-enum VideoStatus
-{
-    /// <summary>
-    /// Status to indicate something wrong happen in video open or play.
-    /// </summary>
-    VideoStatus_Error = -1,
-    /// <summary>
-    /// Status to show video finished open and is ready for play.
-    /// </summary>
-    VideoStatus_Ready = 0,
-    /// <summary>
-    /// Status to indicate video finished play and reached the end.
-    /// </summary>
-    VideoStatus_Completed = 1,
-};
-
-enum VideoType
-{
-    /// <summary>
-    /// Normal video.
-    /// </summary>
-    VideoType_Normal = 0,
-    /// <summary>
-    /// Transparent video, left half is the RGB channel and right half is alpha channel.
-    /// </summary>
-    VideoType_TransparentSideBySide = 1,
-    /// <summary>
-    /// Transparent video, top half is the RGB channel and bottom half is alpha channel.
-    /// </summary>
-    VideoType_TransparentTopAndBottom = 2,
-};
-
-class VideoPlayer;
-
-class Buffer;
-
-class BufferDictionary;
-
-class BufferPool;
-
-enum CameraDeviceType
-{
-    /// <summary>
-    /// Unknown location
-    /// </summary>
-    CameraDeviceType_Unknown = 0,
-    /// <summary>
-    /// Rear camera
-    /// </summary>
-    CameraDeviceType_Back = 1,
-    /// <summary>
-    /// Front camera
-    /// </summary>
-    CameraDeviceType_Front = 2,
-};
-
-/// <summary>
-/// MotionTrackingStatus describes the quality of device motion tracking.
-/// </summary>
-enum MotionTrackingStatus
-{
-    /// <summary>
-    /// Result is not available and should not to be used to render virtual objects or do 3D reconstruction. This value occurs temporarily after initializing, tracking lost or relocalizing.
-    /// </summary>
-    MotionTrackingStatus_NotTracking = 0,
-    /// <summary>
-    /// Tracking is available, but the quality of the result is not good enough. This value occurs temporarily due to weak texture or excessive movement. The result can be used to render virtual objects, but should generally not be used to do 3D reconstruction.
-    /// </summary>
-    MotionTrackingStatus_Limited = 1,
-    /// <summary>
-    /// Tracking with a good quality. The result can be used to render virtual objects or do 3D reconstruction.
-    /// </summary>
-    MotionTrackingStatus_Tracking = 2,
-};
-
-class CameraParameters;
-
-/// <summary>
-/// PixelFormat represents the format of image pixel data. All formats follow the pixel direction from left to right and from top to bottom.
-/// </summary>
-enum PixelFormat
-{
-    /// <summary>
-    /// Unknown
-    /// </summary>
-    PixelFormat_Unknown = 0,
-    /// <summary>
-    /// 256 shades grayscale
-    /// </summary>
-    PixelFormat_Gray = 1,
-    /// <summary>
-    /// YUV_NV21
-    /// </summary>
-    PixelFormat_YUV_NV21 = 2,
-    /// <summary>
-    /// YUV_NV12
-    /// </summary>
-    PixelFormat_YUV_NV12 = 3,
-    /// <summary>
-    /// YUV_I420
-    /// </summary>
-    PixelFormat_YUV_I420 = 4,
-    /// <summary>
-    /// YUV_YV12
-    /// </summary>
-    PixelFormat_YUV_YV12 = 5,
-    /// <summary>
-    /// RGB888
-    /// </summary>
-    PixelFormat_RGB888 = 6,
-    /// <summary>
-    /// BGR888
-    /// </summary>
-    PixelFormat_BGR888 = 7,
-    /// <summary>
-    /// RGBA8888
-    /// </summary>
-    PixelFormat_RGBA8888 = 8,
-    /// <summary>
-    /// BGRA8888
-    /// </summary>
-    PixelFormat_BGRA8888 = 9,
-};
-
-class Image;
-
-class JniUtility;
-
-enum LogLevel
-{
-    /// <summary>
-    /// Error
-    /// </summary>
-    LogLevel_Error = 0,
-    /// <summary>
-    /// Warning
-    /// </summary>
-    LogLevel_Warning = 1,
-    /// <summary>
-    /// Information
-    /// </summary>
-    LogLevel_Info = 2,
-};
-
-class Log;
-
-struct Matrix44F;
-
-struct Matrix33F;
-
-struct Vec4F;
-
-struct Vec3F;
-
-struct Vec2F;
-
-struct Vec4I;
-
-struct Vec2I;
-
 struct OptionalOfBuffer;
 
 struct FunctorOfVoid;
 
 struct OptionalOfObjectTarget;
-
-class ListOfObjectTarget;
 
 class ListOfVec3F;
 
@@ -697,9 +709,13 @@ struct FunctorOfVoidFromTargetAndBool;
 
 class ListOfTarget;
 
-struct OptionalOfFunctorOfVoidFromCloudStatusAndListOfTarget;
+struct OptionalOfImageTarget;
 
-struct FunctorOfVoidFromCloudStatusAndListOfTarget;
+class ListOfImage;
+
+struct OptionalOfString;
+
+struct FunctorOfVoidFromCloudRecognizationResult;
 
 class ListOfBlockInfo;
 
@@ -707,15 +723,15 @@ struct OptionalOfFunctorOfVoidFromInputFrame;
 
 struct FunctorOfVoidFromInputFrame;
 
-struct OptionalOfImageTarget;
+struct OptionalOfFunctorOfVoidFromCameraState;
 
-class ListOfImageTarget;
-
-class ListOfImage;
+struct FunctorOfVoidFromCameraState;
 
 struct OptionalOfFunctorOfVoidFromPermissionStatusAndString;
 
 struct FunctorOfVoidFromPermissionStatusAndString;
+
+struct FunctorOfVoidFromLogLevelAndString;
 
 struct OptionalOfFunctorOfVoidFromRecordStatusAndString;
 
@@ -735,9 +751,9 @@ struct FunctorOfVoidFromBoolAndStringAndString;
 
 struct FunctorOfVoidFromBoolAndString;
 
-struct OptionalOfFunctorOfVoidFromCameraState;
+struct OptionalOfFunctorOfVoidFromVideoStatus;
 
-struct FunctorOfVoidFromCameraState;
+struct FunctorOfVoidFromVideoStatus;
 
 struct OptionalOfFunctorOfVoid;
 
@@ -748,12 +764,6 @@ struct FunctorOfVoidFromFeedbackFrame;
 struct FunctorOfOutputFrameFromListOfOutputFrame;
 
 class ListOfOutputFrame;
-
-struct OptionalOfFunctorOfVoidFromVideoStatus;
-
-struct FunctorOfVoidFromVideoStatus;
-
-struct FunctorOfVoidFromLogLevelAndString;
 
 }
 

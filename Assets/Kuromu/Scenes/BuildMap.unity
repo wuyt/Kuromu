@@ -552,6 +552,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114401056854333214, guid: 15c6b1d1856b83e4aaecf0e5e8a04fe8,
+        type: 3}
+      propertyPath: DeviceStrategy
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114401056854333214, guid: 15c6b1d1856b83e4aaecf0e5e8a04fe8,
+        type: 3}
+      propertyPath: DesiredMotionTrackerParameters.FocusMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114401056854333214, guid: 15c6b1d1856b83e4aaecf0e5e8a04fe8,
+        type: 3}
+      propertyPath: DesiredMotionTrackerParameters.FPS
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114599901319279742, guid: 15c6b1d1856b83e4aaecf0e5e8a04fe8,
+        type: 3}
+      propertyPath: LocalizerConfig.LocalizationMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 114971157556838206, guid: 15c6b1d1856b83e4aaecf0e5e8a04fe8,
         type: 3}
       propertyPath: WorldRootController

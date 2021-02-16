@@ -1,23 +1,33 @@
 ﻿//================================================================================================================================
 //
-//  Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+//  Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 //  EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 //  and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
 //================================================================================================================================
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace easyar
 {
+    /// <summary>
+    /// <para xml:lang="en"><see cref="MonoBehaviour"/> which controls VIO camera device (<see cref="MotionTrackerCameraDevice"/>, <see cref="ARKitCameraDevice"/> or <see cref="ARCoreCameraDevice"/>) in the scene, providing a few extensions in the Unity environment. Use <see cref="Device"/> directly when necessary.</para>
+    /// <para xml:lang="zh">在场景中控制VIO相机设备（<see cref="MotionTrackerCameraDevice"/>、<see cref="ARKitCameraDevice"/>、<see cref="ARCoreCameraDevice"/>）的<see cref="MonoBehaviour"/>，在Unity环境下提供功能扩展。如有需要可以直接使用<see cref="Device"/>。</para>
+    /// </summary>
     public class VIOCameraDeviceUnion : CameraSource
     {
         /// <summary>
-        /// EasyAR Sense API (Unioned). Accessible between DeviceCreated and DeviceClosed event if available.
+        /// <para xml:lang="en">EasyAR Sense API (Union). Accessible between <see cref="DeviceCreated"/> and <see cref="DeviceClosed"/> event if available.</para>
+        /// <para xml:lang="zh">EasyAR Sense API (Union)，如果功能可以使用，可以在<see cref="DeviceCreated"/>和<see cref="DeviceClosed"/>事件之间访问。</para>
         /// </summary>
         public DeviceUnion Device { get; private set; }
 
+        /// <summary>
+        /// <para xml:lang="en">Strategy of choosing VIO device.</para>
+        /// <para xml:lang="zh">选择VIO设备的策略。</para>
+        /// </summary>
         public DeviceChooseStrategy DeviceStrategy;
 
         private Action deviceStart;
@@ -28,15 +38,47 @@ namespace easyar
         private Action<InputFrameSink> deviceConnect;
         private bool willOpen;
 
+        /// <summary>
+        /// <para xml:lang="en">Event when <see cref="Device"/> created.</para>
+        /// <para xml:lang="zh"><see cref="Device"/> 创建的事件。</para>
+        /// </summary>
         public event Action DeviceCreated;
+        /// <summary>
+        /// <para xml:lang="en">Event when <see cref="Device"/> opened.</para>
+        /// <para xml:lang="zh"><see cref="Device"/> 打开的事件。</para>
+        /// </summary>
         public event Action DeviceOpened;
+        /// <summary>
+        /// <para xml:lang="en">Event when <see cref="Device"/> closed.</para>
+        /// <para xml:lang="zh"><see cref="Device"/> 关闭的事件。</para>
+        /// </summary>
         public event Action DeviceClosed;
 
+        /// <summary>
+        /// <para xml:lang="en">Strategy of choosing VIO device.</para>
+        /// <para xml:lang="zh">选择VIO设备的策略。</para>
+        /// </summary>
         public enum DeviceChooseStrategy
         {
+            /// <summary>
+            /// <para xml:lang="en">Choose VIO device based on system support，in the order of System VIO device (ARKit/ARCore) > EasyAR Motion Tracker.</para>
+            /// <para xml:lang="zh">根据系统对VIO设备支持情况进行选择，优先顺序为 系统VIO设备 (ARKit/ARCore) > EasyAR Motion Tracker。</para>
+            /// </summary>
             SystemVIOFirst,
+            /// <summary>
+            /// <para xml:lang="en">Choose VIO device based on system support，in the order of EasyAR Motion Tracker > System VIO device (ARKit/ARCore)。</para>
+            /// <para xml:lang="zh">根据系统对VIO设备支持情况进行选择，优先顺序为 EasyAR Motion Tracker > 系统VIO设备 (ARKit/ARCore)。</para>
+            /// </summary>
             EasyARMotionTrackerFirst,
+            /// <summary>
+            /// <para xml:lang="en">Choose only System VIO device (ARKit/ARCore), do not use EasyAR Motion Tracker.</para>
+            /// <para xml:lang="zh">只选择系统VIO设备 (ARKit/ARCore)，不使用EasyAR Motion Tracker。</para>
+            /// </summary>
             SystemVIOOnly,
+            /// <summary>
+            /// <para xml:lang="en">Choose only EasyAR Motion Tracker, do not use System VIO device (ARKit/ARCore).</para>
+            /// <para xml:lang="zh">只选择EasyAR Motion Tracker，不使用系统VIO设备 (ARKit/ARCore)。</para>
+            /// </summary>
             EasyARMotionTrackerOnly,
         }
 
@@ -65,6 +107,9 @@ namespace easyar
             get { return true; }
         }
 
+        /// <summary>
+        /// MonoBehaviour OnEnable
+        /// </summary>
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -74,6 +119,9 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// MonoBehaviour Start
+        /// </summary>
         protected override void Start()
         {
             switch (DeviceStrategy)
@@ -127,6 +175,9 @@ namespace easyar
             base.Start();
         }
 
+        /// <summary>
+        /// MonoBehaviour OnDisable
+        /// </summary>
         protected override void OnDisable()
         {
             base.OnDisable();
@@ -134,6 +185,60 @@ namespace easyar
             {
                 deviceStop();
             }
+        }
+
+        /// <summary>
+        /// <para xml:lang="en">Performs ray cast from the user&#39;s device in the direction of given screen point. Intersections with horizontal plane is detected in real time in the current field of view,and return the 3D point nearest to ray on horizontal plane. <paramref name="pointInView"/> should be normalized to [0, 1]^2.</para>
+        /// <para xml:lang="zh">在当前视野内实时检测到的水平面上进行Hit Test,点击到某个水平面后返回该平面上距离Hit Test射线最近的3D点的位置坐标。<paramref name="pointInView"/> 需要被归一化到[0, 1]^2。</para>
+        /// </summary>
+        public List<Vector3> HitTestAgainstHorizontalPlane(Vector2 pointInView)
+        {
+            var points = new List<Vector3>();
+            if (Device == null || Device.Type() != typeof(MotionTrackerCameraDevice))
+            {
+                return points;
+            }
+            if (!arSession || arSession.FrameCameraParameters.OnNone || arSession.Assembly == null || !arSession.Assembly.Camera)
+            {
+                return points;
+            }
+
+            var coord = EasyARController.Instance.Display.ImageCoordinatesFromScreenCoordinates(pointInView, arSession.FrameCameraParameters.Value, arSession.Assembly.Camera);
+            var hitPoints = Device.MotionTrackerCameraDevice.hitTestAgainstHorizontalPlane(coord.ToEasyARVector());
+
+            foreach (var p in hitPoints)
+            {
+                points.Add(new Vector3(p.data_0, p.data_1, -p.data_2));
+            }
+
+            return points;
+        }
+
+        /// <summary>
+        /// <para xml:lang="en">Perform hit test against the point cloud and return the nearest 3D point. <paramref name="pointInView"/> should be normalized to [0, 1]^2.</para>
+        /// <para xml:lang="zh">在当前点云中进行Hit Test,得到距离相机从近到远一条射线上的最近的一个3D点位置坐标。<paramref name="pointInView"/> 需要被归一化到[0, 1]^2。</para>
+        /// </summary>
+        public List<Vector3> HitTestAgainstPointCloud(Vector2 pointInView)
+        {
+            var points = new List<Vector3>();
+            if (Device == null || Device.Type() != typeof(MotionTrackerCameraDevice))
+            {
+                return points;
+            }
+            if (!arSession || arSession.FrameCameraParameters.OnNone || arSession.Assembly == null || !arSession.Assembly.Camera)
+            {
+                return points;
+            }
+
+            var coord = EasyARController.Instance.Display.ImageCoordinatesFromScreenCoordinates(pointInView, arSession.FrameCameraParameters.Value, arSession.Assembly.Camera);
+            var hitPoints = Device.MotionTrackerCameraDevice.hitTestAgainstPointCloud(coord.ToEasyARVector());
+
+            foreach (var p in hitPoints)
+            {
+                points.Add(new Vector3(p.data_0, p.data_1, -p.data_2));
+            }
+
+            return points;
         }
 
         public override void Open()
@@ -362,6 +467,10 @@ namespace easyar
             return false;
         }
 
+        /// <summary>
+        /// <para xml:lang="en">VIO device Union.</para>
+        /// <para xml:lang="zh">VIO设备的集合。</para>
+        /// </summary>
         public class DeviceUnion
         {
             private MotionTrackerCameraDevice motionTrackerCameraDevice;

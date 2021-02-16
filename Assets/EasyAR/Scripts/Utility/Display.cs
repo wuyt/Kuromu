@@ -1,6 +1,6 @@
 ﻿//================================================================================================================================
 //
-//  Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+//  Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 //  EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 //  and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -12,6 +12,10 @@ using UnityEngine;
 
 namespace easyar
 {
+    /// <summary>
+    /// <para xml:lang="en">Display device.</para>
+    /// <para xml:lang="zh">显示设备。</para>
+    /// </summary>
     public class Display : IDisposable
     {
         private Dictionary<int, int> rotations = new Dictionary<int, int>();
@@ -36,6 +40,10 @@ namespace easyar
             DeleteAndroidJavaObjects();
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Device rotation.</para>
+        /// <para xml:lang="zh">设备旋转信息。</para>
+        /// </summary>
         public int Rotation
         {
             get
@@ -55,12 +63,20 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Dispose resources.</para>
+        /// <para xml:lang="zh">销毁资源。</para>
+        /// </summary>
         public void Dispose()
         {
             DeleteAndroidJavaObjects();
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Get compensation matrix using camera parameters <paramref name="camParams"/>.</para>
+        /// <para xml:lang="zh">根据相机参数<paramref name="camParams"/>返回补偿矩阵。</para>
+        /// </summary>
         public Matrix4x4 GetCompensation(CameraParameters camParams)
         {
             var screenRotation = Rotation;
@@ -73,7 +89,10 @@ namespace easyar
             return rotationMatrix;
         }
 
-        // pointInView should be normalized to [0, 1]
+        /// <summary>
+        /// <para xml:lang="en">Transforms points from screen coordinate system ([0, 1]^2) to image coordinate system ([0, 1]^2). <paramref name="pointInView"/> should be normalized to [0, 1]^2.</para>
+        /// <para xml:lang="zh">从屏幕坐标系（[0, 1]^2）变换到图像坐标系（[0, 1]^2）。<paramref name="pointInView"/> 需要被归一化到[0, 1]^2。</para>
+        /// </summary>
         public Vector2 ImageCoordinatesFromScreenCoordinates(Vector2 pointInView, CameraParameters cameraParameters, Camera camera)
         {
             return cameraParameters.imageCoordinatesFromScreenCoordinates(

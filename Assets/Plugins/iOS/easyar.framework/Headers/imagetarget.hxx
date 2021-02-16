@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -78,7 +78,7 @@ public:
 
 /// <summary>
 /// ImageTarget represents planar image targets that can be tracked by `ImageTracker`_ .
-/// The fields of ImageTarget need to be filled with the create.../setupAll method before it can be read. And ImageTarget can be tracked by `ImageTracker`_ after a successful load into the `ImageTracker`_ using `ImageTracker.loadTarget`_ .
+/// The fields of ImageTarget need to be filled with the create... method before it can be read. And ImageTarget can be tracked by `ImageTracker`_ after a successful load into the `ImageTracker`_ using `ImageTracker.loadTarget`_ .
 /// </summary>
 class ImageTarget : public Target
 {
@@ -112,15 +112,9 @@ public:
     /// </summary>
     bool save(String * path);
     /// <summary>
-    /// Creates a target from an image file. If not needed, name, uid, meta can be passed with empty string, and scale can be passed with default value 1.
+    /// Creates a target from an image file. If not needed, name, uid, meta can be passed with empty string, and scale can be passed with default value 1. Jpeg and png files are supported.
     /// </summary>
     static void createFromImageFile(String * path, StorageType storageType, String * name, String * uid, String * meta, float scale, /* OUT */ ImageTarget * * Return);
-    /// <summary>
-    /// Setup all targets listed in the json file or json string from path with storageType. This method only parses the json file or string.
-    /// If path is json file path, storageType should be `App` or `Assets` or `Absolute` indicating the path type. Paths inside json files should be absolute path or relative path to the json file.
-    /// See `StorageType`_ for more descriptions.
-    /// </summary>
-    static void setupAll(String * path, StorageType storageType, /* OUT */ ListOfImageTarget * * Return);
     /// <summary>
     /// The scale of image. The value is the physical image width divided by 1 meter. The default value is 1.
     /// </summary>
@@ -173,27 +167,6 @@ struct OptionalOfImageTarget
     ImageTarget * value;
 };
 static inline easyar_OptionalOfImageTarget OptionalOfImageTarget_to_c(ImageTarget * o);
-#endif
-
-#ifndef __EASYAR_LISTOFIMAGETARGET__
-#define __EASYAR_LISTOFIMAGETARGET__
-class ListOfImageTarget
-{
-private:
-    easyar_ListOfImageTarget * cdata_;
-    virtual ListOfImageTarget & operator=(const ListOfImageTarget & data) { return *this; } //deleted
-public:
-    ListOfImageTarget(easyar_ListOfImageTarget * cdata);
-    virtual ~ListOfImageTarget();
-
-    ListOfImageTarget(const ListOfImageTarget & data);
-    const easyar_ListOfImageTarget * get_cdata() const;
-    easyar_ListOfImageTarget * get_cdata();
-
-    ListOfImageTarget(easyar_ImageTarget * * begin, easyar_ImageTarget * * end);
-    int size() const;
-    ImageTarget * at(int index) const;
-};
 #endif
 
 #ifndef __EASYAR_LISTOFIMAGE__
@@ -439,12 +412,6 @@ inline void ImageTarget::createFromImageFile(String * arg0, StorageType arg1, St
     easyar_ImageTarget_createFromImageFile(arg0->get_cdata(), static_cast<easyar_StorageType>(arg1), arg2->get_cdata(), arg3->get_cdata(), arg4->get_cdata(), arg5, &_return_value_);
     *Return = (_return_value_.has_value ? new ImageTarget(_return_value_.value) : NULL);
 }
-inline void ImageTarget::setupAll(String * arg0, StorageType arg1, /* OUT */ ListOfImageTarget * * Return)
-{
-    easyar_ListOfImageTarget * _return_value_ = NULL;
-    easyar_ImageTarget_setupAll(arg0->get_cdata(), static_cast<easyar_StorageType>(arg1), &_return_value_);
-    *Return = new ListOfImageTarget(_return_value_);
-}
 inline float ImageTarget::scale()
 {
     if (cdata_ == NULL) {
@@ -557,51 +524,6 @@ static inline easyar_OptionalOfImageTarget OptionalOfImageTarget_to_c(ImageTarge
         easyar_OptionalOfImageTarget _return_value_ = {false, NULL};
         return _return_value_;
     }
-}
-#endif
-
-#ifndef __IMPLEMENTATION_EASYAR_LISTOFIMAGETARGET__
-#define __IMPLEMENTATION_EASYAR_LISTOFIMAGETARGET__
-inline ListOfImageTarget::ListOfImageTarget(easyar_ListOfImageTarget * cdata)
-    : cdata_(cdata)
-{
-}
-inline ListOfImageTarget::~ListOfImageTarget()
-{
-    if (cdata_) {
-        easyar_ListOfImageTarget__dtor(cdata_);
-        cdata_ = NULL;
-    }
-}
-
-inline ListOfImageTarget::ListOfImageTarget(const ListOfImageTarget & data)
-    : cdata_(static_cast<easyar_ListOfImageTarget *>(NULL))
-{
-    easyar_ListOfImageTarget_copy(data.cdata_, &cdata_);
-}
-inline const easyar_ListOfImageTarget * ListOfImageTarget::get_cdata() const
-{
-    return cdata_;
-}
-inline easyar_ListOfImageTarget * ListOfImageTarget::get_cdata()
-{
-    return cdata_;
-}
-
-inline ListOfImageTarget::ListOfImageTarget(easyar_ImageTarget * * begin, easyar_ImageTarget * * end)
-    : cdata_(static_cast<easyar_ListOfImageTarget *>(NULL))
-{
-    easyar_ListOfImageTarget__ctor(begin, end, &cdata_);
-}
-inline int ListOfImageTarget::size() const
-{
-    return easyar_ListOfImageTarget_size(cdata_);
-}
-inline ImageTarget * ListOfImageTarget::at(int index) const
-{
-    easyar_ImageTarget * _return_value_ = easyar_ListOfImageTarget_at(cdata_, index);
-    easyar_ImageTarget__retain(_return_value_, &_return_value_);
-    return new ImageTarget(_return_value_);
 }
 #endif
 

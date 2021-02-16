@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -80,12 +80,6 @@ void easyar_ObjectTarget_createFromParameters(easyar_ObjectTargetParameters * pa
 /// </summary>
 void easyar_ObjectTarget_createFromObjectFile(easyar_String * path, easyar_StorageType storageType, easyar_String * name, easyar_String * uid, easyar_String * meta, float scale, /* OUT */ easyar_OptionalOfObjectTarget * Return);
 /// <summary>
-/// Setup all targets listed in the json file or json string from path with storageType. This method only parses the json file or string.
-/// If path is json file path, storageType should be `App` or `Assets` or `Absolute` indicating the path type. Paths inside json files should be absolute path or relative path to the json file.
-/// See `StorageType`_ for more descriptions.
-/// </summary>
-void easyar_ObjectTarget_setupAll(easyar_String * path, easyar_StorageType storageType, /* OUT */ easyar_ListOfObjectTarget * * Return);
-/// <summary>
 /// The scale of model. The value is the physical scale divided by model coordinate system scale. The default value is 1. (Supposing the unit of model coordinate system is 1 meter.)
 /// </summary>
 float easyar_ObjectTarget_scale(const easyar_ObjectTarget * This);
@@ -138,12 +132,6 @@ void easyar_ObjectTarget__retain(const easyar_ObjectTarget * This, /* OUT */ eas
 const char * easyar_ObjectTarget__typeName(const easyar_ObjectTarget * This);
 void easyar_castObjectTargetToTarget(const easyar_ObjectTarget * This, /* OUT */ easyar_Target * * Return);
 void easyar_tryCastTargetToObjectTarget(const easyar_Target * This, /* OUT */ easyar_ObjectTarget * * Return);
-
-void easyar_ListOfObjectTarget__ctor(easyar_ObjectTarget * const * begin, easyar_ObjectTarget * const * end, /* OUT */ easyar_ListOfObjectTarget * * Return);
-void easyar_ListOfObjectTarget__dtor(easyar_ListOfObjectTarget * This);
-void easyar_ListOfObjectTarget_copy(const easyar_ListOfObjectTarget * This, /* OUT */ easyar_ListOfObjectTarget * * Return);
-int easyar_ListOfObjectTarget_size(const easyar_ListOfObjectTarget * This);
-easyar_ObjectTarget * easyar_ListOfObjectTarget_at(const easyar_ListOfObjectTarget * This, int index);
 
 void easyar_ListOfVec3F__ctor(easyar_Vec3F const * begin, easyar_Vec3F const * end, /* OUT */ easyar_ListOfVec3F * * Return);
 void easyar_ListOfVec3F__dtor(easyar_ListOfVec3F * This);

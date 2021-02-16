@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -87,7 +87,7 @@ public:
 /// <summary>
 /// ObjectTarget represents 3d object targets that can be tracked by `ObjectTracker`_ .
 /// The size of ObjectTarget is determined by the `obj` file. You can change it by changing the object `scale`, which is default to 1.
-/// A ObjectTarget should be setup using setup before any value is valid. And ObjectTarget can be tracked by `ObjectTracker`_ after a successful load into the `ObjectTracker`_ using `ObjectTracker.loadTarget`_ .
+/// A ObjectTarget can be tracked by `ObjectTracker`_ after a successful load into the `ObjectTracker`_ using `ObjectTracker.loadTarget`_ .
 /// </summary>
 class ObjectTarget : public Target
 {
@@ -112,12 +112,6 @@ public:
     /// Creats a target from obj, mtl and jpg/png files.
     /// </summary>
     static void createFromObjectFile(String * path, StorageType storageType, String * name, String * uid, String * meta, float scale, /* OUT */ ObjectTarget * * Return);
-    /// <summary>
-    /// Setup all targets listed in the json file or json string from path with storageType. This method only parses the json file or string.
-    /// If path is json file path, storageType should be `App` or `Assets` or `Absolute` indicating the path type. Paths inside json files should be absolute path or relative path to the json file.
-    /// See `StorageType`_ for more descriptions.
-    /// </summary>
-    static void setupAll(String * path, StorageType storageType, /* OUT */ ListOfObjectTarget * * Return);
     /// <summary>
     /// The scale of model. The value is the physical scale divided by model coordinate system scale. The default value is 1. (Supposing the unit of model coordinate system is 1 meter.)
     /// </summary>
@@ -177,27 +171,6 @@ struct OptionalOfObjectTarget
     ObjectTarget * value;
 };
 static inline easyar_OptionalOfObjectTarget OptionalOfObjectTarget_to_c(ObjectTarget * o);
-#endif
-
-#ifndef __EASYAR_LISTOFOBJECTTARGET__
-#define __EASYAR_LISTOFOBJECTTARGET__
-class ListOfObjectTarget
-{
-private:
-    easyar_ListOfObjectTarget * cdata_;
-    virtual ListOfObjectTarget & operator=(const ListOfObjectTarget & data) { return *this; } //deleted
-public:
-    ListOfObjectTarget(easyar_ListOfObjectTarget * cdata);
-    virtual ~ListOfObjectTarget();
-
-    ListOfObjectTarget(const ListOfObjectTarget & data);
-    const easyar_ListOfObjectTarget * get_cdata() const;
-    easyar_ListOfObjectTarget * get_cdata();
-
-    ListOfObjectTarget(easyar_ObjectTarget * * begin, easyar_ObjectTarget * * end);
-    int size() const;
-    ObjectTarget * at(int index) const;
-};
 #endif
 
 #ifndef __EASYAR_LISTOFVEC_F__
@@ -440,12 +413,6 @@ inline void ObjectTarget::createFromObjectFile(String * arg0, StorageType arg1, 
     easyar_ObjectTarget_createFromObjectFile(arg0->get_cdata(), static_cast<easyar_StorageType>(arg1), arg2->get_cdata(), arg3->get_cdata(), arg4->get_cdata(), arg5, &_return_value_);
     *Return = (_return_value_.has_value ? new ObjectTarget(_return_value_.value) : NULL);
 }
-inline void ObjectTarget::setupAll(String * arg0, StorageType arg1, /* OUT */ ListOfObjectTarget * * Return)
-{
-    easyar_ListOfObjectTarget * _return_value_ = NULL;
-    easyar_ObjectTarget_setupAll(arg0->get_cdata(), static_cast<easyar_StorageType>(arg1), &_return_value_);
-    *Return = new ListOfObjectTarget(_return_value_);
-}
 inline float ObjectTarget::scale()
 {
     if (cdata_ == NULL) {
@@ -550,51 +517,6 @@ static inline easyar_OptionalOfObjectTarget OptionalOfObjectTarget_to_c(ObjectTa
         easyar_OptionalOfObjectTarget _return_value_ = {false, NULL};
         return _return_value_;
     }
-}
-#endif
-
-#ifndef __IMPLEMENTATION_EASYAR_LISTOFOBJECTTARGET__
-#define __IMPLEMENTATION_EASYAR_LISTOFOBJECTTARGET__
-inline ListOfObjectTarget::ListOfObjectTarget(easyar_ListOfObjectTarget * cdata)
-    : cdata_(cdata)
-{
-}
-inline ListOfObjectTarget::~ListOfObjectTarget()
-{
-    if (cdata_) {
-        easyar_ListOfObjectTarget__dtor(cdata_);
-        cdata_ = NULL;
-    }
-}
-
-inline ListOfObjectTarget::ListOfObjectTarget(const ListOfObjectTarget & data)
-    : cdata_(static_cast<easyar_ListOfObjectTarget *>(NULL))
-{
-    easyar_ListOfObjectTarget_copy(data.cdata_, &cdata_);
-}
-inline const easyar_ListOfObjectTarget * ListOfObjectTarget::get_cdata() const
-{
-    return cdata_;
-}
-inline easyar_ListOfObjectTarget * ListOfObjectTarget::get_cdata()
-{
-    return cdata_;
-}
-
-inline ListOfObjectTarget::ListOfObjectTarget(easyar_ObjectTarget * * begin, easyar_ObjectTarget * * end)
-    : cdata_(static_cast<easyar_ListOfObjectTarget *>(NULL))
-{
-    easyar_ListOfObjectTarget__ctor(begin, end, &cdata_);
-}
-inline int ListOfObjectTarget::size() const
-{
-    return easyar_ListOfObjectTarget_size(cdata_);
-}
-inline ObjectTarget * ListOfObjectTarget::at(int index) const
-{
-    easyar_ObjectTarget * _return_value_ = easyar_ListOfObjectTarget_at(cdata_, index);
-    easyar_ObjectTarget__retain(_return_value_, &_return_value_);
-    return new ObjectTarget(_return_value_);
 }
 #endif
 

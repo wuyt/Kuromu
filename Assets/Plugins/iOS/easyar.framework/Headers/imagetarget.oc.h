@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -65,7 +65,7 @@
 
 /// <summary>
 /// ImageTarget represents planar image targets that can be tracked by `ImageTracker`_ .
-/// The fields of ImageTarget need to be filled with the create.../setupAll method before it can be read. And ImageTarget can be tracked by `ImageTracker`_ after a successful load into the `ImageTracker`_ using `ImageTracker.loadTarget`_ .
+/// The fields of ImageTarget need to be filled with the create... method before it can be read. And ImageTarget can be tracked by `ImageTracker`_ after a successful load into the `ImageTracker`_ using `ImageTracker.loadTarget`_ .
 /// </summary>
 @interface easyar_ImageTarget : easyar_Target
 
@@ -90,15 +90,9 @@
 /// </summary>
 - (bool)save:(NSString *)path;
 /// <summary>
-/// Creates a target from an image file. If not needed, name, uid, meta can be passed with empty string, and scale can be passed with default value 1.
+/// Creates a target from an image file. If not needed, name, uid, meta can be passed with empty string, and scale can be passed with default value 1. Jpeg and png files are supported.
 /// </summary>
 + (easyar_ImageTarget *)createFromImageFile:(NSString *)path storageType:(easyar_StorageType)storageType name:(NSString *)name uid:(NSString *)uid meta:(NSString *)meta scale:(float)scale;
-/// <summary>
-/// Setup all targets listed in the json file or json string from path with storageType. This method only parses the json file or string.
-/// If path is json file path, storageType should be `App` or `Assets` or `Absolute` indicating the path type. Paths inside json files should be absolute path or relative path to the json file.
-/// See `StorageType`_ for more descriptions.
-/// </summary>
-+ (NSArray<easyar_ImageTarget *> *)setupAll:(NSString *)path storageType:(easyar_StorageType)storageType;
 /// <summary>
 /// The scale of image. The value is the physical image width divided by 1 meter. The default value is 1.
 /// </summary>

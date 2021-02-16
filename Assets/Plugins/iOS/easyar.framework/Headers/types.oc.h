@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -24,27 +24,139 @@
 
 @class easyar_ObjectTracker;
 
-typedef enum easyar_CloudStatus : NSInteger
+typedef enum easyar_CloudRecognizationStatus : NSInteger
 {
     /// <summary>
-    /// Targets are recognized.
+    /// Unknown error
     /// </summary>
-    easyar_CloudStatus_FoundTargets = 0,
+    easyar_CloudRecognizationStatus_UnknownError = 0,
     /// <summary>
-    /// No targets are recognized.
+    /// A target is recognized.
     /// </summary>
-    easyar_CloudStatus_TargetsNotFound = 1,
+    easyar_CloudRecognizationStatus_FoundTarget = 1,
     /// <summary>
-    /// Connection broke and auto reconnecting
+    /// No target is recognized.
     /// </summary>
-    easyar_CloudStatus_Reconnecting = 2,
+    easyar_CloudRecognizationStatus_TargetNotFound = 2,
     /// <summary>
-    /// Protocol error
+    /// Reached the access limit
     /// </summary>
-    easyar_CloudStatus_ProtocolError = 3,
-} easyar_CloudStatus;
+    easyar_CloudRecognizationStatus_ReachedAccessLimit = 3,
+    /// <summary>
+    /// Request interval too low
+    /// </summary>
+    easyar_CloudRecognizationStatus_RequestIntervalTooLow = 4,
+} easyar_CloudRecognizationStatus;
+
+@class easyar_CloudRecognizationResult;
 
 @class easyar_CloudRecognizer;
+
+@class easyar_Buffer;
+
+@class easyar_BufferDictionary;
+
+@class easyar_BufferPool;
+
+typedef enum easyar_CameraDeviceType : NSInteger
+{
+    /// <summary>
+    /// Unknown location
+    /// </summary>
+    easyar_CameraDeviceType_Unknown = 0,
+    /// <summary>
+    /// Rear camera
+    /// </summary>
+    easyar_CameraDeviceType_Back = 1,
+    /// <summary>
+    /// Front camera
+    /// </summary>
+    easyar_CameraDeviceType_Front = 2,
+} easyar_CameraDeviceType;
+
+/// <summary>
+/// MotionTrackingStatus describes the quality of device motion tracking.
+/// </summary>
+typedef enum easyar_MotionTrackingStatus : NSInteger
+{
+    /// <summary>
+    /// Result is not available and should not to be used to render virtual objects or do 3D reconstruction. This value occurs temporarily after initializing, tracking lost or relocalizing.
+    /// </summary>
+    easyar_MotionTrackingStatus_NotTracking = 0,
+    /// <summary>
+    /// Tracking is available, but the quality of the result is not good enough. This value occurs temporarily due to weak texture or excessive movement. The result can be used to render virtual objects, but should generally not be used to do 3D reconstruction.
+    /// </summary>
+    easyar_MotionTrackingStatus_Limited = 1,
+    /// <summary>
+    /// Tracking with a good quality. The result can be used to render virtual objects or do 3D reconstruction.
+    /// </summary>
+    easyar_MotionTrackingStatus_Tracking = 2,
+} easyar_MotionTrackingStatus;
+
+@class easyar_CameraParameters;
+
+/// <summary>
+/// PixelFormat represents the format of image pixel data. All formats follow the pixel direction from left to right and from top to bottom.
+/// </summary>
+typedef enum easyar_PixelFormat : NSInteger
+{
+    /// <summary>
+    /// Unknown
+    /// </summary>
+    easyar_PixelFormat_Unknown = 0,
+    /// <summary>
+    /// 256 shades grayscale
+    /// </summary>
+    easyar_PixelFormat_Gray = 1,
+    /// <summary>
+    /// YUV_NV21
+    /// </summary>
+    easyar_PixelFormat_YUV_NV21 = 2,
+    /// <summary>
+    /// YUV_NV12
+    /// </summary>
+    easyar_PixelFormat_YUV_NV12 = 3,
+    /// <summary>
+    /// YUV_I420
+    /// </summary>
+    easyar_PixelFormat_YUV_I420 = 4,
+    /// <summary>
+    /// YUV_YV12
+    /// </summary>
+    easyar_PixelFormat_YUV_YV12 = 5,
+    /// <summary>
+    /// RGB888
+    /// </summary>
+    easyar_PixelFormat_RGB888 = 6,
+    /// <summary>
+    /// BGR888
+    /// </summary>
+    easyar_PixelFormat_BGR888 = 7,
+    /// <summary>
+    /// RGBA8888
+    /// </summary>
+    easyar_PixelFormat_RGBA8888 = 8,
+    /// <summary>
+    /// BGRA8888
+    /// </summary>
+    easyar_PixelFormat_BGRA8888 = 9,
+} easyar_PixelFormat;
+
+@class easyar_Image;
+
+@class easyar_Matrix44F;
+
+@class easyar_Matrix33F;
+
+@class easyar_Vec4F;
+
+@class easyar_Vec3F;
+
+@class easyar_Vec2F;
+
+@class easyar_Vec4I;
+
+@class easyar_Vec2I;
 
 @class easyar_DenseSpatialMap;
 
@@ -52,11 +164,137 @@ typedef enum easyar_CloudStatus : NSInteger
 
 @class easyar_SceneMesh;
 
+@class easyar_ARCoreCameraDevice;
+
+@class easyar_ARKitCameraDevice;
+
+typedef enum easyar_CameraDeviceFocusMode : NSInteger
+{
+    /// <summary>
+    /// Normal auto focus mode. You should call autoFocus to start the focus in this mode.
+    /// </summary>
+    easyar_CameraDeviceFocusMode_Normal = 0,
+    /// <summary>
+    /// Continuous auto focus mode
+    /// </summary>
+    easyar_CameraDeviceFocusMode_Continousauto = 2,
+    /// <summary>
+    /// Infinity focus mode
+    /// </summary>
+    easyar_CameraDeviceFocusMode_Infinity = 3,
+    /// <summary>
+    /// Macro (close-up) focus mode. You should call autoFocus to start the focus in this mode.
+    /// </summary>
+    easyar_CameraDeviceFocusMode_Macro = 4,
+    /// <summary>
+    /// Medium distance focus mode
+    /// </summary>
+    easyar_CameraDeviceFocusMode_Medium = 5,
+} easyar_CameraDeviceFocusMode;
+
+typedef enum easyar_AndroidCameraApiType : NSInteger
+{
+    /// <summary>
+    /// Android Camera1
+    /// </summary>
+    easyar_AndroidCameraApiType_Camera1 = 0,
+    /// <summary>
+    /// Android Camera2
+    /// </summary>
+    easyar_AndroidCameraApiType_Camera2 = 1,
+} easyar_AndroidCameraApiType;
+
+typedef enum easyar_CameraDevicePresetProfile : NSInteger
+{
+    /// <summary>
+    /// The same as AVCaptureSessionPresetPhoto.
+    /// </summary>
+    easyar_CameraDevicePresetProfile_Photo = 0,
+    /// <summary>
+    /// The same as AVCaptureSessionPresetHigh.
+    /// </summary>
+    easyar_CameraDevicePresetProfile_High = 1,
+    /// <summary>
+    /// The same as AVCaptureSessionPresetMedium.
+    /// </summary>
+    easyar_CameraDevicePresetProfile_Medium = 2,
+    /// <summary>
+    /// The same as AVCaptureSessionPresetLow.
+    /// </summary>
+    easyar_CameraDevicePresetProfile_Low = 3,
+} easyar_CameraDevicePresetProfile;
+
+typedef enum easyar_CameraState : NSInteger
+{
+    /// <summary>
+    /// Unknown
+    /// </summary>
+    easyar_CameraState_Unknown = 0x00000000,
+    /// <summary>
+    /// Disconnected
+    /// </summary>
+    easyar_CameraState_Disconnected = 0x00000001,
+    /// <summary>
+    /// Preempted by another application.
+    /// </summary>
+    easyar_CameraState_Preempted = 0x00000002,
+} easyar_CameraState;
+
+@class easyar_CameraDevice;
+
+typedef enum easyar_CameraDevicePreference : NSInteger
+{
+    /// <summary>
+    /// Optimized for `ImageTracker`_ , `ObjectTracker`_ and `CloudRecognizer`_ .
+    /// </summary>
+    easyar_CameraDevicePreference_PreferObjectSensing = 0,
+    /// <summary>
+    /// Optimized for `SurfaceTracker`_ .
+    /// </summary>
+    easyar_CameraDevicePreference_PreferSurfaceTracking = 1,
+    /// <summary>
+    /// Optimized for Motion Tracking .
+    /// </summary>
+    easyar_CameraDevicePreference_PreferMotionTracking = 2,
+} easyar_CameraDevicePreference;
+
+@class easyar_CameraDeviceSelector;
+
 @class easyar_SurfaceTrackerResult;
 
 @class easyar_SurfaceTracker;
 
 @class easyar_MotionTrackerCameraDevice;
+
+@class easyar_InputFrameRecorder;
+
+@class easyar_InputFramePlayer;
+
+@class easyar_CallbackScheduler;
+
+@class easyar_DelayedCallbackScheduler;
+
+@class easyar_ImmediateCallbackScheduler;
+
+@class easyar_JniUtility;
+
+typedef enum easyar_LogLevel : NSInteger
+{
+    /// <summary>
+    /// Error
+    /// </summary>
+    easyar_LogLevel_Error = 0,
+    /// <summary>
+    /// Warning
+    /// </summary>
+    easyar_LogLevel_Warning = 1,
+    /// <summary>
+    /// Information
+    /// </summary>
+    easyar_LogLevel_Info = 2,
+} easyar_LogLevel;
+
+@class easyar_Log;
 
 @class easyar_ImageTargetParameters;
 
@@ -240,105 +478,43 @@ typedef enum easyar_LocalizationMode : NSInteger
 
 @class easyar_SparseSpatialMapManager;
 
+@class easyar_Engine;
+
+typedef enum easyar_VideoStatus : NSInteger
+{
+    /// <summary>
+    /// Status to indicate something wrong happen in video open or play.
+    /// </summary>
+    easyar_VideoStatus_Error = -1,
+    /// <summary>
+    /// Status to show video finished open and is ready for play.
+    /// </summary>
+    easyar_VideoStatus_Ready = 0,
+    /// <summary>
+    /// Status to indicate video finished play and reached the end.
+    /// </summary>
+    easyar_VideoStatus_Completed = 1,
+} easyar_VideoStatus;
+
+typedef enum easyar_VideoType : NSInteger
+{
+    /// <summary>
+    /// Normal video.
+    /// </summary>
+    easyar_VideoType_Normal = 0,
+    /// <summary>
+    /// Transparent video, left half is the RGB channel and right half is alpha channel.
+    /// </summary>
+    easyar_VideoType_TransparentSideBySide = 1,
+    /// <summary>
+    /// Transparent video, top half is the RGB channel and bottom half is alpha channel.
+    /// </summary>
+    easyar_VideoType_TransparentTopAndBottom = 2,
+} easyar_VideoType;
+
+@class easyar_VideoPlayer;
+
 @class easyar_ImageHelper;
-
-@class easyar_ARCoreCameraDevice;
-
-@class easyar_ARKitCameraDevice;
-
-@class easyar_CallbackScheduler;
-
-@class easyar_DelayedCallbackScheduler;
-
-@class easyar_ImmediateCallbackScheduler;
-
-typedef enum easyar_CameraDeviceFocusMode : NSInteger
-{
-    /// <summary>
-    /// Normal auto focus mode. You should call autoFocus to start the focus in this mode.
-    /// </summary>
-    easyar_CameraDeviceFocusMode_Normal = 0,
-    /// <summary>
-    /// Continuous auto focus mode
-    /// </summary>
-    easyar_CameraDeviceFocusMode_Continousauto = 2,
-    /// <summary>
-    /// Infinity focus mode
-    /// </summary>
-    easyar_CameraDeviceFocusMode_Infinity = 3,
-    /// <summary>
-    /// Macro (close-up) focus mode. You should call autoFocus to start the focus in this mode.
-    /// </summary>
-    easyar_CameraDeviceFocusMode_Macro = 4,
-    /// <summary>
-    /// Medium distance focus mode
-    /// </summary>
-    easyar_CameraDeviceFocusMode_Medium = 5,
-} easyar_CameraDeviceFocusMode;
-
-typedef enum easyar_AndroidCameraApiType : NSInteger
-{
-    /// <summary>
-    /// Android Camera1
-    /// </summary>
-    easyar_AndroidCameraApiType_Camera1 = 0,
-    /// <summary>
-    /// Android Camera2
-    /// </summary>
-    easyar_AndroidCameraApiType_Camera2 = 1,
-} easyar_AndroidCameraApiType;
-
-typedef enum easyar_CameraDevicePresetProfile : NSInteger
-{
-    /// <summary>
-    /// The same as AVCaptureSessionPresetPhoto.
-    /// </summary>
-    easyar_CameraDevicePresetProfile_Photo = 0,
-    /// <summary>
-    /// The same as AVCaptureSessionPresetHigh.
-    /// </summary>
-    easyar_CameraDevicePresetProfile_High = 1,
-    /// <summary>
-    /// The same as AVCaptureSessionPresetMedium.
-    /// </summary>
-    easyar_CameraDevicePresetProfile_Medium = 2,
-    /// <summary>
-    /// The same as AVCaptureSessionPresetLow.
-    /// </summary>
-    easyar_CameraDevicePresetProfile_Low = 3,
-} easyar_CameraDevicePresetProfile;
-
-typedef enum easyar_CameraState : NSInteger
-{
-    /// <summary>
-    /// Unknown
-    /// </summary>
-    easyar_CameraState_Unknown = 0x00000000,
-    /// <summary>
-    /// Disconnected
-    /// </summary>
-    easyar_CameraState_Disconnected = 0x00000001,
-    /// <summary>
-    /// Preempted by another application.
-    /// </summary>
-    easyar_CameraState_Preempted = 0x00000002,
-} easyar_CameraState;
-
-@class easyar_CameraDevice;
-
-typedef enum easyar_CameraDevicePreference : NSInteger
-{
-    /// <summary>
-    /// Optimized for `ImageTracker`_ , `ObjectTracker`_ and `CloudRecognizer`_ .
-    /// </summary>
-    easyar_CameraDevicePreference_PreferObjectSensing = 0,
-    /// <summary>
-    /// Optimized for `SurfaceTracker`_ .
-    /// </summary>
-    easyar_CameraDevicePreference_PreferSurfaceTracking = 1,
-} easyar_CameraDevicePreference;
-
-@class easyar_CameraDeviceSelector;
 
 @class easyar_SignalSink;
 
@@ -372,8 +548,6 @@ typedef enum easyar_CameraDevicePreference : NSInteger
 
 @class easyar_InputFrameToFeedbackFrameAdapter;
 
-@class easyar_Engine;
-
 @class easyar_InputFrame;
 
 @class easyar_FrameFilterResult;
@@ -406,7 +580,7 @@ typedef enum easyar_StorageType : NSInteger
 {
     /// <summary>
     /// The app path.
-    /// Android: the application&#39;s `persistent data directory &lt;https://developer.android.google.cn/reference/android/content/pm/ApplicationInfo.html#dataDir&gt;`_
+    /// Android: the application&#39;s `persistent data directory &lt;https://developer.android.google.cn/reference/android/content/pm/ApplicationInfo.html#dataDir&gt;`__
     /// iOS: the application&#39;s sandbox directory
     /// Windows: Windows: the application&#39;s executable directory
     /// Mac: the application’s executable directory (if app is a bundle, this path is inside the bundle)
@@ -454,163 +628,3 @@ typedef enum easyar_TargetStatus : NSInteger
 @class easyar_TargetTrackerResult;
 
 @class easyar_TextureId;
-
-typedef enum easyar_VideoStatus : NSInteger
-{
-    /// <summary>
-    /// Status to indicate something wrong happen in video open or play.
-    /// </summary>
-    easyar_VideoStatus_Error = -1,
-    /// <summary>
-    /// Status to show video finished open and is ready for play.
-    /// </summary>
-    easyar_VideoStatus_Ready = 0,
-    /// <summary>
-    /// Status to indicate video finished play and reached the end.
-    /// </summary>
-    easyar_VideoStatus_Completed = 1,
-} easyar_VideoStatus;
-
-typedef enum easyar_VideoType : NSInteger
-{
-    /// <summary>
-    /// Normal video.
-    /// </summary>
-    easyar_VideoType_Normal = 0,
-    /// <summary>
-    /// Transparent video, left half is the RGB channel and right half is alpha channel.
-    /// </summary>
-    easyar_VideoType_TransparentSideBySide = 1,
-    /// <summary>
-    /// Transparent video, top half is the RGB channel and bottom half is alpha channel.
-    /// </summary>
-    easyar_VideoType_TransparentTopAndBottom = 2,
-} easyar_VideoType;
-
-@class easyar_VideoPlayer;
-
-@class easyar_Buffer;
-
-@class easyar_BufferDictionary;
-
-@class easyar_BufferPool;
-
-typedef enum easyar_CameraDeviceType : NSInteger
-{
-    /// <summary>
-    /// Unknown location
-    /// </summary>
-    easyar_CameraDeviceType_Unknown = 0,
-    /// <summary>
-    /// Rear camera
-    /// </summary>
-    easyar_CameraDeviceType_Back = 1,
-    /// <summary>
-    /// Front camera
-    /// </summary>
-    easyar_CameraDeviceType_Front = 2,
-} easyar_CameraDeviceType;
-
-/// <summary>
-/// MotionTrackingStatus describes the quality of device motion tracking.
-/// </summary>
-typedef enum easyar_MotionTrackingStatus : NSInteger
-{
-    /// <summary>
-    /// Result is not available and should not to be used to render virtual objects or do 3D reconstruction. This value occurs temporarily after initializing, tracking lost or relocalizing.
-    /// </summary>
-    easyar_MotionTrackingStatus_NotTracking = 0,
-    /// <summary>
-    /// Tracking is available, but the quality of the result is not good enough. This value occurs temporarily due to weak texture or excessive movement. The result can be used to render virtual objects, but should generally not be used to do 3D reconstruction.
-    /// </summary>
-    easyar_MotionTrackingStatus_Limited = 1,
-    /// <summary>
-    /// Tracking with a good quality. The result can be used to render virtual objects or do 3D reconstruction.
-    /// </summary>
-    easyar_MotionTrackingStatus_Tracking = 2,
-} easyar_MotionTrackingStatus;
-
-@class easyar_CameraParameters;
-
-/// <summary>
-/// PixelFormat represents the format of image pixel data. All formats follow the pixel direction from left to right and from top to bottom.
-/// </summary>
-typedef enum easyar_PixelFormat : NSInteger
-{
-    /// <summary>
-    /// Unknown
-    /// </summary>
-    easyar_PixelFormat_Unknown = 0,
-    /// <summary>
-    /// 256 shades grayscale
-    /// </summary>
-    easyar_PixelFormat_Gray = 1,
-    /// <summary>
-    /// YUV_NV21
-    /// </summary>
-    easyar_PixelFormat_YUV_NV21 = 2,
-    /// <summary>
-    /// YUV_NV12
-    /// </summary>
-    easyar_PixelFormat_YUV_NV12 = 3,
-    /// <summary>
-    /// YUV_I420
-    /// </summary>
-    easyar_PixelFormat_YUV_I420 = 4,
-    /// <summary>
-    /// YUV_YV12
-    /// </summary>
-    easyar_PixelFormat_YUV_YV12 = 5,
-    /// <summary>
-    /// RGB888
-    /// </summary>
-    easyar_PixelFormat_RGB888 = 6,
-    /// <summary>
-    /// BGR888
-    /// </summary>
-    easyar_PixelFormat_BGR888 = 7,
-    /// <summary>
-    /// RGBA8888
-    /// </summary>
-    easyar_PixelFormat_RGBA8888 = 8,
-    /// <summary>
-    /// BGRA8888
-    /// </summary>
-    easyar_PixelFormat_BGRA8888 = 9,
-} easyar_PixelFormat;
-
-@class easyar_Image;
-
-@class easyar_JniUtility;
-
-typedef enum easyar_LogLevel : NSInteger
-{
-    /// <summary>
-    /// Error
-    /// </summary>
-    easyar_LogLevel_Error = 0,
-    /// <summary>
-    /// Warning
-    /// </summary>
-    easyar_LogLevel_Warning = 1,
-    /// <summary>
-    /// Information
-    /// </summary>
-    easyar_LogLevel_Info = 2,
-} easyar_LogLevel;
-
-@class easyar_Log;
-
-@class easyar_Matrix44F;
-
-@class easyar_Matrix33F;
-
-@class easyar_Vec4F;
-
-@class easyar_Vec3F;
-
-@class easyar_Vec2F;
-
-@class easyar_Vec4I;
-
-@class easyar_Vec2I;

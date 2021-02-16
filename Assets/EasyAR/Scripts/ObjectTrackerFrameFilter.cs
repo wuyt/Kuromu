@@ -1,6 +1,6 @@
 ﻿//================================================================================================================================
 //
-//  Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+//  Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 //  EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 //  and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -12,10 +12,15 @@ using UnityEngine;
 
 namespace easyar
 {
+    /// <summary>
+    /// <para xml:lang="en"><see cref="MonoBehaviour"/> which controls <see cref="ObjectTracker"/> in the scene, providing a few extensions in the Unity environment. Use <see cref="Tracker"/> directly when necessary.</para>
+    /// <para xml:lang="zh">在场景中控制<see cref="ObjectTracker"/>的<see cref="MonoBehaviour"/>，在Unity环境下提供功能扩展。如有需要可以直接使用<see cref="Tracker"/>。</para>
+    /// </summary>
     public class ObjectTrackerFrameFilter : FrameFilter, FrameFilter.IFeedbackFrameSink, FrameFilter.IOutputFrameSource
     {
         /// <summary>
-        /// EasyAR Sense API. Accessible after Awake if available.
+        /// <para xml:lang="en">EasyAR Sense API. Accessible after Awake if available.</para>
+        /// <para xml:lang="zh">EasyAR Sense API，如果功能可以使用，可以在Awake之后访问。</para>
         /// </summary>
         public ObjectTracker Tracker { get; private set; }
 
@@ -25,7 +30,15 @@ namespace easyar
         private Dictionary<int, TargetController> allTargetController = new Dictionary<int, TargetController>();
         private bool isStarted;
 
+        /// <summary>
+        /// <para xml:lang="en">Target load finish event. The bool value indicates the load success or not.</para>
+        /// <para xml:lang="zh">Target加载完成的事件。bool值表示加载是否成功。</para>
+        /// </summary>
         public event Action<ObjectTargetController, Target, bool> TargetLoad;
+        /// <summary>
+        /// <para xml:lang="en">Target unload finish event. The bool value indicates the unload success or not.</para>
+        /// <para xml:lang="zh">Target卸载完成的事件。bool值表示卸载是否成功。</para>
+        /// </summary>
         public event Action<ObjectTargetController, Target, bool> TargetUnload;
         private event Action SimultaneousNumChanged;
 
@@ -34,6 +47,10 @@ namespace easyar
             get { return Tracker.bufferRequirement(); }
         }
 
+        /// <summary>
+        /// <para xml:lang="en">The max number of targets which will be the simultaneously tracked by the tracker. Modify at any time and takes effect immediately.</para>
+        /// <para xml:lang="zh">最大可被tracker跟踪的目标个数。可随时修改，立即生效。</para>
+        /// </summary>
         public int SimultaneousNum
         {
             get
@@ -58,6 +75,10 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// <para xml:lang="en"><see cref="TargetController"/> that has been loaded.</para>
+        /// <para xml:lang="zh">已加载的<see cref="TargetController"/>。</para>
+        /// </summary>
         public List<TargetController> TargetControllers
         {
             get
@@ -72,6 +93,9 @@ namespace easyar
             private set { }
         }
 
+        /// <summary>
+        /// MonoBehaviour Awake
+        /// </summary>
         protected virtual void Awake()
         {
             if (!EasyARController.Initialized)
@@ -87,6 +111,9 @@ namespace easyar
             Tracker.setSimultaneousNum(simultaneousNum);
         }
 
+        /// <summary>
+        /// MonoBehaviour OnEnable
+        /// </summary>
         protected virtual void OnEnable()
         {
             if (Tracker != null && isStarted)
@@ -95,6 +122,9 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// MonoBehaviour Start
+        /// </summary>
         protected virtual void Start()
         {
             isStarted = true;
@@ -104,6 +134,9 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// MonoBehaviour OnDisable
+        /// </summary>
         protected virtual void OnDisable()
         {
             if (Tracker != null)
@@ -112,6 +145,9 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// MonoBehaviour OnDestroy
+        /// </summary>
         protected virtual void OnDestroy()
         {
             if (Tracker != null)
@@ -120,6 +156,10 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Load target.</para>
+        /// <para xml:lang="zh">加载target。</para>
+        /// </summary>
         public void LoadTarget(ObjectTargetController target)
         {
             if (target.Target != null && TryGetTargetController(target.Target.runtimeID()))
@@ -129,6 +169,10 @@ namespace easyar
             target.Tracker = this;
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Unload target.</para>
+        /// <para xml:lang="zh">卸载target。</para>
+        /// </summary>
         public void UnloadTarget(ObjectTargetController target)
         {
             if (target.Target != null && !TryGetTargetController(target.Target.runtimeID()))
@@ -207,7 +251,7 @@ namespace easyar
                     lostIDs.Remove(id);
                 }
                 var controller = TryGetTargetController(id);
-                if (controller)
+                if (controller && controller.IsLoaded)
                 {
                     controller.OnTracking(true);
                 }
@@ -224,6 +268,10 @@ namespace easyar
             return resultControllers;
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Internal method, do not call directly.</para>
+        /// <para xml:lang="zh">内部方法，不可直接调用。</para>
+        /// </summary>
         internal void LoadObjectTarget(ObjectTargetController controller, Action<Target, bool> callback)
         {
             Tracker.loadTarget(controller.Target, EasyARController.Scheduler, (target, status) =>
@@ -240,6 +288,10 @@ namespace easyar
             allTargetController[controller.Target.runtimeID()] = controller;
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Internal method, do not call directly.</para>
+        /// <para xml:lang="zh">内部方法，不可直接调用。</para>
+        /// </summary>
         internal void UnloadObjectTarget(ObjectTargetController controller, Action<Target, bool> callback)
         {
             if (allTargetController.Remove(controller.Target.runtimeID()))

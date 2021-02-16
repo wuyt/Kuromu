@@ -1,6 +1,6 @@
 ﻿//================================================================================================================================
 //
-//  Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+//  Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 //  EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 //  and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -11,6 +11,10 @@ using UnityEngine;
 
 namespace easyar
 {
+    /// <summary>
+    /// <para xml:lang="en">Material to render camera image.</para>
+    /// <para xml:lang="zh">用于渲染camera图像的材质。</para>
+    /// </summary>
     internal class CameraImageMaterial : IDisposable
     {
         private static EasyARShaders shaders;
@@ -33,12 +37,20 @@ namespace easyar
             DisposeResources();
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Dispose resources.</para>
+        /// <para xml:lang="zh">销毁资源。</para>
+        /// </summary>
         public void Dispose()
         {
             DisposeResources();
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Update material using <paramref name="image"/>.</para>
+        /// <para xml:lang="zh">使用<paramref name="image"/>更新材质。</para>
+        /// </summary>
         public Material UpdateByImage(Image image)
         {
             var recreateMaterial = false;
@@ -141,7 +153,7 @@ namespace easyar
                         {
                             textures = new Texture2D[1];
                             textures[0] = new Texture2D(imageWidth, imageHeight, TextureFormat.RGB24, false);
-                            mat = new Material(Shader.Find("Unlit/Texture"));
+                            mat = new Material(shaders.RGB);
                             mat.SetTexture("_MainTex", textures[0]);
                         }
                         textures[0].LoadRawTextureData(new IntPtr(ptr.ToInt64()), buffer.size());
@@ -163,7 +175,7 @@ namespace easyar
                         {
                             textures = new Texture2D[1];
                             textures[0] = new Texture2D(imageWidth, imageHeight, TextureFormat.RGBA32, false);
-                            mat = new Material(Shader.Find("Unlit/Texture"));
+                            mat = new Material(shaders.RGB);
                             mat.SetTexture("_MainTex", textures[0]);
                         }
                         textures[0].LoadRawTextureData(new IntPtr(ptr.ToInt64()), buffer.size());

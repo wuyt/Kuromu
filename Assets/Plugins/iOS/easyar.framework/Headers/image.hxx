@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -85,10 +85,6 @@ public:
     /// Returns image height.
     /// </summary>
     int height();
-    /// <summary>
-    /// Checks if the image is empty.
-    /// </summary>
-    bool empty();
 };
 
 }
@@ -177,14 +173,6 @@ inline int Image::height()
         return int();
     }
     int _return_value_ = easyar_Image_height(cdata_);
-    return _return_value_;
-}
-inline bool Image::empty()
-{
-    if (cdata_ == NULL) {
-        return bool();
-    }
-    bool _return_value_ = easyar_Image_empty(cdata_);
     return _return_value_;
 }
 

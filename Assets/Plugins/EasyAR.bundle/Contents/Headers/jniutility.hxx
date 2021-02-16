@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -30,6 +30,10 @@ public:
     /// Wraps Java&#39;s java.nio.ByteBuffer, which must be a direct buffer.
     /// </summary>
     static void wrapBuffer(void * directBuffer, FunctorOfVoid deleter, /* OUT */ Buffer * * Return);
+    /// <summary>
+    /// Get the raw address of a direct buffer of java.nio.ByteBuffer by calling JNIEnv-&gt;GetDirectBufferAddress.
+    /// </summary>
+    static void * getDirectBufferAddress(void * directBuffer);
 };
 
 #ifndef __EASYAR_FUNCTOROFVOID__
@@ -70,6 +74,11 @@ inline void JniUtility::wrapBuffer(void * arg0, FunctorOfVoid arg1, /* OUT */ Bu
     easyar_Buffer * _return_value_ = NULL;
     easyar_JniUtility_wrapBuffer(arg0, FunctorOfVoid_to_c(arg1), &_return_value_);
     *Return = new Buffer(_return_value_);
+}
+inline void * JniUtility::getDirectBufferAddress(void * arg0)
+{
+    void * _return_value_ = easyar_JniUtility_getDirectBufferAddress(arg0);
+    return _return_value_;
 }
 
 #ifndef __IMPLEMENTATION_EASYAR_FUNCTOROFVOID__

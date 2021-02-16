@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -17,7 +17,7 @@
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
-+ (easyar_CameraParameters *) create:(easyar_Vec2I *)size focalLength:(easyar_Vec2F *)focalLength principalPoint:(easyar_Vec2F *)principalPoint cameraDeviceType:(easyar_CameraDeviceType)cameraDeviceType cameraOrientation:(int)cameraOrientation;
++ (easyar_CameraParameters *) create:(easyar_Vec2I *)imageSize focalLength:(easyar_Vec2F *)focalLength principalPoint:(easyar_Vec2F *)principalPoint cameraDeviceType:(easyar_CameraDeviceType)cameraDeviceType cameraOrientation:(int)cameraOrientation;
 /// <summary>
 /// Image size.
 /// </summary>
@@ -44,7 +44,11 @@
 /// <summary>
 /// Creates CameraParameters with default camera intrinsics. Default intrinsics are calculated by image size, which is not very precise.
 /// </summary>
-+ (easyar_CameraParameters *)createWithDefaultIntrinsics:(easyar_Vec2I *)size cameraDeviceType:(easyar_CameraDeviceType)cameraDeviceType cameraOrientation:(int)cameraOrientation;
++ (easyar_CameraParameters *)createWithDefaultIntrinsics:(easyar_Vec2I *)imageSize cameraDeviceType:(easyar_CameraDeviceType)cameraDeviceType cameraOrientation:(int)cameraOrientation;
+/// <summary>
+/// Get equivalent CameraParameters for a different camera image size.
+/// </summary>
+- (easyar_CameraParameters *)getResized:(easyar_Vec2I *)imageSize;
 /// <summary>
 /// Calculates the angle required to rotate the camera image clockwise to align it with the screen.
 /// screenRotation is the angle of rotation of displaying screen image against device natural orientation in clockwise in degrees.

@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -71,7 +71,7 @@ bool easyar_CameraDevice_openWithPreferredType(easyar_CameraDevice * This, easya
 /// </summary>
 bool easyar_CameraDevice_start(easyar_CameraDevice * This);
 /// <summary>
-/// Stops video stream capture. It will only stop capture and will not change previous set camera parameters.
+/// Stops video stream capture. It will only stop capture and will not change previous set camera parameters and connection.
 /// </summary>
 void easyar_CameraDevice_stop(easyar_CameraDevice * This);
 /// <summary>
@@ -147,7 +147,11 @@ void easyar_CameraDevice__retain(const easyar_CameraDevice * This, /* OUT */ eas
 const char * easyar_CameraDevice__typeName(const easyar_CameraDevice * This);
 
 /// <summary>
-/// Creates `CameraDevice`_ with a specified preference.
+/// Gets recommended Android Camera API type by a specified preference.
+/// </summary>
+easyar_AndroidCameraApiType easyar_CameraDeviceSelector_getAndroidCameraApiType(easyar_CameraDevicePreference preference);
+/// <summary>
+/// Creates `CameraDevice`_ by a specified preference.
 /// </summary>
 void easyar_CameraDeviceSelector_createCameraDevice(easyar_CameraDevicePreference preference, /* OUT */ easyar_CameraDevice * * Return);
 

@@ -1,6 +1,6 @@
 ﻿//================================================================================================================================
 //
-//  Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+//  Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 //  EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 //  and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -12,6 +12,10 @@ using UnityEngine.Rendering;
 
 namespace easyar
 {
+    /// <summary>
+    /// <para xml:lang="en"><see cref="MonoBehaviour"/> which controls camera image rendering in the scene. Unity universal render pipeline (URP) is not supported yet, you can extend this class for URP support.</para>
+    /// <para xml:lang="zh">在场景中控制camera图像渲染的<see cref="MonoBehaviour"/>，这个类目前不支持Unity universal render pipeline (URP) ，但你可以自行扩展这个类的实现来支持URP。</para>
+    /// </summary>
     [RequireComponent(typeof(RenderCameraController))]
     public class CameraImageRenderer : MonoBehaviour
     {
@@ -23,25 +27,41 @@ namespace easyar
         private bool renderImageHFlip;
         private UserRequest request;
 
+        /// <summary>
+        /// <para xml:lang="en">Camera image rendering update event. This event will pass out the Material and texture size of current camera image rendering. This event only indicates a new render happens, while the camera image itself may not change.</para>
+        /// <para xml:lang="zh">camera图像渲染更新的事件。这个事件会传出当前用于camera图像渲染的材质和贴图大小。当这个事件发生时，camera图像本身不一定有改变，它只表示一次渲染的发生。</para>
+        /// </summary>
         public event Action<Material, Vector2> OnFrameRenderUpdate;
         private event Action<Camera, RenderTexture> TargetTextureChange;
 
+        /// <summary>
+        /// MonoBehaviour Awake
+        /// </summary>
         protected virtual void Awake()
         {
             controller = GetComponent<RenderCameraController>();
             arMaterial = new CameraImageMaterial();
         }
 
+        /// <summary>
+        /// MonoBehaviour OnEnable
+        /// </summary>
         protected virtual void OnEnable()
         {
             UpdateCommandBuffer(controller ? controller.TargetCamera : null, material);
         }
 
+        /// <summary>
+        /// MonoBehaviour OnDisable
+        /// </summary>
         protected virtual void OnDisable()
         {
             RemoveCommandBuffer(controller ? controller.TargetCamera : null);
         }
 
+        /// <summary>
+        /// MonoBehaviour OnDestroy
+        /// </summary>
         protected virtual void OnDestroy()
         {
             arMaterial.Dispose();
@@ -49,6 +69,12 @@ namespace easyar
             if (cameraParameters != null) { cameraParameters.Dispose(); }
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Get the <see cref="RenderTexture"/> of camera image.</para>
+        /// <para xml:lang="en">The texture is a full sized image from <see cref="OutputFrame"/>, not cropped by the screen. The action <paramref name="targetTextureEventHandler"/> will pass out the <see cref="RenderTexture"/> and the <see cref="Camera"/> drawing the texture when the texture created or changed, will not call every frame or when the camera image data change. Calling this method will create external resources, and will trigger render when necessary, so make sure to release the resource using <see cref="DropTargetTexture"/> when not use.</para>
+        /// <para xml:lang="zh">获取camera图像的<see cref="RenderTexture"/>。</para>
+        /// <para xml:lang="zh">通过这个接口获取的texture是从<see cref="OutputFrame"/>获取的完整大小的图像，未经屏幕裁剪。<paramref name="targetTextureEventHandler"/> action会传出<see cref="RenderTexture"/>以及用于绘制texture的<see cref="Camera"/>。这个action不会每帧调用，也不会在camera图像数据发生变化的时候调用，它只会发生在texture本身创建或改变的时候。调用这个方法会创建额外的资源且会在必要时触发渲染，因此在不使用的时候需要调用<see cref="DropTargetTexture"/>释放资源。</para>
+        /// </summary>
         public void RequestTargetTexture(Action<Camera, RenderTexture> targetTextureEventHandler)
         {
             if (request == null)
@@ -64,6 +90,10 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Release the <see cref="RenderTexture"/> of camera image. Internal resources will be released when all holders release.</para>
+        /// <para xml:lang="zh">释放绘制camera图像的<see cref="RenderTexture"/>。内部资源将在所有持有者都释放后释放。</para>
+        /// </summary>
         public void DropTargetTexture(Action<Camera, RenderTexture> targetTextureEventHandler)
         {
             if (controller)
@@ -79,12 +109,20 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Usually only for internal assemble use. Assemble response.</para>
+        /// <para xml:lang="zh">通常只在内部组装时使用。组装响应方法。</para>
+        /// </summary>
         public void OnAssemble(ARSession session)
         {
             session.FrameChange += OnFrameChange;
             session.FrameUpdate += OnFrameUpdate;
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Set render image horizontal flip.</para>
+        /// <para xml:lang="zh">设置渲染的图像的镜像翻转。</para>
+        /// </summary>
         public void SetHFilp(bool hFlip)
         {
             renderImageHFlip = hFlip;

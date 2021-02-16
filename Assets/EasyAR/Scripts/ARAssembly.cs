@@ -1,6 +1,6 @@
 ﻿//================================================================================================================================
 //
-//  Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+//  Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 //  EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 //  and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -31,16 +31,53 @@ namespace easyar
     ///                                                 '
     ///                                                 '
     ///                                                 + - - - - - - - - - - - - - - - - - > DenseSpatialMap ~ ~ > o
-    ///                                                 '
-    ///                                                 + - - - - - - - - - - - - - - - - - > CloudRecognizer ~ ~ > o
     ///</remarks>
+
+    /// <summary>
+    /// <para xml:lang="en">Assembly of AR components. It implements one typical assemble strategy for all EasyAR Sense components. Inherit this class and override some methods can make a more customized assembly.</para>
+    /// <para xml:lang="zh">AR组件的组装体。它实现了一种对所有EasyAR Sense组件的典型组装。继承这个类并重载部分可以实现更定制化的组装。</para>
+    /// </summary>
     [Serializable]
     public class ARAssembly : IDisposable
     {
+        /// <summary>
+        /// <para xml:lang="en"><see cref="UnityEngine.Camera"/> in the virtual world in reflection of real world camera device, its projection matrix and transform will be set to reflect the real world camera.</para>
+        /// <para xml:lang="en">It will be set to <see cref="Camera.main"/> when assembling if <see cref="ARSession.AssembleMode"/> == <see cref="AssembleMode.Auto"/>.</para>
+        /// <para xml:lang="zh">现实环境中相机设备在虚拟世界中对应的<see cref="UnityEngine.Camera"/>，其投影矩阵和位置都将于真实相机对应。</para>
+        /// <para xml:lang="zh">如果<see cref="ARSession.AssembleMode"/> == <see cref="AssembleMode.Auto"/>，在组装时会设为<see cref="Camera.main"/>。</para>
+        /// </summary>
         public Camera Camera;
+
+        /// <summary>
+        /// <para xml:lang="en"><see cref="Transform"/> of root node of all <see cref="UnityEngine.Camera"/>s used for AR rendering.</para>
+        /// <para xml:lang="en">It will be set to <see cref="Camera"/> <see cref="Transform"/> when assembling if <see cref="ARSession.AssembleMode"/> == <see cref="AssembleMode.Auto"/>.</para>
+        /// <para xml:lang="zh">用于AR渲染的所有<see cref="UnityEngine.Camera"/>的根节点的<see cref="Transform"/>。</para>
+        /// <para xml:lang="zh">如果<see cref="ARSession.AssembleMode"/> == <see cref="AssembleMode.Auto"/>，在组装时会设为<see cref="Camera"/>的<see cref="Transform"/>。</para>
+        /// </summary>
         public Transform CameraRoot;
+
+        /// <summary>
+        /// <para xml:lang="en"><see cref="RenderCameraController"/> list.</para>
+        /// <para xml:lang="en">It will be set to the list of <see cref="RenderCameraController"/> get from children of the <see cref="ARSession"/> <see cref="GameObject"/> when assembling if <see cref="ARSession.AssembleMode"/> == <see cref="AssembleMode.Auto"/>.</para>
+        /// <para xml:lang="zh"><see cref="RenderCameraController"/>的列表。</para>
+        /// <para xml:lang="zh">如果<see cref="ARSession.AssembleMode"/> == <see cref="AssembleMode.Auto"/>，在组装时会从<see cref="ARSession"/>的<see cref="GameObject"/>的所有子节点中寻找并获取<see cref="RenderCameraController"/>。</para>
+        /// </summary>
         public List<RenderCameraController> RenderCameras = new List<RenderCameraController>();
+
+        /// <summary>
+        /// <para xml:lang="en">Frame source.</para>
+        /// <para xml:lang="en">It will be set to <see cref="easyar.FrameSource"/> get from children of the <see cref="ARSession"/> <see cref="GameObject"/> when assembling if <see cref="ARSession.AssembleMode"/> == <see cref="AssembleMode.Auto"/>.</para>
+        /// <para xml:lang="zh">Frame数据源。</para>
+        /// <para xml:lang="zh">如果<see cref="ARSession.AssembleMode"/> == <see cref="AssembleMode.Auto"/>，在组装时会从<see cref="ARSession"/>的<see cref="GameObject"/>的所有子节点中寻找并获取<see cref="easyar.FrameSource"/>。</para>
+        /// </summary>
         public FrameSource FrameSource;
+
+        /// <summary>
+        /// <para xml:lang="en"><see cref="FrameFilter"/> list.</para>
+        /// <para xml:lang="en">It will be set to the list of <see cref="FrameFilter"/> get from children of the <see cref="ARSession"/> <see cref="GameObject"/> when assembling if <see cref="ARSession.AssembleMode"/> == <see cref="AssembleMode.Auto"/>.</para>
+        /// <para xml:lang="zh"><see cref="FrameFilter"/>的列表。</para>
+        /// <para xml:lang="zh">如果<see cref="ARSession.AssembleMode"/> == <see cref="AssembleMode.Auto"/>，在组装时会从<see cref="ARSession"/>的<see cref="GameObject"/>的所有子节点中寻找并获取<see cref="FrameFilter"/>。</para>
+        /// </summary>
         public List<FrameFilter> FrameFilters = new List<FrameFilter>();
 
         protected InputFrameThrottler iFrameThrottler;
@@ -57,16 +94,40 @@ namespace easyar
             DisposeAll();
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Assemble mode.</para>
+        /// <para xml:lang="zh">组装模式。</para>
+        /// </summary>
         public enum AssembleMode
         {
+            /// <summary>
+            /// <para xml:lang="en">Auto assemble, components will be get from the children nodes.</para>
+            /// <para xml:lang="zh">自动组装，此模式会自动获取子节点的组件进行装配。</para>
+            /// </summary>
             Auto,
+            /// <summary>
+            /// <para xml:lang="en">Manual assemble.</para>
+            /// <para xml:lang="zh">手动组装。</para>
+            /// </summary>
             Manual,
         }
 
+        /// <summary>
+        /// <para xml:lang="en">The assembly can be used.</para>
+        /// <para xml:lang="zh">组装体可以使用。</para>
+        /// </summary>
         public bool Ready { get; private set; }
 
+        /// <summary>
+        /// <para xml:lang="en">If <see cref="WorldRootController"/> is required by the assembly.</para>
+        /// <para xml:lang="zh">组装体是否需要<see cref="WorldRootController"/>。</para>
+        /// </summary>
         public bool RequireWorldCenter { get; private set; }
 
+        /// <summary>
+        /// <para xml:lang="en">Output frame.</para>
+        /// <para xml:lang="zh">输出帧。</para>
+        /// </summary>
         public Optional<OutputFrame> OutputFrame
         {
             get
@@ -79,12 +140,20 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Dispose resources.</para>
+        /// <para xml:lang="zh">销毁资源。</para>
+        /// </summary>
         public virtual void Dispose()
         {
             DisposeAll();
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Assemble AR components.</para>
+        /// <para xml:lang="zh">组装AR组件。</para>
+        /// </summary>
         public virtual void Assemble(ARSession session)
         {
             if (session.AssembleMode == AssembleMode.Auto)
@@ -110,11 +179,19 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Break the assembly. The assembly cannot be used once broken.</para>
+        /// <para xml:lang="zh">破坏AR组件体。一旦破坏将无法再使用。</para>
+        /// </summary>
         public void Break()
         {
             Ready = false;
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Pause output.</para>
+        /// <para xml:lang="zh">暂停输出。</para>
+        /// </summary>
         public void Pause()
         {
             if (!Ready)
@@ -124,6 +201,10 @@ namespace easyar
             oFrameBuffer.pause();
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Resume output.</para>
+        /// <para xml:lang="zh">继续输出。</para>
+        /// </summary>
         public void Resume()
         {
             if (!Ready)
@@ -133,6 +214,10 @@ namespace easyar
             oFrameBuffer.resume();
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Reset buffer capacity.</para>
+        /// <para xml:lang="zh">重置缓冲的容量。</para>
+        /// </summary>
         public void ResetBufferCapacity()
         {
             if (FrameSource is CameraSource)
@@ -142,6 +227,10 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Get buffer requirement.</para>
+        /// <para xml:lang="zh">获取当前需要的缓冲容量。</para>
+        /// </summary>
         protected int GetBufferRequirement()
         {
             int count = 1; // for OutputFrameBuffer.peek
@@ -156,6 +245,10 @@ namespace easyar
             return count;
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Get <see cref="FrameFilter"/> number of certain type.</para>
+        /// <para xml:lang="zh">获取指定<see cref="FrameFilter"/>的数量。</para>
+        /// </summary>
         protected int GetFrameFilterCount<T>()
         {
             if (FrameFilters == null)

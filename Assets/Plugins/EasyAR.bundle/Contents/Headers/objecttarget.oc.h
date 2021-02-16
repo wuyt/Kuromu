@@ -1,7 +1,7 @@
 ﻿//=============================================================================================================================
 //
-// EasyAR Sense 4.0.0-final-7bc4102ce
-// Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR Sense 4.1.0.7750-f1413084f
+// Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 // EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 // and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -74,7 +74,7 @@
 /// <summary>
 /// ObjectTarget represents 3d object targets that can be tracked by `ObjectTracker`_ .
 /// The size of ObjectTarget is determined by the `obj` file. You can change it by changing the object `scale`, which is default to 1.
-/// A ObjectTarget should be setup using setup before any value is valid. And ObjectTarget can be tracked by `ObjectTracker`_ after a successful load into the `ObjectTracker`_ using `ObjectTracker.loadTarget`_ .
+/// A ObjectTarget can be tracked by `ObjectTracker`_ after a successful load into the `ObjectTracker`_ using `ObjectTracker.loadTarget`_ .
 /// </summary>
 @interface easyar_ObjectTarget : easyar_Target
 
@@ -90,12 +90,6 @@
 /// Creats a target from obj, mtl and jpg/png files.
 /// </summary>
 + (easyar_ObjectTarget *)createFromObjectFile:(NSString *)path storageType:(easyar_StorageType)storageType name:(NSString *)name uid:(NSString *)uid meta:(NSString *)meta scale:(float)scale;
-/// <summary>
-/// Setup all targets listed in the json file or json string from path with storageType. This method only parses the json file or string.
-/// If path is json file path, storageType should be `App` or `Assets` or `Absolute` indicating the path type. Paths inside json files should be absolute path or relative path to the json file.
-/// See `StorageType`_ for more descriptions.
-/// </summary>
-+ (NSArray<easyar_ObjectTarget *> *)setupAll:(NSString *)path storageType:(easyar_StorageType)storageType;
 /// <summary>
 /// The scale of model. The value is the physical scale divided by model coordinate system scale. The default value is 1. (Supposing the unit of model coordinate system is 1 meter.)
 /// </summary>

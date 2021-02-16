@@ -1,6 +1,6 @@
 ﻿//================================================================================================================================
 //
-//  Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+//  Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 //  EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 //  and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -49,12 +49,13 @@ Shader "EasyAR/ImageTargetGizmo"
             {
                 v2f o;
 
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                v.vertex.xy = lerp(lerp(float2(0, 1), float2(1, 1), o.uv.x), lerp(float2(0, 0), float2(1, 0), o.uv.x), o.uv.y);
                 v.vertex.x = (v.vertex.x - 0.5);
                 v.vertex.y = (v.vertex.y - 0.5) * _Ratio;
                 v.vertex.z = 0.001;
                 v.vertex = mul(_Transform, v.vertex);
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 return o;
             }
 

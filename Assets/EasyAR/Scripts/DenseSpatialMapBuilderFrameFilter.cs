@@ -1,6 +1,6 @@
 ﻿//================================================================================================================================
 //
-//  Copyright (c) 2015-2019 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+//  Copyright (c) 2015-2020 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
 //  EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
 //  and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
 //
@@ -12,15 +12,30 @@ using UnityEngine;
 
 namespace easyar
 {
+    /// <summary>
+    /// <para xml:lang="en"><see cref="MonoBehaviour"/> which controls <see cref="DenseSpatialMap"/> in the scene, providing a few extensions in the Unity environment. Use <see cref="Builder"/> directly when necessary.</para>
+    /// <para xml:lang="zh">在场景中控制<see cref="DenseSpatialMap"/>的<see cref="MonoBehaviour"/>，在Unity环境下提供功能扩展。如有需要可以直接使用<see cref="Builder"/>。</para>
+    /// </summary>
     public class DenseSpatialMapBuilderFrameFilter : FrameFilter, FrameFilter.IInputFrameSink, FrameFilter.ISpatialInformationSink
     {
         /// <summary>
-        /// EasyAR Sense API. Accessible after Awake if available.
+        /// <para xml:lang="en">EasyAR Sense API. Accessible after Awake if available.</para>
+        /// <para xml:lang="zh">EasyAR Sense API，如果功能可以使用，可以在Awake之后访问。</para>
         /// </summary>
         public DenseSpatialMap Builder { get; private set; }
 
+        /// <summary>
+        /// <para xml:lang="en"><see cref="Material"/> for map mesh render.</para>
+        /// <para xml:lang="zh">用于渲染Map网格的<see cref="Material"/>。</para>
+        /// </summary>
         public Material MapMeshMaterial;
+
+        /// <summary>
+        /// <para xml:lang="en">The max number of mesh blocks to be updated each frame. Decrease this value if the mesh update slows rendering.</para>
+        /// <para xml:lang="zh">每帧更新网格块的最大数量。如果网格更新使渲染变慢可以降低这个数值。</para>
+        /// </summary>
         public int BlockUpdateLimitation = 5;
+
 
         private Dictionary<Vector3, DenseSpatialMapBlockController> blocksDict = new Dictionary<Vector3, DenseSpatialMapBlockController>();
         private List<DenseSpatialMapBlockController> dirtyBlocks = new List<DenseSpatialMapBlockController>();
@@ -30,7 +45,15 @@ namespace easyar
         private Material mapMaterial;
         private DenseSpatialMapDepthRenderer depthRenderer;
 
+        /// <summary>
+        /// <para xml:lang="en">Event when a new mesh block created.</para>
+        /// <para xml:lang="zh">新网格块创建的事件。</para>
+        /// </summary>
         public event Action<DenseSpatialMapBlockController> MapCreate;
+        /// <summary>
+        /// <para xml:lang="en">Event when mesh block updates.</para>
+        /// <para xml:lang="zh">网格块更新的事件。</para>
+        /// </summary>
         public event Action<List<DenseSpatialMapBlockController>> MapUpdate;
 
         public override int BufferRequirement
@@ -43,6 +66,10 @@ namespace easyar
             get; private set;
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Mesh render on/off.</para>
+        /// <para xml:lang="zh">是否渲染网格。</para>
+        /// </summary>
         public bool RenderMesh
         {
             get { return renderMesh; }
@@ -60,6 +87,10 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// <para xml:lang="en">Mesh color.</para>
+        /// <para xml:lang="zh">网格颜色。</para>
+        /// </summary>
         public Color MeshColor
         {
             get
@@ -79,6 +110,10 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// <para xml:lang="en">All mesh blocks.</para>
+        /// <para xml:lang="zh">当前所有网格块。</para>
+        /// </summary>
         public List<DenseSpatialMapBlockController> MeshBlocks
         {
             get
@@ -92,6 +127,9 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// MonoBehaviour Awake
+        /// </summary>
         protected virtual void Awake()
         {
             if (!EasyARController.Initialized)
@@ -113,6 +151,9 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// MonoBehaviour OnEnable
+        /// </summary>
         protected virtual void OnEnable()
         {
             if (Builder != null && isStarted)
@@ -121,6 +162,9 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// MonoBehaviour Start
+        /// </summary>
         protected virtual void Start()
         {
             isStarted = true;
@@ -130,6 +174,9 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// MonoBehaviour Update
+        /// </summary>
         protected virtual void Update()
         {
             if (dirtyBlocks.Count <= 0)
@@ -188,6 +235,9 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// MonoBehaviour OnDisable
+        /// </summary>
         protected virtual void OnDisable()
         {
             if (Builder != null)
@@ -196,6 +246,9 @@ namespace easyar
             }
         }
 
+        /// <summary>
+        /// MonoBehaviour OnDestroy
+        /// </summary>
         protected virtual void OnDestroy()
         {
             if (Builder != null)
